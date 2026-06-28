@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+
+{% block title %}
+Contact Us
+{% endblock %}
+
+{% block content %}
+
+<section class="py-16">
+
+    <div class="max-w-7xl mx-auto px-6">
+
+        <div class="mb-16 text-center">
+
+            <h1 class="text-5xl font-bold">
+
+                Contact Us
+
+            </h1>
+
+            <p class="text-gray-600 mt-4">
+
+                We'd love to hear from you.
+
+            </p>
+
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-10">
+
+            <!-- Contact Information -->
+
+            <div class="space-y-8">
+
+                <div>
+
+                    <h2 class="font-bold text-xl mb-2">
+
+                        Phone
+
+                    </h2>
+
+                    <p>
+
+                        {{ site_settings.phone }}
+
+                    </p>
+
+                </div>
+
+                <div>
+
+                    <h2 class="font-bold text-xl mb-2">
+
+                        Email
+
+                    </h2>
+
+                    <p>
+
+                        {{ site_settings.email }}
+
+                    </p>
+
+                </div>
+
+                <div>
+
+                    <h2 class="font-bold text-xl mb-2">
+
+                        Address
+
+                    </h2>
+
+                    <p>
+
+                        {{ site_settings.address }}
+
+                    </p>
+
+                </div>
+
+                <div>
+
+                    <h2 class="font-bold text-xl mb-2">
+
+                        Office Hours
+
+                    </h2>
+
+                    <p>
+
+                        {{ site_settings.office_hours }}
+
+                    </p>
+
+                </div>
+
+            </div>
+
+            <!-- Contact Form -->
+
+            <div class="lg:col-span-2">
+
+                <div
+                    class="bg-white rounded-2xl shadow-sm p-8">
+
+                    <form method="post">
+
+                        {% csrf_token %}
+
+                        <div class="grid md:grid-cols-2 gap-6">
+
+                            <div>
+
+                                <label class="block mb-2">
+
+                                    Name
+
+                                </label>
+
+                                {{ form.name }}
+
+                            </div>
+
+                            <div>
+
+                                <label class="block mb-2">
+
+                                    Email
+
+                                </label>
+
+                                {{ form.email }}
+
+                            </div>
+
+                        </div>
+
+                        <div class="mt-6">
+
+                            <label class="block mb-2">
+
+                                Subject
+
+                            </label>
+
+                            {{ form.subject }}
+
+                        </div>
+
+                        <div class="mt-6">
+
+                            <label class="block mb-2">
+
+                                Message
+
+                            </label>
+
+                            {{ form.message }}
+
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="btn-primary mt-6 cursor-pointer">
+
+                            Send Message
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% if site_settings.google_maps_embed_url %}
+
+        <div class="mt-16">
+
+            <iframe
+                src="{{ site_settings.google_maps_embed_url }}"
+                class="w-full h-96 rounded-2xl shadow-sm"
+                loading="lazy">
+            </iframe>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+{% endblock %}

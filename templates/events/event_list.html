@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}
+Events
+{% endblock %}
+
+{% block content %}
+
+<section class="py-16">
+
+    <div class="max-w-7xl mx-auto px-6">
+
+        <h1 class="text-5xl font-bold mb-12">
+
+            Upcoming Events
+
+        </h1>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+            {% for event in events %}
+
+            <article
+            class="bg-white rounded-xl shadow-sm hover:shadow-md transition p-6">
+
+                <p class="text-primary font-semibold">
+
+                    {{ event.event_date|date:"d M Y" }}
+
+                </p>
+
+                <h2 class="font-bold text-xl mt-2">
+
+                    {{ event.title }}
+
+                </h2>
+
+                <p class="text-gray-600 mt-4">
+
+                    {{ event.description|truncatewords:20 }}
+
+                </p>
+
+                <a
+                    href="{% url 'event-detail' event.slug %}"
+                    class="inline-block mt-4 text-primary font-medium">
+
+                    View Event →
+
+                </a>
+
+            </article>
+
+            {% empty %}
+
+            <p>No events published yet.</p>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

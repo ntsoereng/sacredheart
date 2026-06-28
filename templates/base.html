@@ -1,0 +1,59 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        {% block title %}
+        Sacred Heart High School
+        {% endblock %}
+    </title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    {% if site_settings.favicon %}
+
+    <link
+        rel="icon"
+        href="{{ site_settings.favicon.url }}">
+
+    {% endif %}
+
+    <link rel="stylesheet"
+          href="{% static 'css/output.css' %}">
+
+</head>
+
+<body class="bg-stone-50 text-gray-800 min-h-screen flex flex-col">
+
+    {% include "partials/navbar.html" %}
+
+    {% include "partials/messages.html" %}
+
+    <main class="grow">
+
+        {% block content %}
+        {% endblock %}
+
+    </main>
+
+    {% include "partials/footer.html" %}
+
+
+    <script defer
+        src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js">
+    </script>
+</body>
+
+</html>

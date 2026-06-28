@@ -1,0 +1,35 @@
+<div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-10">
+
+    <div>
+
+        {% if eyebrow %}
+        <p class="text-gold font-semibold uppercase tracking-wide">
+            {{ eyebrow }}
+        </p>
+        {% endif %}
+
+        <h2 class="text-3xl md:text-4xl font-bold mt-2">
+            {{ title }}
+        </h2>
+
+        {% if subtitle %}
+        <p class="text-gray-600 mt-4 max-w-2xl">
+            {{ subtitle }}
+        </p>
+        {% endif %}
+
+    </div>
+
+    {% if action_url %}
+
+    <a
+        href="{{ action_url }}"
+        class="text-primary font-medium">
+
+        {{ action_text|default:"View All" }} &rarr;
+
+    </a>
+
+    {% endif %}
+
+</div>

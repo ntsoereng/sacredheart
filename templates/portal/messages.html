@@ -1,0 +1,58 @@
+{% extends "portal/base.html" %}
+{% block portal_content %}
+
+<h1 class="text-4xl font-bold mb-8">
+    Messages
+</h1>
+
+<div class="space-y-4">
+
+    {% for contact_message in contact_messages %}
+
+    <a
+        href="{% url 'message-detail' contact_message.pk %}"
+        class="block bg-white rounded-xl shadow-sm p-6">
+
+        <div class="flex justify-between">
+
+            <div>
+
+                <h2 class="font-bold">
+
+                    {{ contact_message.subject }}
+
+                </h2>
+
+                <p class="text-gray-600">
+
+                    {{ contact_message.name }}
+
+                </p>
+
+            </div>
+
+            {% if not contact_message.is_read %}
+
+            <span
+                class="bg-red-100 text-red-700 px-3 py-1 rounded-xl text-sm flex items-center justify-center">
+                Unread
+            </span>
+
+            {% else %}
+
+           <span
+                class="bg-green-100 text-green-700 px-3 py-1 rounded-xl text-sm flex items-center justify-center">
+                Read
+            </span>
+
+            {% endif %}
+
+        </div>
+
+    </a>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

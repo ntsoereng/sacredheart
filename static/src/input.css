@@ -1,0 +1,112 @@
+@import "tailwindcss";
+
+@theme {
+    --font-sans: "Inter", sans-serif;
+    --color-primary: #6d1f2f;
+    --color-primary-dark: #521722;
+
+    --color-gold: #c9a227;
+    --color-gold-light: #e2c45a;
+
+    --radius-card: 1rem;
+
+}
+
+@utility btn-primary {
+
+    background-color: var(--color-primary);
+
+    color: white;
+
+    padding: 0.75rem 1.5rem;
+
+    border-radius: 0.75rem;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+a {
+    transition: all 150ms ease;
+}
+
+::selection {
+    background-color: #c9a227;
+    color: white;
+}
+
+.announcement-wrapper {
+    width: 100%;
+    overflow: hidden;
+}
+
+.announcement-track {
+    display: flex;
+    width: max-content;
+    white-space: nowrap;
+
+    animation: marquee 40s linear infinite;
+}
+
+.announcement-item {
+    flex-shrink: 0;
+
+    padding: 0.5rem 3rem;
+
+    font-size: 0.875rem;
+}
+
+@keyframes marquee {
+
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+input,
+textarea,
+select {
+
+    width: 100%;
+
+    padding: 0.75rem;
+
+    border: 1px solid #d1d5db;
+
+    border-radius: 0.5rem;
+
+    background-color: white;
+
+    transition:
+        border-color 150ms ease,
+        box-shadow 150ms ease;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+
+    outline: none;
+
+    border-color: var(--color-primary);
+
+    box-shadow:
+        0 0 0 3px rgba(109, 31, 47, 0.15);
+}
+
+input[readonly] {
+
+    background-color: #f8fafc;
+
+    cursor: not-allowed;
+}

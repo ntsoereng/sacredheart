@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ event.title }}
+{% endblock %}
+
+{% block content %}
+
+<section class="py-16">
+
+    <div class="max-w-4xl mx-auto px-6">
+
+        <p class="text-primary font-semibold mb-4">
+
+            {{ event.event_date|date:"d F Y" }}
+
+        </p>
+
+        <h1 class="text-5xl font-bold mb-6">
+
+            {{ event.title }}
+
+        </h1>
+
+        {% if event.location %}
+
+        <p class="text-gray-500 mb-8">
+
+            📍 {{ event.location }}
+
+        </p>
+
+        {% endif %}
+
+        {% if event.image %}
+
+        <img
+            src="{{ event.image.url }}"
+            alt="{{ event.title }}"
+            class="rounded-2xl shadow-sm mb-10">
+
+        {% endif %}
+
+        <div class="space-y-6 text-lg leading-relaxed">
+
+            {{ event.description|linebreaks }}
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

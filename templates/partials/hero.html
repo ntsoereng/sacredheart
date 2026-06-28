@@ -1,0 +1,62 @@
+<section
+class="max-w-7xl mx-auto px-6 py-20">
+
+    <div
+    class="grid lg:grid-cols-2 gap-12 items-center">
+
+        <div>
+
+            <span class="text-gold font-semibold">
+                {{ site_settings.tagline |default:"Welcome to Sacred Heart High School" }}
+            </span>
+
+            <h1
+            class="text-5xl lg:text-6xl font-bold mt-4 leading-tight">
+                {{ site_settings.hero_title|default:"Nurturing Excellence, Character and Service" }}
+            </h1>
+
+            <p
+            class="text-gray-600 mt-6 text-lg">
+                {{ site_settings.hero_subtitle|default:"Empowering the next generation of leaders" }}
+            </p>
+
+            <div class="flex flex-wrap gap-4 mt-8">
+
+                <a href="#"
+                   class="bg-primary text-white px-6 py-3 rounded-xl">
+
+                    Learn More
+
+                </a>
+
+                <a href="#"
+                   class="border border-gray-300 px-6 py-3 rounded-xl">
+
+                    Admissions
+
+                </a>
+
+            </div>
+
+        </div>
+
+        <div>
+            {% if site_settings.hero_image %}
+
+            <img
+                src="{{ site_settings.hero_image.url }}"
+                alt="{{ site_settings.school_name }}"
+                class="w-full h-96 object-cover rounded-2xl shadow-md">
+
+            {% else %}
+
+                <div
+                    class="bg-white rounded-2xl shadow-md h-96">
+                </div>
+
+            {% endif %}
+        </div>
+
+    </div>
+
+</section>

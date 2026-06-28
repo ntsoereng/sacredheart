@@ -1,0 +1,329 @@
+{% extends "base.html" %}
+
+{% block title %}
+Admissions Application
+{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+
+<section class="bg-primary text-white py-20">
+
+    <div class="max-w-5xl mx-auto px-6 text-center">
+
+        <h1 class="text-5xl font-bold">
+
+            Admissions Application
+
+        </h1>
+
+        <p class="mt-6 text-lg max-w-3xl mx-auto">
+
+            Begin your application to Sacred Heart High School.
+            We are committed to academic excellence, character
+            formation and holistic development.
+
+        </p>
+
+    </div>
+
+</section>
+
+<!-- INFORMATION -->
+
+<section class="py-16">
+
+    <div class="max-w-5xl mx-auto px-6">
+
+        <div class="grid md:grid-cols-3 gap-8">
+
+            <div class="bg-white rounded-2xl shadow-sm p-6">
+
+                <h2 class="font-bold text-xl mb-3">
+
+                    Application Process
+
+                </h2>
+
+                <p class="text-gray-600">
+
+                    Complete the application form below.
+                    Applications are reviewed by the school
+                    administration and shortlisted applicants
+                    may be contacted for further steps.
+
+                </p>
+
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-sm p-6">
+
+                <h2 class="font-bold text-xl mb-3">
+
+                    Academic Year
+
+                </h2>
+
+                <p class="text-gray-600">
+
+                    Applications submitted through this form
+                    are intended for the upcoming academic year.
+
+                </p>
+
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-sm p-6">
+
+                <h2 class="font-bold text-xl mb-3">
+
+                    Important Notice
+
+                </h2>
+
+                <p class="text-gray-600">
+
+                    Submission of an application does not
+                    guarantee admission. Applicants will be
+                    contacted once their application has
+                    been reviewed.
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- BOYS SCHOOL NOTICE -->
+
+<section class="pb-8">
+
+    <div class="max-w-5xl mx-auto px-6">
+
+        <div
+            class="bg-gold/10 border border-gold/20 rounded-2xl p-6">
+
+            <h2 class="font-bold text-xl mb-3">
+
+                About Sacred Heart High School
+
+            </h2>
+
+            <p class="text-gray-700">
+
+                Sacred Heart High School is a boys' school
+                dedicated to developing young men of integrity,
+                leadership and academic excellence. Our mission
+                is to provide a supportive environment that
+                nurtures intellectual growth, personal
+                responsibility and service to the community.
+
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- APPLICATION FORM -->
+
+<section class="pb-20">
+
+    <div class="max-w-5xl mx-auto px-6">
+
+        <div class="bg-white rounded-2xl shadow-sm p-8">
+
+            <h2 class="text-3xl font-bold mb-8">
+
+                Application Form
+
+            </h2>
+
+            <form method="post" class="space-y-6">
+
+                {% csrf_token %}
+
+                <div>
+
+                    <label
+                        for="{{ form.academic_year.id_for_label }}"
+                        class="block mb-2 font-medium">
+
+                        Academic Year
+
+                    </label>
+
+                    {{ form.academic_year }}
+
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+
+                    <div>
+
+                        <label
+                            for="{{ form.student_name.id_for_label }}"
+                            class="block mb-2 font-medium">
+
+                            Student Name
+
+                        </label>
+
+                        {{ form.student_name }}
+
+                    </div>
+
+                    <div>
+
+                        <label
+                            for="{{ form.student_surname.id_for_label }}"
+                            class="block mb-2 font-medium">
+
+                            Student Surname
+
+                        </label>
+
+                        {{ form.student_surname }}
+
+                    </div>
+
+                </div>
+
+                <div>
+
+                    <label
+                        for="{{ form.date_of_birth.id_for_label }}"
+                        class="block mb-2 font-medium">
+
+                        Date of Birth
+
+                    </label>
+
+                    {{ form.date_of_birth }}
+
+                </div>
+
+                <div>
+
+                    <label
+                        for="{{ form.parent_guardian_names.id_for_label }}"
+                        class="block mb-2 font-medium">
+
+                        Parent / Guardian Full Names
+
+                    </label>
+
+                    {{ form.parent_guardian_names }}
+
+                </div>
+
+                <div>
+
+                    <label
+                        for="{{ form.parent_phone_number.id_for_label }}"
+                        class="block mb-2 font-medium">
+
+                        Parent / Guardian Phone Number
+
+                    </label>
+
+                    {{ form.parent_phone_number }}
+
+                </div>
+
+                <div>
+
+                    <label
+                        for="{{ form.home_address.id_for_label }}"
+                        class="block mb-2 font-medium">
+
+                        Home Address
+
+                    </label>
+
+                    {{ form.home_address }}
+
+                </div>
+
+                <div>
+
+                    <label
+                        for="{{ form.previous_school.id_for_label }}"
+                        class="block mb-2 font-medium">
+
+                        Previous School
+
+                    </label>
+
+                    {{ form.previous_school }}
+
+                </div>
+
+                <div>
+
+                    <label
+                        for="{{ form.district.id_for_label }}"
+                        class="block mb-2 font-medium">
+
+                        District
+
+                    </label>
+
+                    {{ form.district }}
+
+                </div>
+
+                {% if form.errors %}
+
+                <div
+                    class="bg-red-50 border border-red-200 rounded-xl p-4">
+
+                    <p class="font-medium text-red-700">
+
+                        Please correct the errors below.
+
+                    </p>
+
+                    {{ form.errors }}
+
+                </div>
+
+                {% endif %}
+
+                <div
+                    class="bg-stone-50 border rounded-xl p-4">
+
+                    <p class="text-sm text-gray-600">
+
+                        By submitting this application,
+                        you confirm that the information
+                        provided is accurate to the best
+                        of your knowledge.
+
+                    </p>
+
+                </div>
+
+                <button
+                    type="submit"
+                    class="btn-primary">
+
+                    Submit Application
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

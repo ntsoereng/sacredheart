@@ -1,0 +1,111 @@
+<footer
+    class="bg-primary text-white mt-24">
+
+    <div
+        class="max-w-7xl mx-auto px-6 py-12">
+
+        <div
+            class="grid md:grid-cols-3 gap-8">
+
+            <div>
+                <div class="flex items-center gap-3 mb-4">
+
+                    {% if site_settings.logo %}
+
+                    <img
+                        src="{{ site_settings.logo.url }}"
+                        alt="{{ site_settings.school_name }}"
+                        class="h-12 w-auto rounded-lg">
+
+                    {% endif %}
+
+                    <div >
+
+                        <p class="font-bold">{{ site_settings.school_name }}</p>
+
+                        <p class="text-sm font-light text-gray-200">
+                            {{ site_settings.tagline }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+            <div>
+
+                <h3 class="font-bold mb-3">
+                    Quick Links
+                </h3>
+
+                <ul class="space-y-2 text-sm">
+
+                    <li><a href="/admissions/">Admissions</a></li>
+                    <li><a href="/academics/">Academics</a></li>
+                    <li><a href="/events/">Events</a></li>
+                    <li><a href="/news/">News</a></li>
+                    <li><a href="{% url 'contact' %}">Contact</a></li>
+
+                </ul>
+
+            </div>
+
+            <div>
+
+                <h3 class="font-bold mb-3">
+                    Contact
+                </h3>
+
+                <div class="space-y-2">
+                    <p class="text-sm">
+                        <span class="font-semibold">Address: </span>{{ site_settings.address }}
+                    </p>
+                    <p class="text-sm">
+                        <span class="font-semibold">Phone: </span>{{ site_settings.phone }}
+                    </p>
+                    <p class="text-sm">
+                        <span class="font-semibold">Email: </span>{{ site_settings.email }}
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div
+            class="border-t border-gray-200 mt-12 pt-6
+                flex flex-col md:flex-row justify-between
+                items-center gap-4">
+
+            <p class="text-sm text-gray-400">
+
+                © {% now "Y" %} {{ site_settings.school_name }}.
+                All rights reserved.
+
+            </p>
+
+            <p class="text-sm text-gray-400">
+
+                Website by
+
+                <a
+                    href="https://creativematrix.co.ls"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="font-medium text-gold hover:underline">
+
+                    Creative Matrix
+
+                </a>
+
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+</footer>

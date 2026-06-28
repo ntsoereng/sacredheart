@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block title %}
+Search
+{% endblock %}
+
+{% block content %}
+
+<section class="py-16">
+
+    <div class="max-w-5xl mx-auto px-6">
+
+        <h1 class="text-4xl font-bold">
+
+            Search Results
+
+        </h1>
+
+        <p class="text-gray-600 mt-2 mb-10">
+
+            Results for "{{ query }}"
+
+        </p>
+
+        <!-- Pages -->
+
+        {% if pages %}
+
+        <div class="mb-12">
+
+            <h2 class="text-2xl font-bold mb-6">
+
+                Pages
+
+            </h2>
+
+            <div class="space-y-4">
+
+                {% for page in pages %}
+
+                <a
+                    href="/{{ page.slug }}/"
+                    class="block bg-white rounded-xl shadow-sm p-6 hover:shadow-md">
+
+                    <h3 class="font-bold">
+
+                        {{ page.title }}
+
+                    </h3>
+
+                </a>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+        <!-- Posts -->
+
+        {% if posts %}
+
+        <div class="mb-12">
+
+            <h2 class="text-2xl font-bold mb-6">
+
+                News
+
+            </h2>
+
+            <div class="space-y-4">
+
+                {% for post in posts %}
+
+                <a
+                    href="{% url 'post-detail' post.slug %}"
+                    class="block bg-white rounded-xl shadow-sm p-6 hover:shadow-md">
+
+                    <h3 class="font-bold">
+
+                        {{ post.title }}
+
+                    </h3>
+
+                    <p class="text-gray-600 mt-2">
+
+                        {{ post.summary|truncatewords:25 }}
+
+                    </p>
+
+                </a>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+        <!-- Events -->
+
+        {% if events %}
+
+        <div>
+
+            <h2 class="text-2xl font-bold mb-6">
+
+                Events
+
+            </h2>
+
+            <div class="space-y-4">
+
+                {% for event in events %}
+
+                <a
+                    href="{% url 'event-detail' event.slug %}"
+                    class="block bg-white rounded-xl shadow-sm p-6 hover:shadow-md">
+
+                    <h3 class="font-bold">
+
+                        {{ event.title }}
+
+                    </h3>
+
+                    <p class="text-gray-600 mt-2">
+
+                        {{ event.event_date|date:"d F Y" }}
+
+                    </p>
+
+                </a>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+        {% if not pages and not posts and not events %}
+
+        <div
+            class="bg-white rounded-xl shadow-sm p-10 text-center">
+
+            <h2 class="text-2xl font-bold">
+
+                No Results Found
+
+            </h2>
+
+            <p class="text-gray-600 mt-4">
+
+                Try searching for something else.
+
+            </p>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+{% endblock %}

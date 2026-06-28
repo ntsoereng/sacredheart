@@ -1,0 +1,49 @@
+{% extends "portal/base.html" %}
+
+{% block portal_content %}
+
+<h1 class="text-4xl font-bold mb-8">
+    Dashboard
+</h1>
+
+<div class="grid md:grid-cols-3 gap-6">
+
+    <div class="bg-white rounded-2xl shadow-sm p-6">
+
+        <h2 class="text-gray-500">
+            Applications
+        </h2>
+
+        <p class="text-4xl font-bold mt-2">
+            {{ portal_total_applications }}
+        </p>
+
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm p-6">
+
+        <h2 class="text-gray-500">
+            Messages
+        </h2>
+
+        <p class="text-4xl font-bold mt-2">
+            {{ portal_total_messages }}
+        </p>
+
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm p-6">
+
+        <h2 class="text-gray-500">
+            Unread Messages
+        </h2>
+
+        <p class="text-4xl font-bold mt-2">
+            {{ portal_unread_messages }}
+        </p>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,149 @@
+{% extends "portal/base.html" %}
+{% block portal_content %}
+
+<div class="flex justify-between items-center mb-8">
+
+    <h1 class="text-4xl font-bold">
+        Applications
+    </h1>
+
+    <a
+        href="{% url 'application-export' %}"
+        class="btn-primary">
+
+        Export CSV
+
+    </a>
+
+</div>
+
+<form
+        method="get"
+        class="grid md:grid-cols-4 gap-4 mb-8">
+
+        <input
+            type="text"
+            name="q"
+            value="{{ request.GET.q }}"
+            placeholder="Search applicant, guardian, phone or reference">
+
+        <select name="year">
+
+            <option value="">
+                All Years
+            </option>
+
+            {% for year in available_years %}
+
+            <option
+                value="{{ year }}"
+                {% if request.GET.year == year %}
+                selected
+                {% endif %}>
+
+                {{ year }}
+
+            </option>
+
+            {% endfor %}
+
+        </select>
+
+        <select name="status">
+
+            <option value="">
+                All Statuses
+            </option>
+
+            {% for value, label in status_choices %}
+
+            <option
+                value="{{ value }}"
+                {% if request.GET.status == value %}
+                selected
+                {% endif %}>
+
+                {{ label }}
+
+            </option>
+
+            {% endfor %}
+
+        </select>
+
+        <button
+            type="submit"
+            class="btn-primary">
+
+            Search
+
+        </button>
+
+    </form>
+
+<div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+
+
+    <table class="w-full">
+
+        <thead>
+
+            <tr>
+
+                <th class="text-left p-4">Student</th>
+                <th class="text-left p-4">District</th>
+                <th class="text-left p-4">Guardian</th>
+                <th class="text-left p-4">Phone</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            {% for application in applications %}
+
+            <tr class="border-t border-primary-100 hover:bg-primary-50 transition">
+
+                <td class="p-4">
+
+                    <a
+                        href="{% url 'application-detail' application.pk %}"
+                        class="text-primary font-medium">
+
+                        {{ application.student_name }}
+                        {{ application.student_surname }}
+
+                    </a>
+
+                </td>
+
+                <td class="p-4">
+
+                    {{ application.district }}
+
+                </td>
+
+                <td class="p-4">
+
+                    {{ application.parent_guardian_names }}
+
+                </td>
+
+                <td class="p-4">
+
+                    {{ application.parent_phone_number }}
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+{% endblock %}

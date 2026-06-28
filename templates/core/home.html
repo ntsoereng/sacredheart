@@ -1,0 +1,249 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Home
+{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+
+{% include "partials/hero.html" %}
+
+{% if featured_event %}
+
+<section class="py-12">
+
+    <div class="max-w-7xl mx-auto px-6">
+
+        <div
+            class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+
+            <div class="grid lg:grid-cols-3 gap-8 items-center">
+
+                <div>
+
+                    <p class="text-gold font-semibold">
+
+                        Featured Event
+
+                    </p>
+
+                    <h2 class="text-3xl font-bold mt-2">
+
+                        {{ featured_event.title }}
+
+                    </h2>
+
+                </div>
+
+                <div>
+
+                    <p class="text-gray-600">
+
+                        {{ featured_event.description|truncatewords:30 }}
+
+                    </p>
+
+                </div>
+
+                <div class="lg:text-right">
+
+                    <p class="font-semibold text-primary">
+
+                        {{ featured_event.event_date|date:"d F Y" }}
+
+                    </p>
+
+                    <a
+                        href="{% url 'event-detail' featured_event.slug %}"
+                        class="inline-block mt-4 btn-primary">
+
+                        View Event
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endif %}
+
+<!-- NEWS -->
+
+<section class="py-20">
+
+    <div class="max-w-7xl mx-auto px-6">
+
+        {% url 'post-list' as news_url %}
+
+        {% include "partials/section_header.html" with eyebrow="News"  title="Latest News"  subtitle="Stay informed about activities and achievements across our school community." action_url=news_url action_text="View All News"%}
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+            {% for post in latest_posts %}
+
+            <article
+                class="bg-white rounded-xl shadow-sm hover:shadow-md transition overflow-hidden">
+
+                {% if post.featured_image %}
+
+                <img
+                    src="{{ post.featured_image.url }}"
+                    alt="{{ post.title }}"
+                    class="w-full h-56 object-cover">
+
+                {% endif %}
+
+                <div class="p-6">
+
+                    <p class="text-sm text-gray-500 mb-2">
+
+                        {{ post.created_at|date:"d M Y" }}
+
+                    </p>
+
+                    <h3 class="font-bold text-xl mb-3">
+
+                        {{ post.title }}
+
+                    </h3>
+
+                    <p class="text-gray-600">
+
+                        {{ post.summary|truncatewords:20 }}
+
+                    </p>
+
+                    <a
+                        href="{% url 'post-detail' post.slug %}"
+                        class="inline-block mt-4 text-primary font-medium">
+
+                        Read More →
+
+                    </a>
+
+                </div>
+
+            </article>
+
+            {% empty %}
+
+            <div class="col-span-full text-center text-gray-500">
+
+                No news articles available at the moment.
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- EVENTS -->
+
+<section class="bg-white py-20">
+
+    <div class="max-w-7xl mx-auto px-6">
+
+        {% url 'event-list' as events_url %}
+
+        {% include "partials/section_header.html" with eyebrow="Events" title="Upcoming Events" subtitle="Important dates and activities for students, parents and staff." action_url=events_url action_text="View All Events"%}
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+            {% for event in upcoming_events %}
+
+            <article
+                class="rounded-xl shadow-sm hover:shadow-md transition p-6">
+
+                <p class="text-primary font-semibold">
+
+                    {{ event.event_date|date:"d M Y" }}
+
+                </p>
+
+                <h3 class="font-bold text-xl mt-3">
+
+                    {{ event.title }}
+
+                </h3>
+
+                <p class="text-gray-600 mt-3">
+
+                    {{ event.description|truncatewords:20 }}
+
+                </p>
+
+                <a
+                    href="{% url 'event-detail' event.slug %}"
+                    class="inline-block mt-4 text-primary font-medium">
+
+                    View Event &rarr;
+
+                </a>
+
+            </article>
+
+            {% empty %}
+
+            <div class="col-span-full text-center text-gray-500">
+
+                There are currently no upcoming events.
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- CTA -->
+
+<section class="py-24">
+
+    <div class="max-w-5xl mx-auto px-6">
+
+        <div
+            class="bg-primary rounded-2xl text-white text-center p-12">
+
+            <h2 class="text-4xl font-bold">
+
+                Join the Sacred Heart Community
+
+            </h2>
+
+            <p class="mt-4 text-gray-100 max-w-2xl mx-auto">
+
+                Learn more about admissions,
+                academic programmes and student life.
+
+            </p>
+
+            <a
+                href="/admissions/"
+                class="inline-block mt-8 bg-gold text-black px-8 py-3 rounded-xl font-medium">
+
+                Learn About Admissions
+
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
