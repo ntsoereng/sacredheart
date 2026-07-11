@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Subjects{% endblock %}
+
+{% block content %}
+<section class="page-hero py-20 text-white">
+    <div class="max-w-7xl mx-auto px-6 text-center">
+        <p class="text-gold font-semibold uppercase tracking-[0.2em] text-sm">Academics</p>
+        <h1 class="text-4xl md:text-5xl font-bold mt-4">Our Subjects</h1>
+        <p class="max-w-2xl mx-auto mt-5 text-white/80 text-lg">
+            Explore the subjects that help our learners build knowledge, confidence, and curiosity.
+        </p>
+    </div>
+</section>
+
+<section class="soft-section py-16">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="mb-10 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"><div><p class="text-gold font-semibold uppercase tracking-[0.2em] text-sm">Explore learning</p><h2 class="mt-2 text-3xl font-bold">Subjects that open doors</h2></div><a href="{% url 'staff-list' %}" class="text-link">Meet our educators →</a></div>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for subject in subjects %}
+                <article class="content-card rounded-2xl transition p-7">
+                    <span class="icon-disc" aria-hidden="true"><svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m4 6 8-3 8 3-8 3-8-3Zm0 6 8 3 8-3M4 18l8 3 8-3"/></svg></span>
+                    <h2 class="font-bold text-xl mt-5">{{ subject.name }}</h2>
+                    <p class="text-gray-600 mt-4">{{ subject.description|truncatewords:24 }}</p>
+                    <a href="{% url 'subject-detail' subject.slug %}" class="inline-block mt-5 text-link">
+                        Learn more →
+                    </a>
+                </article>
+            {% empty %}
+                <p class="text-gray-600">Subject information will be available soon.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+<section class="bg-primary py-14 text-white"><div class="max-w-7xl mx-auto flex flex-col gap-5 px-6 sm:flex-row sm:items-center sm:justify-between"><div><h2 class="text-2xl font-bold">Ready to take the next step?</h2><p class="mt-1 text-white/75">Learn how to become part of our school community.</p></div><a href="{% url 'application-create' %}" class="inline-flex w-fit rounded-lg bg-gold px-5 py-3 font-bold text-primary hover:bg-gold-light">Admissions information</a></div></section>
+{% endblock %}

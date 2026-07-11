@@ -1,249 +1,51 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
-{% block title %}
-Home
-{% endblock %}
+{% block title %}Home{% endblock %}
 
 {% block content %}
-
-<!-- HERO -->
-
 {% include "partials/hero.html" %}
 
 {% if featured_event %}
-
-<section class="py-12">
-
-    <div class="max-w-7xl mx-auto px-6">
-
-        <div
-            class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-
-            <div class="grid lg:grid-cols-3 gap-8 items-center">
-
-                <div>
-
-                    <p class="text-gold font-semibold">
-
-                        Featured Event
-
-                    </p>
-
-                    <h2 class="text-3xl font-bold mt-2">
-
-                        {{ featured_event.title }}
-
-                    </h2>
-
-                </div>
-
-                <div>
-
-                    <p class="text-gray-600">
-
-                        {{ featured_event.description|truncatewords:30 }}
-
-                    </p>
-
-                </div>
-
-                <div class="lg:text-right">
-
-                    <p class="font-semibold text-primary">
-
-                        {{ featured_event.event_date|date:"d F Y" }}
-
-                    </p>
-
-                    <a
-                        href="{% url 'event-detail' featured_event.slug %}"
-                        class="inline-block mt-4 btn-primary">
-
-                        View Event
-
-                    </a>
-
-                </div>
-
-            </div>
-
+<section class="relative z-10 -mt-1 bg-primary py-5 text-white">
+    <div class="max-w-7xl mx-auto flex flex-col gap-4 px-6 md:flex-row md:items-center md:justify-between">
+        <div class="flex items-center gap-4">
+            <span class="flex h-10 w-10 items-center justify-center rounded-full bg-gold text-primary" aria-hidden="true">✦</span>
+            <div><p class="text-xs font-bold uppercase tracking-[0.16em] text-gold-light">Coming up</p><p class="font-semibold">{{ featured_event.title }} <span class="font-normal text-white/70">· {{ featured_event.event_date|date:"d M Y" }}</span></p></div>
         </div>
-
+        <a href="{% url 'event-detail' featured_event.slug %}" class="inline-flex items-center gap-2 self-start text-sm font-bold text-white hover:text-gold-light md:self-auto">Event details <span aria-hidden="true">→</span></a>
     </div>
-
 </section>
-
 {% endif %}
 
-<!-- NEWS -->
-
-<section class="py-20">
-
+<section class="py-20 md:py-24">
     <div class="max-w-7xl mx-auto px-6">
-
-        {% url 'post-list' as news_url %}
-
-        {% include "partials/section_header.html" with eyebrow="News"  title="Latest News"  subtitle="Stay informed about activities and achievements across our school community." action_url=news_url action_text="View All News"%}
-
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-
-            {% for post in latest_posts %}
-
-            <article
-                class="bg-white rounded-xl shadow-sm hover:shadow-md transition overflow-hidden">
-
-                {% if post.featured_image %}
-
-                <img
-                    src="{{ post.featured_image.url }}"
-                    alt="{{ post.title }}"
-                    class="w-full h-56 object-cover">
-
-                {% endif %}
-
-                <div class="p-6">
-
-                    <p class="text-sm text-gray-500 mb-2">
-
-                        {{ post.created_at|date:"d M Y" }}
-
-                    </p>
-
-                    <h3 class="font-bold text-xl mb-3">
-
-                        {{ post.title }}
-
-                    </h3>
-
-                    <p class="text-gray-600">
-
-                        {{ post.summary|truncatewords:20 }}
-
-                    </p>
-
-                    <a
-                        href="{% url 'post-detail' post.slug %}"
-                        class="inline-block mt-4 text-primary font-medium">
-
-                        Read More →
-
-                    </a>
-
-                </div>
-
-            </article>
-
-            {% empty %}
-
-            <div class="col-span-full text-center text-gray-500">
-
-                No news articles available at the moment.
-
-            </div>
-
-            {% endfor %}
-
+        <div class="grid gap-12 lg:grid-cols-[.8fr_1.2fr] lg:items-end">
+            <div><p class="text-gold font-semibold uppercase tracking-[0.2em] text-sm">Our approach</p><h2 class="mt-3 text-3xl font-bold leading-tight md:text-4xl">Education that prepares learners for life.</h2></div>
+            <p class="max-w-2xl text-lg leading-relaxed text-gray-600">We combine strong learning foundations with care, faith, responsibility, and opportunities to discover each learner’s strengths.</p>
         </div>
-
+        <div class="mt-12 grid gap-6 md:grid-cols-3">
+            <article class="content-card rounded-2xl p-7"><span class="icon-disc"><svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m4 6 8-3 8 3-8 3-8-3Zm0 6 8 3 8-3M4 18l8 3 8-3"/></svg></span><h3 class="mt-5 text-xl font-bold">Strong learning</h3><p class="mt-3 leading-relaxed text-gray-600">Explore subjects that develop knowledge, problem-solving, and a lifelong love of learning.</p><a href="{% url 'subject-list' %}" class="inline-block mt-5 text-link">Our subjects →</a></article>
+            <article class="content-card rounded-2xl p-7"><span class="icon-disc"><svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 21s8-4.5 8-11.5a4.5 4.5 0 0 0-8-2.7A4.5 4.5 0 0 0 4 9.5C4 16.5 12 21 12 21Z"/></svg></span><h3 class="mt-5 text-xl font-bold">Known and supported</h3><p class="mt-3 leading-relaxed text-gray-600">Our school community helps learners grow in confidence, compassion, and belonging.</p><a href="{% url 'about-us' %}" class="inline-block mt-5 text-link">About our school →</a></article>
+            <article class="content-card rounded-2xl p-7"><span class="icon-disc"><svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6 5.6 18.4"/></svg></span><h3 class="mt-5 text-xl font-bold">A vibrant community</h3><p class="mt-3 leading-relaxed text-gray-600">Stay connected with school events, achievements, and the moments that bring our community together.</p><a href="{% url 'event-list' %}" class="inline-block mt-5 text-link">See events →</a></article>
+        </div>
     </div>
-
 </section>
 
-<!-- EVENTS -->
+{% if principal %}
+<section class="soft-section py-20">
+    <div class="max-w-7xl mx-auto px-6"><div class="content-card grid overflow-hidden rounded-3xl lg:grid-cols-[.75fr_1.25fr]">
+        <div class="min-h-72 bg-primary/10">{% if principal.profile_picture %}<img src="{{ principal.profile_picture.url }}" alt="{{ principal.full_name }}" class="h-full w-full object-cover">{% else %}<div class="flex h-full min-h-72 items-center justify-center text-7xl font-bold text-primary/30">{{ principal.full_name|slice:":1" }}</div>{% endif %}</div>
+        <div class="p-8 md:p-12"><p class="text-gold font-semibold uppercase tracking-[0.2em] text-sm">A welcome from our principal</p><h2 class="mt-3 text-3xl font-bold">{{ principal.full_name }}</h2><p class="mt-1 font-semibold text-primary">{{ principal.role }}</p><p class="mt-5 leading-relaxed text-gray-600">{{ principal.welcome_remarks|truncatewords:38 }}</p><a href="{% url 'staff-list' %}" class="inline-block mt-6 text-link">Meet our staff →</a></div>
+    </div></div>
+</section>
+{% endif %}
 
-<section class="bg-white py-20">
-
+<section class="py-20 md:py-24">
     <div class="max-w-7xl mx-auto px-6">
-
-        {% url 'event-list' as events_url %}
-
-        {% include "partials/section_header.html" with eyebrow="Events" title="Upcoming Events" subtitle="Important dates and activities for students, parents and staff." action_url=events_url action_text="View All Events"%}
-
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-
-            {% for event in upcoming_events %}
-
-            <article
-                class="rounded-xl shadow-sm hover:shadow-md transition p-6">
-
-                <p class="text-primary font-semibold">
-
-                    {{ event.event_date|date:"d M Y" }}
-
-                </p>
-
-                <h3 class="font-bold text-xl mt-3">
-
-                    {{ event.title }}
-
-                </h3>
-
-                <p class="text-gray-600 mt-3">
-
-                    {{ event.description|truncatewords:20 }}
-
-                </p>
-
-                <a
-                    href="{% url 'event-detail' event.slug %}"
-                    class="inline-block mt-4 text-primary font-medium">
-
-                    View Event &rarr;
-
-                </a>
-
-            </article>
-
-            {% empty %}
-
-            <div class="col-span-full text-center text-gray-500">
-
-                There are currently no upcoming events.
-
-            </div>
-
-            {% endfor %}
-
-        </div>
-
+        {% url 'post-list' as news_url %}{% include "partials/section_header.html" with eyebrow="School news" title="What’s happening at Sacred Heart" subtitle="Stories, achievements, and updates from across our school community." action_url=news_url action_text="All news" %}
+        <div class="grid gap-7 md:grid-cols-2 lg:grid-cols-3">{% for post in latest_posts %}<article class="content-card overflow-hidden rounded-2xl transition">{% if post.featured_image %}<img src="{{ post.featured_image.url }}" alt="{{ post.title }}" class="h-52 w-full object-cover">{% endif %}<div class="p-7"><p class="text-sm font-medium text-gray-500">{{ post.created_at|date:"d M Y" }}</p><h3 class="mt-3 text-xl font-bold"><a href="{% url 'post-detail' post.slug %}">{{ post.title }}</a></h3><p class="mt-3 text-gray-600">{{ post.summary|truncatewords:20 }}</p><a href="{% url 'post-detail' post.slug %}" class="inline-block mt-5 text-link">Read story →</a></div></article>{% empty %}<p class="text-gray-600">News updates will be shared here soon.</p>{% endfor %}</div>
     </div>
-
 </section>
 
-<!-- CTA -->
-
-<section class="py-24">
-
-    <div class="max-w-5xl mx-auto px-6">
-
-        <div
-            class="bg-primary rounded-2xl text-white text-center p-12">
-
-            <h2 class="text-4xl font-bold">
-
-                Join the Sacred Heart Community
-
-            </h2>
-
-            <p class="mt-4 text-gray-100 max-w-2xl mx-auto">
-
-                Learn more about admissions,
-                academic programmes and student life.
-
-            </p>
-
-            <a
-                href="/admissions/"
-                class="inline-block mt-8 bg-gold text-black px-8 py-3 rounded-xl font-medium">
-
-                Learn About Admissions
-
-            </a>
-
-        </div>
-
-    </div>
-
-</section>
-
+<section class="bg-primary py-20 text-white"><div class="max-w-7xl mx-auto grid gap-10 px-6 lg:grid-cols-2 lg:items-center"><div><p class="text-gold-light font-semibold uppercase tracking-[0.2em] text-sm">Begin your journey</p><h2 class="mt-3 text-3xl font-bold md:text-4xl">Ready to learn more about Sacred Heart?</h2><p class="mt-5 max-w-xl text-lg leading-relaxed text-white/80">Explore our subjects, meet our team, or contact the school to ask about the admissions process.</p></div><div class="flex flex-wrap gap-3 lg:justify-end"><a href="{% url 'application-create' %}" class="inline-flex items-center rounded-lg bg-gold px-5 py-3 font-bold text-primary hover:bg-gold-light">Admissions</a><a href="{% url 'contact' %}" class="inline-flex items-center rounded-lg border border-white/35 px-5 py-3 font-bold text-white hover:bg-white/10">Contact us</a></div></div></section>
 {% endblock %}

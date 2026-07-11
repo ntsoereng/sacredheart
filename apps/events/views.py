@@ -33,3 +33,11 @@ class EventDetailView(DetailView):
             slug=self.kwargs["slug"],
             is_published=True,
         )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["related_events"] = (
+            Event.objects.filter(is_published=True)
+            .exclude(pk=self.object.pk)[:3]
+        )
+        return context

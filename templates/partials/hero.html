@@ -1,62 +1,55 @@
-<section
-class="max-w-7xl mx-auto px-6 py-20">
-
-    <div
-    class="grid lg:grid-cols-2 gap-12 items-center">
-
-        <div>
-
-            <span class="text-gold font-semibold">
-                {{ site_settings.tagline |default:"Welcome to Sacred Heart High School" }}
-            </span>
-
-            <h1
-            class="text-5xl lg:text-6xl font-bold mt-4 leading-tight">
-                {{ site_settings.hero_title|default:"Nurturing Excellence, Character and Service" }}
-            </h1>
-
-            <p
-            class="text-gray-600 mt-6 text-lg">
-                {{ site_settings.hero_subtitle|default:"Empowering the next generation of leaders" }}
+<section class="relative overflow-hidden bg-[#f0e8dc]">
+    <div class="absolute -left-24 top-8 h-64 w-64 rounded-full bg-gold/15 blur-3xl"></div>
+    <div class="absolute -right-24 bottom-0 h-72 w-72 rounded-full bg-primary/10 blur-3xl"></div>
+    <div class="relative max-w-7xl mx-auto grid gap-12 px-6 py-16 lg:grid-cols-2 lg:items-center lg:py-24">
+        <div class="max-w-xl">
+            <p class="inline-flex items-center gap-2 rounded-full bg-white/75 px-4 py-2 text-sm font-semibold text-primary shadow-sm">
+                <span class="h-2 w-2 rounded-full bg-gold"></span>
+                {{ site_settings.tagline|default:"Welcome to Sacred Heart High School" }}
             </p>
-
-            <div class="flex flex-wrap gap-4 mt-8">
-
-                <a href="#"
-                   class="bg-primary text-white px-6 py-3 rounded-xl">
-
-                    Learn More
-
-                </a>
-
-                <a href="#"
-                   class="border border-gray-300 px-6 py-3 rounded-xl">
-
-                    Admissions
-
-                </a>
-
+            <h1 class="mt-6 text-4xl font-extrabold leading-[1.08] tracking-tight text-primary sm:text-5xl lg:text-6xl">
+                {{ site_settings.hero_title|default:"A place to learn, belong, and grow." }}
+            </h1>
+            <p class="mt-6 max-w-lg text-lg leading-relaxed text-gray-700">
+                {{ site_settings.hero_subtitle|default:"A supportive school community where learners develop knowledge, character, and confidence for the future." }}
+            </p>
+            <div class="mt-8 flex flex-wrap gap-3">
+                <a href="{% url 'application-create' %}" class="nav-cta">Start an application <span aria-hidden="true">→</span></a>
+                <a href="{% url 'subject-list' %}" class="inline-flex items-center gap-2 rounded-lg border border-primary/20 bg-white/70 px-5 py-2.5 font-semibold text-primary hover:border-primary hover:bg-white">Explore subjects <span aria-hidden="true">→</span></a>
             </div>
-
+            <div class="mt-10 flex flex-wrap gap-x-6 gap-y-3 text-sm font-medium text-gray-600">
+                <span class="inline-flex items-center gap-2"><span class="text-gold">✓</span> Learning with purpose</span>
+                <span class="inline-flex items-center gap-2"><span class="text-gold">✓</span> Character and service</span>
+            </div>
         </div>
 
-        <div>
+        <div class="relative mx-auto w-full max-w-xl">
             {% if site_settings.hero_image %}
-
-            <img
-                src="{{ site_settings.hero_image.url }}"
-                alt="{{ site_settings.school_name }}"
-                class="w-full h-96 object-cover rounded-2xl shadow-md">
-
+                <img src="{{ site_settings.hero_image.url }}" alt="Students learning at {{ site_settings.school_name }}" class="aspect-[4/3] w-full rounded-[2rem] object-cover shadow-2xl shadow-primary/15">
             {% else %}
-
-                <div
-                    class="bg-white rounded-2xl shadow-md h-96">
+                <div class="relative aspect-[4/3] overflow-hidden rounded-[2rem] bg-primary shadow-2xl shadow-primary/20">
+                    <div class="absolute -right-12 -top-12 h-48 w-48 rounded-full bg-gold/90"></div>
+                    <div class="absolute bottom-0 left-0 h-2/5 w-full bg-primary-dark"></div>
+                    <svg viewBox="0 0 600 450" class="absolute inset-0 h-full w-full" aria-hidden="true">
+                        <path d="M80 355c55-92 115-139 182-139 72 0 124 38 176 117l35 78H80v-56Z" fill="#7f3344" opacity=".75"/>
+                        <path d="M110 376c70-56 129-84 182-84 74 0 129 33 190 96H110v-12Z" fill="#521722"/>
+                        <rect x="197" y="175" width="205" height="160" rx="14" fill="#f7f3ed"/>
+                        <rect x="217" y="195" width="165" height="104" rx="8" fill="#e8d9ba"/>
+                        <path d="M251 258h98M251 237h69M251 279h87" stroke="#6d1f2f" stroke-width="10" stroke-linecap="round"/>
+                        <circle cx="183" cy="154" r="38" fill="#c68c6b"/>
+                        <path d="M141 150c2-40 78-57 87-6-16-14-54-16-87 6Z" fill="#2f2525"/>
+                        <path d="M133 328c8-84 91-85 102 0" fill="#c9a227"/>
+                        <circle cx="454" cy="185" r="35" fill="#8f5f45"/>
+                        <path d="M421 180c3-38 68-48 72 1-20-12-46-13-72-1Z" fill="#30272a"/>
+                        <path d="M408 338c5-90 86-94 99 0" fill="#f7f3ed"/>
+                        <path d="M416 253l40 19 42-23" stroke="#c9a227" stroke-width="8" fill="none"/>
+                    </svg>
+                    <div class="absolute bottom-6 left-6 rounded-xl bg-white/95 px-4 py-3 shadow-lg">
+                        <p class="text-xs font-bold uppercase tracking-[0.16em] text-gold">Learning together</p>
+                        <p class="mt-1 font-bold text-primary">Curiosity starts here</p>
+                    </div>
                 </div>
-
             {% endif %}
         </div>
-
     </div>
-
 </section>

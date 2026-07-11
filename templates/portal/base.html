@@ -31,6 +31,11 @@
 
             </a>
 
+            <form method="post" action="{% url 'staff-logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="rounded-lg border border-stone-300 px-3 py-2 text-sm font-semibold text-primary hover:bg-primary/5">Sign out</button>
+            </form>
+
         </div>
 
     </div>

@@ -7,6 +7,7 @@ from apps.core.forms import ContactForm
 from apps.posts.models import Post
 from apps.events.models import Event
 from apps.pages.models import Page
+from apps.staff.models import StaffMember
 
 
 class HomeView(TemplateView):
@@ -38,10 +39,26 @@ class HomeView(TemplateView):
             .first()
         )
 
+        context["principal"] = (
+            StaffMember.objects.filter(
+                is_active=True,
+                is_principal=True,
+            ).first()
+        )
+
 
         return context
-   
-   
+
+
+class AboutView(TemplateView):
+
+    template_name = "core/about.html"
+
+
+class DonationsView(TemplateView):
+
+    template_name = "core/donations.html"
+
 
 class SearchView(TemplateView):
 

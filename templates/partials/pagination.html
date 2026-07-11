@@ -1,0 +1,11 @@
+{% if is_paginated %}
+<nav class="mt-12 flex items-center justify-center gap-2" aria-label="Pagination">
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}" class="inline-flex min-h-11 items-center rounded-lg border border-stone-300 px-4 font-semibold text-primary hover:bg-primary/5">← Previous</a>
+    {% endif %}
+    <span class="px-3 text-sm font-medium text-gray-600">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}" class="inline-flex min-h-11 items-center rounded-lg border border-stone-300 px-4 font-semibold text-primary hover:bg-primary/5">Next →</a>
+    {% endif %}
+</nav>
+{% endif %}

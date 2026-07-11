@@ -1,120 +1,56 @@
-{% extends "portal/base.html" %}
-
-{% block portal_content %}
+{% extends "portal/base.html" %} {% block portal_content %}
 
 <div class="flex justify-between items-center mb-8">
+  <h1 class="text-4xl font-bold">Application</h1>
 
-    <h1 class="text-4xl font-bold">
-
-        Application
-
-    </h1>
-
-    <a
-        href="{% url 'application-list' %}"
-        class="text-primary">
-
-        ← Back
-
-    </a>
-
+  <a href="{% url 'application-list' %}" class="text-primary"> ← Back </a>
 </div>
 
 <div class="bg-white rounded-2xl shadow-sm p-8">
+  <div class="mb-8">
+    <h2 class="text-sm text-gray-500 uppercase">Reference Number</h2>
 
-    <div class="mb-8">
+    <p class="font-bold text-xl">{{ application.reference_number }}</p>
+  </div>
 
-        <h2 class="text-sm text-gray-500 uppercase">
+  <div class="grid md:grid-cols-2 gap-8">
+    <div>
+      <h3 class="font-bold mb-4">Student Information</h3>
 
-            Reference Number
+      <p>
+        <span>Full Name:</span>
+        {{ application.student_name }} {{ application.student_surname}}
+      </p>
 
-        </h2>
+      <p>Date of Birth: {{ application.date_of_birth }}</p>
 
-        <p class="font-bold text-xl">
-
-            {{ application.reference_number }}
-
-        </p>
-
+      <p>Academic Year: {{ application.academic_year }}</p>
     </div>
 
-    <div class="grid md:grid-cols-2 gap-8">
+    <div>
+      <h3 class="font-bold mb-4">Parent / Guardian</h3>
 
-        <div>
+      <p>{{ application.parent_guardian_names }}</p>
 
-            <h3 class="font-bold mb-4">
-
-                Student Information
-
-            </h3>
-
-            <p>
-                {{ application.student_name }}
-                {{ application.student_surname }}
-            </p>
-
-            <p>
-                {{ application.date_of_birth }}
-            </p>
-
-            <p>
-                {{ application.academic_year }}
-            </p>
-
-        </div>
-
-        <div>
-
-            <h3 class="font-bold mb-4">
-
-                Parent / Guardian
-
-            </h3>
-
-            <p>
-                {{ application.parent_guardian_names }}
-            </p>
-
-            <p>
-                {{ application.parent_phone_number }}
-            </p>
-
-        </div>
-
+      <p>{{ application.parent_phone_number }}</p>
     </div>
+  </div>
 
-    <hr class="my-8">
+  <hr class="my-8" />
 
-    <h3 class="font-bold mb-4">
+  <h3 class="font-bold mb-4">Educational Information</h3>
 
-        Educational Information
+  <p>Previous School: {{ application.previous_school }}</p>
 
-    </h3>
+  <p>District: {{ application.district }}</p>
 
-    <p>
-        Previous School:
-        {{ application.previous_school }}
-    </p>
+  <hr class="my-8" />
 
-    <p>
-        District:
-        {{ application.district }}
-    </p>
+  <h3 class="font-bold mb-4">Internal Notes</h3>
 
-    <hr class="my-8">
-
-    <h3 class="font-bold mb-4">
-
-        Internal Notes
-
-    </h3>
-
-    <div class="bg-stone-50 rounded-xl p-4">
-
-        {{ application.notes|default:"No notes added."|linebreaks }}
-
-    </div>
-
+  <div class="bg-stone-50 rounded-xl p-4">
+    {{ application.notes|default:"No notes added."|linebreaks }}
+  </div>
 </div>
 
 {% endblock %}

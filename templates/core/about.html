@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}
+About Us
+{% endblock %}
+
+{% block content %}
+
+<section class="page-hero py-20 text-white">
+
+    <div class="max-w-7xl mx-auto px-6 text-center">
+
+        <p class="text-gold font-semibold uppercase tracking-[0.2em] text-sm">
+            Welcome to {{ site_settings.school_name }}
+        </p>
+
+        <h1 class="text-4xl md:text-5xl font-bold mt-4">
+            About Us
+        </h1>
+
+        <p class="max-w-2xl mx-auto mt-5 text-white/80 text-lg">
+            Nurturing learners of character, purpose, and promise.
+        </p>
+
+    </div>
+
+</section>
+
+<section class="soft-section py-20">
+
+    <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center">
+
+        <div>
+
+            <p class="text-gold font-semibold">OUR HISTORY</p>
+
+            <h2 class="text-3xl font-bold mt-3">
+                Rooted in faith, learning, and service
+            </h2>
+
+            <div class="mt-6 text-gray-600 leading-relaxed whitespace-pre-line">
+                {% if site_settings.about_history %}
+                    {{ site_settings.about_history|linebreaksbr }}
+                {% else %}
+                    Sacred Heart High School has a proud tradition of providing a caring, values-centred education to generations of young people.
+                    <br><br>
+                    Built on a strong sense of community, our school continues to grow while remaining committed to helping every learner develop their talents and contribute positively to the world around them.
+                {% endif %}
+            </div>
+
+        </div>
+
+        <div class="content-card rounded-2xl p-8 md:p-10">
+
+            <p class="text-primary font-semibold">OUR MISSION</p>
+
+            <p class="text-2xl font-semibold leading-relaxed mt-4">
+                {{ site_settings.about_mission|default:"To provide a supportive and excellent education that forms confident, compassionate, and responsible lifelong learners." }}
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+<section class="py-20">
+
+    <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-8">
+
+        <article class="content-card rounded-2xl p-8 md:p-10">
+
+            <p class="text-gold font-semibold">OUR VISION</p>
+
+            <h2 class="text-3xl font-bold mt-3">
+                Inspiring excellence for a changing world
+            </h2>
+
+            <p class="text-gray-600 leading-relaxed mt-5">
+                {{ site_settings.about_vision|default:"We aspire to be a vibrant school community where every learner is equipped with knowledge, integrity, and courage to make a meaningful difference." }}
+            </p>
+
+        </article>
+
+        <article class="rounded-2xl bg-primary text-white p-8 md:p-10">
+
+            <p class="text-gold font-semibold">OUR VALUES</p>
+
+            <h2 class="text-3xl font-bold mt-3">What guides us</h2>
+
+            <div class="mt-4 text-white/90 leading-relaxed whitespace-pre-line">
+                {% if site_settings.about_values %}
+                    {{ site_settings.about_values|linebreaksbr }}
+                {% else %}
+                    Faith and integrity<br>
+                    Respect for all<br>
+                    Academic excellence<br>
+                    Service and compassion<br>
+                    Responsibility<br>
+                    Community
+                {% endif %}
+            </div>
+
+        </article>
+
+    </div>
+
+</section>
+
+<section class="soft-section py-20">
+
+    <div class="max-w-4xl mx-auto px-6 text-center">
+
+        <h2 class="text-3xl font-bold">Become part of our community</h2>
+
+        <p class="text-gray-600 mt-4">
+            Discover a school where learners are known, supported, and encouraged to flourish.
+        </p>
+
+        <a href="{% url 'application-create' %}" class="inline-block btn-primary mt-8">
+            Apply for Admission
+        </a>
+
+    </div>
+
+</section>
+
+{% endblock %}

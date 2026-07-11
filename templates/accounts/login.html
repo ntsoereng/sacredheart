@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Staff sign in{% endblock %}
+
+{% block content %}
+<section class="soft-section py-16 md:py-24">
+    <div class="mx-auto max-w-md px-6">
+        <div class="content-card rounded-2xl p-7 md:p-10">
+            <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary" aria-hidden="true">
+                <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+            </div>
+            <p class="mt-6 text-gold font-semibold uppercase tracking-[0.18em] text-sm">Staff portal</p>
+            <h1 class="mt-2 text-3xl font-bold">Sign in</h1>
+            <p class="mt-3 text-gray-600">Use your staff account to securely manage applications and messages.</p>
+
+            <form method="post" class="mt-8 space-y-5">
+                {% csrf_token %}
+                {% if form.non_field_errors %}<div class="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">{{ form.non_field_errors }}</div>{% endif %}
+                <div>
+                    <label for="{{ form.username.id_for_label }}" class="mb-2 block font-medium">Username</label>
+                    {{ form.username }}
+                    {% for error in form.username.errors %}<p class="mt-2 text-sm text-red-700">{{ error }}</p>{% endfor %}
+                </div>
+                <div>
+                    <label for="{{ form.password.id_for_label }}" class="mb-2 block font-medium">Password</label>
+                    {{ form.password }}
+                    {% for error in form.password.errors %}<p class="mt-2 text-sm text-red-700">{{ error }}</p>{% endfor %}
+                </div>
+                <input type="hidden" name="next" value="{{ next }}">
+                <button type="submit" class="btn-primary min-h-11 w-full cursor-pointer">Sign in securely</button>
+            </form>
+            <a href="{% url 'home' %}" class="mt-6 inline-block text-sm text-link">← Return to website</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

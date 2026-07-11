@@ -6,14 +6,14 @@ Application Submitted
 
 {% block content %}
 
-<section class="py-24">
+<section class="soft-section py-20 md:py-24">
 
     <div class="max-w-3xl mx-auto px-6">
 
         <div
-            class="bg-white rounded-2xl shadow-sm p-10 text-center">
+            class="content-card rounded-2xl p-10 text-center">
 
-            <div class="text-5xl mb-6">
+            <div class="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-gold/20 text-3xl text-primary">
                 ✓
             </div>
 
@@ -39,7 +39,7 @@ Application Submitted
 
             </p>
 
-            <div class="mt-10">
+            <div class="mt-10 flex flex-wrap justify-center gap-3">
 
                 <a
                     href="/"
@@ -48,6 +48,8 @@ Application Submitted
                     Return Home
 
                 </a>
+
+                <a href="{% url 'subject-list' %}" class="inline-flex items-center rounded-lg border border-primary px-5 py-3 font-bold text-primary hover:bg-primary/5">Explore subjects</a>
 
             </div>
 

@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Donations{% endblock %}
+
+{% block content %}
+<section class="page-hero py-20 text-white">
+    <div class="max-w-4xl mx-auto px-6 text-center">
+        <p class="text-gold font-semibold uppercase tracking-[0.2em] text-sm">Support our learners</p>
+        <h1 class="text-4xl md:text-5xl font-bold mt-4">Give to Sacred Heart</h1>
+        <p class="max-w-2xl mx-auto mt-5 text-lg text-white/85">
+            Your generosity helps provide practical support and opportunities for our students.
+        </p>
+    </div>
+</section>
+
+<section class="soft-section py-16 md:py-20">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="max-w-3xl mx-auto text-center">
+            <h2 class="text-3xl font-bold">Ways to make a difference</h2>
+            <p class="mt-4 text-gray-600 leading-relaxed">
+                We welcome financial support and useful items that help students learn, participate, and thrive.
+            </p>
+        </div>
+
+        <div class="mt-12 grid md:grid-cols-2 gap-8">
+            <article class="content-card rounded-2xl p-8 md:p-10">
+                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                    <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="8.5" /><path d="M14.5 9.5c-.5-.7-1.4-1.1-2.5-1.1-1.4 0-2.4.7-2.4 1.8 0 2.7 4.9 1.3 4.9 4 0 1.2-1.1 2-2.7 2-1.1 0-2.1-.4-2.7-1.2M12 7v10" /></svg>
+                </div>
+                <h3 class="text-2xl font-bold mt-6">Financial gifts</h3>
+                <p class="text-gray-600 leading-relaxed mt-3">
+                    To protect the school and our supporters, banking details are not published online. Please contact the school directly to discuss a secure way to give.
+                </p>
+            </article>
+
+            <article class="content-card rounded-2xl p-8 md:p-10">
+                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-gold/20 text-primary">
+                    <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4.5 6.5h15v12h-15zM8 6.5V4.8h8v1.7M8.5 11h7M8.5 14.5h4" /></svg>
+                </div>
+                <h3 class="text-2xl font-bold mt-6">Useful items</h3>
+                <p class="text-gray-600 leading-relaxed mt-3">We gratefully accept donations of:</p>
+                <ul class="mt-4 space-y-3 text-gray-700">
+                    <li class="flex gap-3"><span class="text-gold font-bold">✓</span> School books and learning materials</li>
+                    <li class="flex gap-3"><span class="text-gold font-bold">✓</span> Educational and sports equipment</li>
+                    <li class="flex gap-3"><span class="text-gold font-bold">✓</span> New or good-condition clothing for students</li>
+                </ul>
+            </article>
+        </div>
+    </div>
+</section>
+
+<section class="py-16 md:py-20">
+    <div class="max-w-3xl mx-auto px-6 text-center">
+        <p class="text-gold font-semibold uppercase tracking-[0.2em] text-sm">Get in touch</p>
+        <h2 class="text-3xl font-bold mt-3">Let us arrange your donation</h2>
+        <p class="text-gray-600 leading-relaxed mt-4">
+            Contact us before making a gift so we can answer questions and arrange the best way to receive it.
+        </p>
+
+        <div class="mt-8 flex flex-col sm:flex-row justify-center gap-3">
+            {% if site_settings.email %}
+                <a href="mailto:{{ site_settings.email }}" class="nav-cta">Email the school</a>
+            {% endif %}
+            {% if site_settings.phone %}
+                <a href="tel:{{ site_settings.phone }}" class="inline-flex items-center justify-center rounded-lg border border-primary px-4 py-2.5 font-semibold text-primary hover:bg-primary/5">Call {{ site_settings.phone }}</a>
+            {% endif %}
+            {% if not site_settings.email and not site_settings.phone %}
+                <a href="{% url 'contact' %}" class="nav-cta">Contact the school</a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

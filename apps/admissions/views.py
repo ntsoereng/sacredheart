@@ -4,6 +4,8 @@ from django.contrib import messages
 from django.urls import reverse_lazy
 from django.views.generic import FormView, TemplateView
 
+from apps.core.models import SiteSettings
+
 from .forms import ApplicationForm
 
 
@@ -16,6 +18,22 @@ class ApplicationCreateView(FormView):
     success_url = reverse_lazy(
         "application-success"
     )
+
+    def dispatch(self, request, *args, **kwargs):
+        self.admissions_open = SiteSettings.objects.filter(
+            admissions_open=True
+        ).exists()
+
+        if not self.admissions_open:
+            return self.render_to_response({"admissions_open": False})
+
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["admissions_open"] = self.admissions_open
+
+        return context
 
     def get_initial(self):
 

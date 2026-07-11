@@ -40,6 +40,26 @@ class SiteSettings(models.Model):
         null=True
     )
 
+    about_history = models.TextField(
+        blank=True,
+        help_text="The school history shown on the About Us page."
+    )
+
+    about_mission = models.TextField(
+        blank=True,
+        help_text="The mission statement shown on the About Us page."
+    )
+
+    about_vision = models.TextField(
+        blank=True,
+        help_text="The vision statement shown on the About Us page."
+    )
+
+    about_values = models.TextField(
+        blank=True,
+        help_text="The school values shown on the About Us page. Enter one value per line."
+    )
+
     updated_at = models.DateTimeField(
         auto_now=True
     )

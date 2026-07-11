@@ -1,66 +1,23 @@
 {% extends "base.html" %}
-
-{% block title %}
-Events
-{% endblock %}
-
+{% block title %}Events{% endblock %}
 {% block content %}
-
-<section class="py-16">
-
-    <div class="max-w-7xl mx-auto px-6">
-
-        <h1 class="text-5xl font-bold mb-12">
-
-            Upcoming Events
-
-        </h1>
-
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-
-            {% for event in events %}
-
-            <article
-            class="bg-white rounded-xl shadow-sm hover:shadow-md transition p-6">
-
-                <p class="text-primary font-semibold">
-
-                    {{ event.event_date|date:"d M Y" }}
-
-                </p>
-
-                <h2 class="font-bold text-xl mt-2">
-
-                    {{ event.title }}
-
-                </h2>
-
-                <p class="text-gray-600 mt-4">
-
-                    {{ event.description|truncatewords:20 }}
-
-                </p>
-
-                <a
-                    href="{% url 'event-detail' event.slug %}"
-                    class="inline-block mt-4 text-primary font-medium">
-
-                    View Event →
-
-                </a>
-
-            </article>
-
-            {% empty %}
-
-            <p>No events published yet.</p>
-
-            {% endfor %}
-
-        </div>
-
+<section class="page-hero py-20 text-white">
+    <div class="max-w-7xl mx-auto px-6 text-center">
+        <p class="text-gold font-semibold uppercase tracking-[0.2em] text-sm">School life</p>
+        <h1 class="mt-4 text-4xl font-bold md:text-5xl">Events at Sacred Heart</h1>
+        <p class="mx-auto mt-5 max-w-2xl text-lg text-white/85">Discover the gatherings, celebrations, and learning experiences that bring our community together.</p>
     </div>
-
 </section>
-
+<section class="soft-section py-16 md:py-20">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="mb-10 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"><div><p class="text-gold font-semibold uppercase tracking-[0.2em] text-sm">Plan ahead</p><h2 class="mt-2 text-3xl font-bold">What’s coming up</h2></div><a href="{% url 'post-list' %}" class="text-link">Read school news →</a></div>
+        <div class="grid gap-7 md:grid-cols-2 lg:grid-cols-3">
+            {% for event in events %}<article class="content-card overflow-hidden rounded-2xl transition">
+                {% if event.image %}<img src="{{ event.image.url }}" alt="" class="h-48 w-full object-cover">{% else %}<div class="flex h-48 items-center justify-center bg-primary/10 text-primary" aria-hidden="true"><svg class="h-14 w-14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 10h18m-11 4h4m-4 4h4"/></svg></div>{% endif %}
+                <div class="p-7"><p class="font-semibold text-primary">{{ event.event_date|date:"d M Y" }}</p><h3 class="mt-2 text-xl font-bold"><a href="{% url 'event-detail' event.slug %}" class="hover:text-primary">{{ event.title }}</a></h3>{% if event.location %}<p class="mt-2 text-sm text-gray-500">{{ event.location }}</p>{% endif %}<p class="mt-4 text-gray-600">{{ event.description|truncatewords:20 }}</p><a href="{% url 'event-detail' event.slug %}" class="inline-block mt-5 text-link">View event <span aria-hidden="true">→</span></a></div>
+            </article>{% empty %}<div class="content-card col-span-full rounded-2xl p-10 text-center"><p class="text-lg font-semibold">No events are published yet.</p><p class="mt-2 text-gray-600">Check our news for the latest school updates.</p><a href="{% url 'post-list' %}" class="inline-block mt-5 text-link">Go to school news →</a></div>{% endfor %}
+        </div>{% include "partials/pagination.html" %}
+    </div>
+</section>
+<section class="bg-primary py-14 text-white"><div class="max-w-7xl mx-auto flex flex-col gap-5 px-6 sm:flex-row sm:items-center sm:justify-between"><div><h2 class="text-2xl font-bold">Thinking about joining our community?</h2><p class="mt-1 text-white/75">Find out about applying to Sacred Heart High School.</p></div><a href="{% url 'application-create' %}" class="inline-flex w-fit rounded-lg bg-gold px-5 py-3 font-bold text-primary hover:bg-gold-light">Explore admissions</a></div></section>
 {% endblock %}

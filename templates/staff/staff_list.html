@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Our Staff{% endblock %}
+
+{% block content %}
+<section class="page-hero py-20 text-white">
+    <div class="max-w-4xl mx-auto px-6 text-center">
+        <p class="text-gold font-semibold uppercase tracking-[0.2em] text-sm">The people behind our purpose</p>
+        <h1 class="text-4xl md:text-5xl font-bold mt-4">Meet Our Staff</h1>
+        <p class="max-w-2xl mx-auto mt-5 text-lg text-white/85">Dedicated educators and staff who help every learner grow with confidence.</p>
+    </div>
+</section>
+
+{% if principal %}
+<section class="soft-section py-16 md:py-20">
+    <div class="max-w-6xl mx-auto px-6">
+        <div class="content-card overflow-hidden rounded-3xl lg:grid lg:grid-cols-5">
+            <div class="min-h-72 bg-primary/10 lg:col-span-2">
+                {% if principal.profile_picture %}
+                    <img src="{{ principal.profile_picture.url }}" alt="{{ principal.full_name }}" class="h-full w-full object-cover">
+                {% else %}
+                    <div class="flex h-full min-h-72 items-center justify-center text-7xl font-bold text-primary/30">{{ principal.full_name|slice:":1" }}</div>
+                {% endif %}
+            </div>
+            <div class="p-8 md:p-10 lg:col-span-3">
+                <p class="text-gold font-semibold uppercase tracking-[0.18em] text-sm">A welcome from the principal</p>
+                <h2 class="text-3xl font-bold mt-3">{{ principal.full_name }}</h2>
+                <p class="mt-1 font-semibold text-primary">{{ principal.role }}</p>
+                <p class="mt-5 text-gray-600 leading-relaxed">{{ principal.short_bio }}</p>
+                <div class="mt-6 text-gray-700 leading-relaxed whitespace-pre-line">{{ principal.welcome_remarks|linebreaksbr }}</div>
+                <p class="mt-6 border-l-4 border-gold pl-4 italic text-gray-600">“{{ principal.motto|default:"Leading with purpose, care, and excellence." }}”</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<section class="py-16 md:py-20">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="max-w-2xl">
+            <p class="text-gold font-semibold uppercase tracking-[0.2em] text-sm">Our team</p>
+            <h2 class="text-3xl md:text-4xl font-bold mt-3">Teachers and staff</h2>
+            <p class="mt-4 text-gray-600 leading-relaxed">Our staff bring knowledge, encouragement, and a shared commitment to our learners every day.</p>
+        </div>
+
+        <div class="mt-12 grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
+            {% for staff_member in staff_members %}
+                <article class="content-card overflow-hidden rounded-2xl transition">
+                    {% if staff_member.profile_picture %}
+                        <img src="{{ staff_member.profile_picture.url }}" alt="{{ staff_member.full_name }}" class="h-64 w-full object-cover">
+                    {% else %}
+                        <div class="flex h-64 items-center justify-center bg-primary/10 text-5xl font-bold text-primary/30">{{ staff_member.full_name|slice:":1" }}</div>
+                    {% endif %}
+                    <div class="p-7">
+                        <h3 class="text-xl font-bold">{{ staff_member.full_name }}</h3>
+                        <p class="mt-1 font-semibold text-primary">{{ staff_member.role }}</p>
+                        <p class="mt-4 text-gray-600 leading-relaxed">{{ staff_member.short_bio }}</p>
+                        {% if staff_member.motto %}<p class="mt-5 border-l-2 border-gold pl-3 text-sm italic text-gray-600">“{{ staff_member.motto }}”</p>{% endif %}
+                        {% if staff_member.started_at_shhs %}<p class="mt-5 text-sm font-medium text-gray-500">At SHHS since {{ staff_member.started_at_shhs|date:"Y" }}</p>{% endif %}
+                    </div>
+                </article>
+            {% empty %}
+                <p class="text-gray-600">Staff profiles will be available soon.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+<section class="bg-primary py-14 text-white"><div class="max-w-7xl mx-auto flex flex-col gap-5 px-6 sm:flex-row sm:items-center sm:justify-between"><div><h2 class="text-2xl font-bold">Discover the Sacred Heart difference</h2><p class="mt-1 text-white/75">Explore our subjects or find out how to apply.</p></div><div class="flex flex-wrap gap-3"><a href="{% url 'subject-list' %}" class="inline-flex rounded-lg border border-white/35 px-5 py-3 font-bold hover:bg-white/10">Our subjects</a><a href="{% url 'application-create' %}" class="inline-flex rounded-lg bg-gold px-5 py-3 font-bold text-primary hover:bg-gold-light">Admissions</a></div></div></section>
+{% endblock %}

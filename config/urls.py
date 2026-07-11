@@ -5,10 +5,13 @@ from django.urls import include, path
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("", include("apps.accounts.urls")),
 
     path("", include("apps.core.urls")),
     path("", include("apps.posts.urls")),
     path("", include("apps.events.urls")),
+    path("", include("apps.academics.urls")),
+    path("", include("apps.staff.urls")),
     path("", include("apps.admissions.urls")),
     path("dashboard/", include("apps.portal.urls")),
     path("", include("apps.pages.urls")),

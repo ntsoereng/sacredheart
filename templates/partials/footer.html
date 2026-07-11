@@ -1,111 +1,50 @@
-<footer
-    class="bg-primary text-white mt-24">
-
-    <div
-        class="max-w-7xl mx-auto px-6 py-12">
-
-        <div
-            class="grid md:grid-cols-3 gap-8">
-
-            <div>
-                <div class="flex items-center gap-3 mb-4">
-
+<footer class="mt-20 bg-primary text-white">
+    <div class="max-w-7xl mx-auto px-6 pt-14 pb-7">
+        <div class="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
+            <div class="lg:col-span-2">
+                <div class="flex items-center gap-3">
                     {% if site_settings.logo %}
-
-                    <img
-                        src="{{ site_settings.logo.url }}"
-                        alt="{{ site_settings.school_name }}"
-                        class="h-12 w-auto rounded-lg">
-
+                        <img src="{{ site_settings.logo.url }}" alt="{{ site_settings.school_name }}" class="h-12 w-auto rounded-lg bg-white p-1">
                     {% endif %}
-
-                    <div >
-
-                        <p class="font-bold">{{ site_settings.school_name }}</p>
-
-                        <p class="text-sm font-light text-gray-200">
-                            {{ site_settings.tagline }}
-                        </p>
-
+                    <div>
+                        <p class="text-lg font-bold">{{ site_settings.school_name }}</p>
+                        {% if site_settings.tagline %}<p class="mt-1 text-sm text-white/70">{{ site_settings.tagline }}</p>{% endif %}
                     </div>
-
                 </div>
-
-
-            </div>
-
-            <div>
-
-                <h3 class="font-bold mb-3">
-                    Quick Links
-                </h3>
-
-                <ul class="space-y-2 text-sm">
-
-                    <li><a href="/admissions/">Admissions</a></li>
-                    <li><a href="/academics/">Academics</a></li>
-                    <li><a href="/events/">Events</a></li>
-                    <li><a href="/news/">News</a></li>
-                    <li><a href="{% url 'contact' %}">Contact</a></li>
-
-                </ul>
-
-            </div>
-
-            <div>
-
-                <h3 class="font-bold mb-3">
-                    Contact
-                </h3>
-
-                <div class="space-y-2">
-                    <p class="text-sm">
-                        <span class="font-semibold">Address: </span>{{ site_settings.address }}
-                    </p>
-                    <p class="text-sm">
-                        <span class="font-semibold">Phone: </span>{{ site_settings.phone }}
-                    </p>
-                    <p class="text-sm">
-                        <span class="font-semibold">Email: </span>{{ site_settings.email }}
-                    </p>
-                </div>
-
-            </div>
-
-        </div>
-
-        <div
-            class="border-t border-gray-200 mt-12 pt-6
-                flex flex-col md:flex-row justify-between
-                items-center gap-4">
-
-            <p class="text-sm text-gray-400">
-
-                © {% now "Y" %} {{ site_settings.school_name }}.
-                All rights reserved.
-
-            </p>
-
-            <p class="text-sm text-gray-400">
-
-                Website by
-
-                <a
-                    href="https://creativematrix.co.ls"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="font-medium text-gold hover:underline">
-
-                    Creative Matrix
-
+                <p class="max-w-md mt-6 text-sm leading-relaxed text-white/75">
+                    A caring school community committed to learning, character, and service.
+                </p>
+                <a href="{% url 'donations' %}" class="inline-flex items-center gap-2 mt-6 rounded-lg bg-gold px-4 py-2.5 text-sm font-bold text-primary transition hover:-translate-y-0.5 hover:bg-gold-light">
+                    Support our learners <span aria-hidden="true">→</span>
                 </a>
+            </div>
 
-            </p>
+            <div>
+                <h2 class="text-sm font-bold uppercase tracking-[0.16em] text-gold">Explore</h2>
+                <ul class="mt-5 space-y-3">
+                    <li><a href="{% url 'about-us' %}" class="footer-link">About us</a></li>
+                    <li><a href="{% url 'subject-list' %}" class="footer-link">Subjects</a></li>
+                    <li><a href="{% url 'staff-list' %}" class="footer-link">Our staff</a></li>
+                    <li><a href="{% url 'event-list' %}" class="footer-link">Events</a></li>
+                    <li><a href="{% url 'post-list' %}" class="footer-link">News</a></li>
+                    <li><a href="{% url 'application-create' %}" class="footer-link">Admissions</a></li>
+                </ul>
+            </div>
 
+            <div>
+                <h2 class="text-sm font-bold uppercase tracking-[0.16em] text-gold">Contact</h2>
+                <ul class="mt-5 space-y-4 text-sm text-white/75">
+                    {% if site_settings.address %}<li class="flex gap-3"><span class="text-gold" aria-hidden="true">⌖</span><span>{{ site_settings.address }}</span></li>{% endif %}
+                    {% if site_settings.phone %}<li class="flex gap-3"><span class="text-gold" aria-hidden="true">☎</span><a href="tel:{{ site_settings.phone }}" class="footer-link">{{ site_settings.phone }}</a></li>{% endif %}
+                    {% if site_settings.email %}<li class="flex gap-3"><span class="text-gold" aria-hidden="true">✉</span><a href="mailto:{{ site_settings.email }}" class="footer-link">{{ site_settings.email }}</a></li>{% endif %}
+                    <li><a href="{% url 'contact' %}" class="footer-link">Send us a message</a></li>
+                </ul>
+            </div>
         </div>
 
+        <div class="mt-12 flex flex-col gap-3 border-t border-white/15 pt-6 text-sm text-white/55 sm:flex-row sm:items-center sm:justify-between">
+            <p>© {% now "Y" %} {{ site_settings.school_name }}. All rights reserved.</p>
+            <p class="flex items-center gap-3">Website by <a href="https://creativematrix.co.ls" target="_blank" rel="noopener noreferrer" class="text-gold hover:text-gold-light">Creative Matrix</a><span aria-hidden="true">·</span><a href="{% url 'staff-login' %}" class="text-white/35 hover:text-white/70" aria-label="Staff portal">Staff</a></p>
+        </div>
     </div>
-
-
-
 </footer>
