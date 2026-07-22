@@ -7,6 +7,13 @@ from .views import (
     ApplicationExportView,
     MessageListView,
     MessageDetailView,
+    AlumniReviewListView,
+    AlumniReviewDetailView,
+    ContentManagerView,
+    EventCreateView,
+    EventUpdateView,
+    PostCreateView,
+    PostUpdateView,
 )
 
 urlpatterns = [
@@ -45,4 +52,11 @@ urlpatterns = [
         MessageDetailView.as_view(),
         name="message-detail",
     ),
+    path("alumni/", AlumniReviewListView.as_view(), name="alumni-review-list"),
+    path("alumni/<int:pk>/", AlumniReviewDetailView.as_view(), name="alumni-review-detail"),
+    path("content/", ContentManagerView.as_view(), name="content-manager"),
+    path("content/posts/new/", PostCreateView.as_view(), name="post-create"),
+    path("content/posts/<int:pk>/edit/", PostUpdateView.as_view(), name="post-edit"),
+    path("content/events/new/", EventCreateView.as_view(), name="event-create"),
+    path("content/events/<int:pk>/edit/", EventUpdateView.as_view(), name="event-edit"),
 ]

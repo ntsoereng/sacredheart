@@ -2,6 +2,8 @@ from django.conf import settings
 from django.db import models
 from django.utils.text import slugify
 
+from .content import sanitize_post_html
+
 
 class Post(models.Model):
 
@@ -55,7 +57,15 @@ class Post(models.Model):
     def save(self, *args, **kwargs):
 
         if not self.slug:
-            self.slug = slugify(self.title)
+            base_slug = slugify(self.title) or "news-story"
+            slug = base_slug
+            suffix = 2
+            while Post.objects.filter(slug=slug).exclude(pk=self.pk).exists():
+                slug = f"{base_slug}-{suffix}"
+                suffix += 1
+            self.slug = slug
+
+        self.content = sanitize_post_html(self.content)
 
         super().save(*args, **kwargs)
 

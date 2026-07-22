@@ -57,7 +57,15 @@ class Event(models.Model):
         """
 
         if not self.slug:
-            self.slug = slugify(f"{self.title}-{self.event_date.year}")
+            base_slug = slugify(
+                f"{self.title}-{self.event_date.year}"
+            ) or "school-event"
+            slug = base_slug
+            suffix = 2
+            while Event.objects.filter(slug=slug).exclude(pk=self.pk).exists():
+                slug = f"{base_slug}-{suffix}"
+                suffix += 1
+            self.slug = slug
 
         super().save(*args, **kwargs)
         

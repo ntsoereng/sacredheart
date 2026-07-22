@@ -1,3 +1,113 @@
-from django.test import TestCase
+from datetime import date
 
-# Create your tests here.
+from django.contrib.auth import get_user_model
+from django.test import TestCase
+from django.urls import reverse
+
+from apps.admissions.models import Application, ApplicationNote
+from apps.events.models import Event
+from apps.posts.models import Post
+
+
+class StaffApplicationWorkflowTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.staff_user = get_user_model().objects.create_user(
+            username="reviewer",
+            password="test-password",
+            is_staff=True,
+        )
+        cls.application = Application.objects.create(
+            academic_year="2027",
+            student_name="Lerato",
+            student_surname="Mokoena",
+            date_of_birth=date(2012, 5, 10),
+            parent_guardian_names="Thabo Mokoena",
+            parent_phone_number="+266 5000 0000",
+            home_address="Maseru",
+            previous_school="Example Primary",
+            district="Maseru",
+        )
+
+    def setUp(self):
+        self.client.force_login(self.staff_user)
+
+    def test_staff_can_update_application_status(self):
+        response = self.client.post(
+            reverse("application-detail", args=[self.application.pk]),
+            {"action": "update_status", "status": "review"},
+        )
+
+        self.assertRedirects(
+            response,
+            reverse("application-detail", args=[self.application.pk]),
+        )
+        self.application.refresh_from_db()
+        self.assertEqual(self.application.status, "review")
+        self.assertTrue(self.application.reviewed)
+        self.assertEqual(self.application.reviewed_by, self.staff_user)
+        self.assertIsNotNone(self.application.reviewed_at)
+
+    def test_staff_can_add_attributed_note(self):
+        response = self.client.post(
+            reverse("application-detail", args=[self.application.pk]),
+            {"action": "add_note", "body": "Guardian documents verified."},
+        )
+
+        self.assertRedirects(
+            response,
+            reverse("application-detail", args=[self.application.pk]),
+        )
+        note = ApplicationNote.objects.get(application=self.application)
+        self.assertEqual(note.author, self.staff_user)
+        self.assertEqual(note.body, "Guardian documents verified.")
+
+    def test_dashboard_shows_action_queue(self):
+        response = self.client.get(reverse("dashboard"))
+
+        self.assertContains(response, "Lerato Mokoena")
+        self.assertEqual(response.context["new_applications"], 1)
+
+    def test_non_staff_user_is_forbidden(self):
+        user = get_user_model().objects.create_user(
+            username="visitor",
+            password="test-password",
+        )
+        self.client.force_login(user)
+
+        response = self.client.get(reverse("application-list"))
+
+        self.assertEqual(response.status_code, 403)
+
+    def test_staff_can_create_post_with_safe_rich_text(self):
+        response = self.client.post(
+            reverse("post-create"),
+            {
+                "title": "School achievement",
+                "summary": "Celebrating a school achievement.",
+                "content": "<h2>Highlights</h2><ul><li>First item</li></ul><script>alert(1)</script>",
+                "is_published": "on",
+            },
+        )
+
+        self.assertRedirects(response, reverse("content-manager"))
+        post = Post.objects.get(title="School achievement")
+        self.assertEqual(post.author, self.staff_user)
+        self.assertIn("<ul>", post.content)
+        self.assertNotIn("<script", post.content)
+
+    def test_staff_can_create_event_and_is_recorded_as_creator(self):
+        response = self.client.post(
+            reverse("event-create"),
+            {
+                "title": "Open Day",
+                "description": "Meet our school community.",
+                "event_date": "2027-04-10",
+                "location": "School campus",
+                "is_published": "on",
+            },
+        )
+
+        self.assertRedirects(response, reverse("content-manager"))
+        event = Event.objects.get(title="Open Day")
+        self.assertEqual(event.created_by, self.staff_user)

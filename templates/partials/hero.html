@@ -1,55 +1,44 @@
-<section class="relative overflow-hidden bg-[#f0e8dc]">
-    <div class="absolute -left-24 top-8 h-64 w-64 rounded-full bg-gold/15 blur-3xl"></div>
-    <div class="absolute -right-24 bottom-0 h-72 w-72 rounded-full bg-primary/10 blur-3xl"></div>
-    <div class="relative max-w-7xl mx-auto grid gap-12 px-6 py-16 lg:grid-cols-2 lg:items-center lg:py-24">
-        <div class="max-w-xl">
-            <p class="inline-flex items-center gap-2 rounded-full bg-white/75 px-4 py-2 text-sm font-semibold text-primary shadow-sm">
-                <span class="h-2 w-2 rounded-full bg-gold"></span>
-                {{ site_settings.tagline|default:"Welcome to Sacred Heart High School" }}
-            </p>
-            <h1 class="mt-6 text-4xl font-extrabold leading-[1.08] tracking-tight text-primary sm:text-5xl lg:text-6xl">
+<section class="relative isolate overflow-hidden bg-[#f3ece2]">
+    <div class="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_12%_18%,rgba(201,162,39,.2),transparent_30%),radial-gradient(circle_at_92%_82%,rgba(109,31,47,.13),transparent_32%)]"></div>
+    <div class="mx-auto grid min-h-[42rem] max-w-7xl items-center gap-12 px-6 py-14 lg:grid-cols-[1.02fr_.98fr] lg:py-20">
+        <div class="max-w-2xl">
+            <div class="inline-flex items-center gap-3 rounded-full border border-primary/10 bg-white/75 px-4 py-2 text-sm font-bold text-primary shadow-sm backdrop-blur">
+                <span class="flex h-6 w-6 items-center justify-center rounded-full bg-gold text-xs" aria-hidden="true">✦</span>
+                {{ site_settings.tagline|default:"Learning, character and service" }}
+            </div>
+            <h1 class="mt-7 text-5xl font-bold leading-[1.04] text-primary sm:text-6xl lg:text-7xl">
                 {{ site_settings.hero_title|default:"A place to learn, belong, and grow." }}
             </h1>
-            <p class="mt-6 max-w-lg text-lg leading-relaxed text-gray-700">
+            <p class="mt-6 max-w-xl text-lg leading-8 text-gray-700 md:text-xl">
                 {{ site_settings.hero_subtitle|default:"A supportive school community where learners develop knowledge, character, and confidence for the future." }}
             </p>
-            <div class="mt-8 flex flex-wrap gap-3">
-                <a href="{% url 'application-create' %}" class="nav-cta">Start an application <span aria-hidden="true">→</span></a>
-                <a href="{% url 'subject-list' %}" class="inline-flex items-center gap-2 rounded-lg border border-primary/20 bg-white/70 px-5 py-2.5 font-semibold text-primary hover:border-primary hover:bg-white">Explore subjects <span aria-hidden="true">→</span></a>
+            <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+                {% if site_settings.admissions_open %}
+                <a href="{% url 'application-create' %}" class="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 font-bold text-white shadow-lg shadow-primary/15 hover:-translate-y-0.5 hover:bg-primary-dark">Start an application <span aria-hidden="true">→</span></a>
+                {% else %}
+                <a href="{% url 'application-create' %}" class="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 font-bold text-white shadow-lg shadow-primary/15 hover:-translate-y-0.5 hover:bg-primary-dark">Admissions information <span aria-hidden="true">→</span></a>
+                {% endif %}
+                <a href="{% url 'about-us' %}" class="inline-flex min-h-12 items-center justify-center rounded-xl border border-primary/20 bg-white/80 px-6 py-3 font-bold text-primary hover:border-primary hover:bg-white">Discover our school</a>
             </div>
-            <div class="mt-10 flex flex-wrap gap-x-6 gap-y-3 text-sm font-medium text-gray-600">
-                <span class="inline-flex items-center gap-2"><span class="text-gold">✓</span> Learning with purpose</span>
-                <span class="inline-flex items-center gap-2"><span class="text-gold">✓</span> Character and service</span>
+            <div class="mt-9 grid max-w-xl gap-3 text-sm font-semibold text-gray-600 sm:grid-cols-3">
+                <span class="flex items-center gap-2"><span class="text-gold">✓</span> Purposeful learning</span>
+                <span class="flex items-center gap-2"><span class="text-gold">✓</span> Faith and character</span>
+                <span class="flex items-center gap-2"><span class="text-gold">✓</span> Supportive community</span>
             </div>
         </div>
 
-        <div class="relative mx-auto w-full max-w-xl">
+        <div class="relative mx-auto w-full max-w-xl lg:justify-self-end">
+            <div class="absolute -left-6 -top-6 h-28 w-28 rounded-3xl border border-gold/40 bg-gold/20"></div>
+            <div class="absolute -bottom-5 -right-5 h-32 w-32 rounded-full bg-primary/10"></div>
             {% if site_settings.hero_image %}
-                <img src="{{ site_settings.hero_image.url }}" alt="Students learning at {{ site_settings.school_name }}" class="aspect-[4/3] w-full rounded-[2rem] object-cover shadow-2xl shadow-primary/15">
+            <img src="{{ site_settings.hero_image.url }}" alt="Students at {{ site_settings.school_name }}" class="relative aspect-[4/5] max-h-[38rem] w-full rounded-[2rem] object-cover shadow-2xl shadow-primary/20 sm:aspect-[5/4] lg:aspect-[4/5]">
             {% else %}
-                <div class="relative aspect-[4/3] overflow-hidden rounded-[2rem] bg-primary shadow-2xl shadow-primary/20">
-                    <div class="absolute -right-12 -top-12 h-48 w-48 rounded-full bg-gold/90"></div>
-                    <div class="absolute bottom-0 left-0 h-2/5 w-full bg-primary-dark"></div>
-                    <svg viewBox="0 0 600 450" class="absolute inset-0 h-full w-full" aria-hidden="true">
-                        <path d="M80 355c55-92 115-139 182-139 72 0 124 38 176 117l35 78H80v-56Z" fill="#7f3344" opacity=".75"/>
-                        <path d="M110 376c70-56 129-84 182-84 74 0 129 33 190 96H110v-12Z" fill="#521722"/>
-                        <rect x="197" y="175" width="205" height="160" rx="14" fill="#f7f3ed"/>
-                        <rect x="217" y="195" width="165" height="104" rx="8" fill="#e8d9ba"/>
-                        <path d="M251 258h98M251 237h69M251 279h87" stroke="#6d1f2f" stroke-width="10" stroke-linecap="round"/>
-                        <circle cx="183" cy="154" r="38" fill="#c68c6b"/>
-                        <path d="M141 150c2-40 78-57 87-6-16-14-54-16-87 6Z" fill="#2f2525"/>
-                        <path d="M133 328c8-84 91-85 102 0" fill="#c9a227"/>
-                        <circle cx="454" cy="185" r="35" fill="#8f5f45"/>
-                        <path d="M421 180c3-38 68-48 72 1-20-12-46-13-72-1Z" fill="#30272a"/>
-                        <path d="M408 338c5-90 86-94 99 0" fill="#f7f3ed"/>
-                        <path d="M416 253l40 19 42-23" stroke="#c9a227" stroke-width="8" fill="none"/>
-                    </svg>
-                    <div class="absolute bottom-6 left-6 rounded-xl bg-white/95 px-4 py-3 shadow-lg">
-                        <p class="text-xs font-bold uppercase tracking-[0.16em] text-gold">Learning together</p>
-                        <p class="mt-1 font-bold text-primary">Curiosity starts here</p>
-                    </div>
-                </div>
+            <div class="relative flex aspect-[4/5] max-h-[38rem] items-center justify-center overflow-hidden rounded-[2rem] bg-primary text-white shadow-2xl shadow-primary/20 sm:aspect-[5/4] lg:aspect-[4/5]"><div class="text-center"><span class="font-serif text-8xl text-gold">SH</span><p class="mt-4 font-bold">Sacred Heart High School</p></div></div>
             {% endif %}
+            <div class="absolute bottom-5 left-5 right-5 rounded-2xl border border-white/60 bg-white/90 p-4 shadow-xl backdrop-blur sm:left-auto sm:max-w-xs">
+                <p class="text-xs font-bold uppercase tracking-[0.16em] text-gold">Every learner matters</p>
+                <p class="mt-1 font-serif text-lg font-bold text-primary">Growing knowledge, confidence and character.</p>
+            </div>
         </div>
     </div>
 </section>

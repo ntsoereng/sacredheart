@@ -1,123 +1,52 @@
 {% extends "base.html" %}
 
+{% block title %}Staff Portal | Sacred Heart{% endblock %}
+
 {% block content %}
-
-<div class="max-w-7xl mx-auto px-6 py-10">
-    <div class="flex justify-between items-center mb-8">
-
-        <div>
-
-            <h1 class="text-2xl font-bold">
-
-                Staff Portal
-
-            </h1>
-
-            <p class="text-gray-500">
-
-                Welcome, {{ request.user.get_full_name|default:request.user.username }}
-
-            </p>
-
-        </div>
-
-        <div class="flex items-center gap-3">
-
-            <a
-                href="/"
-                class="text-primary">
-
-                View Website
-
-            </a>
-
-            <form method="post" action="{% url 'staff-logout' %}">
-                {% csrf_token %}
-                <button type="submit" class="rounded-lg border border-stone-300 px-3 py-2 text-sm font-semibold text-primary hover:bg-primary/5">Sign out</button>
-            </form>
-
-        </div>
-
-    </div>
-
-    <div class="grid lg:grid-cols-5 gap-8">
-
-        <aside class="lg:col-span-1">
-
-            <div
-                class="bg-white rounded-2xl shadow-sm p-4">
-
-                <nav class="space-y-2">
-
-                    <a
-                        href="{% url 'dashboard' %}"
-                        class="block p-3 rounded-lg hover:bg-gray-50">
-
-                        Dashboard
-
-                    </a>
-
-                    <a
-                        href="{% url 'application-list' %}"
-                        class="flex justify-between items-center p-3 rounded-lg hover:bg-gray-50">
-
-                        <span>
-                            Applications
-                        </span>
-
-                        <span
-                            class="bg-stone-100 text-stone-700 px-2 py-1 rounded-full text-xs">
-
-                            {{ portal_total_applications }}
-
-                        </span>
-
-                    </a>
-
-                    <a
-                        href="{% url 'message-list' %}"
-                        class="flex justify-between items-center p-3 rounded-lg hover:bg-gray-50">
-
-                        <span>
-                            Messages
-                        </span>
-
-                        {% if portal_unread_messages > 0 %}
-
-                        <span
-                            class="bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs font-medium">
-
-                            {{ portal_unread_messages }}
-
-                        </span>
-
-                        {% endif %}
-
-                    </a>
-
-                    {% comment %} <a
-                        href="/"
-                        class="block p-3 rounded-lg hover:bg-gray-50">
-
-                        Return To Website
-
-                    </a> {% endcomment %}
-
-                </nav>
-
+<div class="min-h-screen bg-stone-100">
+    <header class="border-b border-stone-200 bg-white">
+        <div class="mx-auto flex max-w-7xl flex-col gap-4 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+            <div>
+                <p class="text-xs font-bold uppercase tracking-[0.18em] text-gold">Staff workspace</p>
+                <h1 class="mt-1 text-2xl font-bold text-primary">Welcome, {{ request.user.get_full_name|default:request.user.username }}</h1>
             </div>
+            <div class="flex items-center gap-3 text-sm">
+                <a href="/" class="rounded-lg px-3 py-2 font-semibold text-primary hover:bg-primary/5">View website</a>
+                <form method="post" action="{% url 'staff-logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="rounded-lg border border-stone-300 px-3 py-2 font-semibold text-primary hover:bg-stone-50">Sign out</button>
+                </form>
+            </div>
+        </div>
+    </header>
 
+    <div class="mx-auto grid max-w-7xl gap-6 px-5 py-7 sm:px-6 lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-8">
+        <aside>
+            <nav class="flex gap-2 overflow-x-auto rounded-2xl border border-stone-200 bg-white p-2 shadow-sm lg:block lg:space-y-1" aria-label="Staff portal">
+                <a href="{% url 'dashboard' %}" class="flex shrink-0 items-center justify-between rounded-xl px-4 py-3 text-sm font-semibold {% if request.resolver_match.url_name == 'dashboard' %}bg-primary text-white{% else %}text-gray-700 hover:bg-stone-100{% endif %}">
+                    <span>Overview</span>
+                </a>
+                <a href="{% url 'application-list' %}" class="flex shrink-0 items-center justify-between gap-4 rounded-xl px-4 py-3 text-sm font-semibold {% if 'application' in request.resolver_match.url_name %}bg-primary text-white{% else %}text-gray-700 hover:bg-stone-100{% endif %}">
+                    <span>Applications</span>
+                    {% if portal_new_applications %}<span class="rounded-full bg-gold px-2 py-0.5 text-xs text-primary">{{ portal_new_applications }} new</span>{% endif %}
+                </a>
+                <a href="{% url 'message-list' %}" class="flex shrink-0 items-center justify-between gap-4 rounded-xl px-4 py-3 text-sm font-semibold {% if 'message' in request.resolver_match.url_name %}bg-primary text-white{% else %}text-gray-700 hover:bg-stone-100{% endif %}">
+                    <span>Messages</span>
+                    {% if portal_unread_messages %}<span class="rounded-full bg-red-100 px-2 py-0.5 text-xs text-red-700">{{ portal_unread_messages }}</span>{% endif %}
+                </a>
+                <a href="{% url 'alumni-review-list' %}" class="flex shrink-0 items-center justify-between gap-4 rounded-xl px-4 py-3 text-sm font-semibold {% if 'alumni-review' in request.resolver_match.url_name %}bg-primary text-white{% else %}text-gray-700 hover:bg-stone-100{% endif %}">
+                    <span>Alumni stories</span>
+                    {% if portal_pending_alumni %}<span class="rounded-full bg-gold px-2 py-0.5 text-xs text-primary">{{ portal_pending_alumni }} new</span>{% endif %}
+                </a>
+                <a href="{% url 'content-manager' %}" class="flex shrink-0 items-center justify-between gap-4 rounded-xl px-4 py-3 text-sm font-semibold {% if request.resolver_match.url_name == 'content-manager' or request.resolver_match.url_name == 'post-create' or request.resolver_match.url_name == 'post-edit' or request.resolver_match.url_name == 'event-create' or request.resolver_match.url_name == 'event-edit' %}bg-primary text-white{% else %}text-gray-700 hover:bg-stone-100{% endif %}">
+                    <span>News &amp; events</span>
+                </a>
+            </nav>
         </aside>
 
-        <main class="lg:col-span-4">
-
-            {% block portal_content %}
-            {% endblock %}
-
+        <main class="min-w-0">
+            {% block portal_content %}{% endblock %}
         </main>
-
     </div>
-
 </div>
-
 {% endblock %}

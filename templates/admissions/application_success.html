@@ -1,62 +1,52 @@
 {% extends "base.html" %}
 
-{% block title %}
-Application Submitted
-{% endblock %}
+{% block title %}Application Submitted | Sacred Heart{% endblock %}
 
 {% block content %}
-
-<section class="soft-section py-20 md:py-24">
-
-    <div class="max-w-3xl mx-auto px-6">
-
-        <div
-            class="content-card rounded-2xl p-10 text-center">
-
-            <div class="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-gold/20 text-3xl text-primary">
-                ✓
+<section class="soft-section py-16 md:py-24">
+    <div class="mx-auto max-w-3xl px-6">
+        <div class="content-card overflow-hidden rounded-3xl">
+            <div class="bg-primary px-6 py-10 text-center text-white md:px-10">
+                <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gold text-3xl font-bold text-primary shadow-lg" aria-hidden="true">✓</div>
+                <p class="mt-6 text-sm font-bold uppercase tracking-[0.2em] text-gold-light">Submission complete</p>
+                <h1 class="mt-2 text-3xl font-bold md:text-4xl">Application received</h1>
+                <p class="mx-auto mt-4 max-w-xl text-white/80">Thank you for applying to Sacred Heart High School. Our admissions team will review the information provided.</p>
             </div>
 
-            <h1 class="text-4xl font-bold">
+            <div class="p-6 md:p-10">
+                {% if reference_number %}
+                <div x-data="{ copied: false }" class="rounded-2xl border-2 border-gold/50 bg-gold/10 p-6 text-center">
+                    <p class="text-xs font-bold uppercase tracking-[0.18em] text-primary">Your application reference</p>
+                    <p class="mt-3 break-all font-mono text-2xl font-bold tracking-wide text-gray-900 md:text-3xl">{{ reference_number }}</p>
+                    <button type="button" @click="navigator.clipboard.writeText('{{ reference_number|escapejs }}'); copied = true; setTimeout(() => copied = false, 2000)" class="mt-4 inline-flex items-center gap-2 rounded-lg border border-primary/20 bg-white px-4 py-2 text-sm font-bold text-primary hover:bg-primary/5">
+                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M15 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h3"/></svg>
+                        <span x-text="copied ? 'Copied' : 'Copy reference'">Copy reference</span>
+                    </button>
+                </div>
 
-                Application Submitted
+                <div class="mt-6 flex gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4 text-amber-900">
+                    <svg class="mt-0.5 h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5m0 3h.01"/></svg>
+                    <div><p class="font-bold">Keep this reference number safe</p><p class="mt-1 text-sm leading-relaxed">Save it or take a screenshot. The school may ask for it when discussing or tracking this application.</p></div>
+                </div>
+                {% else %}
+                <div class="rounded-xl border border-stone-200 bg-stone-50 p-5 text-center"><p class="font-bold text-gray-800">Your application has already been submitted.</p><p class="mt-1 text-sm text-gray-600">If you need the reference number, contact the school using the applicant’s details.</p></div>
+                {% endif %}
 
-            </h1>
+                <div class="mt-8 border-t border-stone-200 pt-6">
+                    <h2 class="font-bold text-gray-900">What happens next?</h2>
+                    <ol class="mt-4 grid gap-3 text-sm text-gray-600 sm:grid-cols-3">
+                        <li class="rounded-xl bg-stone-50 p-4"><span class="font-bold text-primary">1. Review</span><p class="mt-1">The admissions team checks the application.</p></li>
+                        <li class="rounded-xl bg-stone-50 p-4"><span class="font-bold text-primary">2. Follow-up</span><p class="mt-1">A guardian may be contacted if more details are needed.</p></li>
+                        <li class="rounded-xl bg-stone-50 p-4"><span class="font-bold text-primary">3. Decision</span><p class="mt-1">The school communicates the outcome.</p></li>
+                    </ol>
+                </div>
 
-            <p class="mt-6 text-gray-600">
-
-                Thank you for your interest in Sacred Heart
-                High School.
-
-            </p>
-
-            <p class="mt-4 text-gray-600">
-
-                Your application has been received and will
-                be reviewed by the admissions team.
-                Should additional information be required,
-                a parent or guardian may be contacted.
-
-            </p>
-
-            <div class="mt-10 flex flex-wrap justify-center gap-3">
-
-                <a
-                    href="/"
-                    class="btn-primary">
-
-                    Return Home
-
-                </a>
-
-                <a href="{% url 'subject-list' %}" class="inline-flex items-center rounded-lg border border-primary px-5 py-3 font-bold text-primary hover:bg-primary/5">Explore subjects</a>
-
+                <div class="mt-8 flex flex-wrap justify-center gap-3">
+                    <a href="{% url 'home' %}" class="btn-primary">Return home</a>
+                    <a href="{% url 'contact' %}" class="inline-flex items-center rounded-lg border border-primary px-5 py-3 font-bold text-primary hover:bg-primary/5">Contact admissions</a>
+                </div>
             </div>
-
         </div>
-
     </div>
-
 </section>
-
 {% endblock %}

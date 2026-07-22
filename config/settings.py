@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
-from decouple import config
+from decouple import Csv, config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,9 +24,56 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config("DEBUG", cast=bool)
+DEBUG = config("DJANGO_DEBUG", default=False, cast=bool)
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = config(
+    "ALLOWED_HOSTS",
+    default="localhost,127.0.0.1",
+    cast=Csv(),
+)
+
+CSRF_TRUSTED_ORIGINS = config(
+    "CSRF_TRUSTED_ORIGINS",
+    default="",
+    cast=Csv(),
+)
+
+# Django's development server serves plain HTTP. Keep HTTPS-only behavior off
+# locally; production settings should override these values explicitly.
+SECURE_SSL_REDIRECT = config(
+    "DJANGO_SECURE_SSL_REDIRECT",
+    default=not DEBUG,
+    cast=bool,
+)
+SESSION_COOKIE_SECURE = config(
+    "DJANGO_SESSION_COOKIE_SECURE",
+    default=not DEBUG,
+    cast=bool,
+)
+CSRF_COOKIE_SECURE = config(
+    "DJANGO_CSRF_COOKIE_SECURE",
+    default=not DEBUG,
+    cast=bool,
+)
+SECURE_HSTS_SECONDS = config(
+    "DJANGO_SECURE_HSTS_SECONDS",
+    default=31536000 if not DEBUG else 0,
+    cast=int,
+)
+SECURE_HSTS_INCLUDE_SUBDOMAINS = config(
+    "DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS",
+    default=False,
+    cast=bool,
+)
+SECURE_HSTS_PRELOAD = config(
+    "DJANGO_SECURE_HSTS_PRELOAD",
+    default=False,
+    cast=bool,
+)
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+USE_X_FORWARDED_HOST = True
 
 
 # Application definition
@@ -47,6 +94,7 @@ INSTALLED_APPS = [
     "apps.academics",
     "apps.staff",
     "apps.admissions",
+    "apps.alumni",
     "apps.portal",
 ]
 
@@ -93,8 +141,19 @@ LOGOUT_REDIRECT_URL = "home"
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST'),
+        'PORT': config('DB_PORT'),
+        'CONN_MAX_AGE': config('DB_CONN_MAX_AGE', default=60, cast=int),
+        'CONN_HEALTH_CHECKS': True,
+        'OPTIONS': {
+            'charset': 'utf8mb4',
+            'connect_timeout': 10,
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
     }
 }
 
@@ -133,18 +192,67 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = "/static/"
+STATIC_URL = config("STATIC_URL", default="/static/")
 
 STATICFILES_DIRS = [
-    BASE_DIR / "static",
+    ("css", BASE_DIR / "static" / "css"),
+    ("admin", BASE_DIR / "static" / "admin"),
 ]
 
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_ROOT = Path(
+    config("STATIC_ROOT", default=str(BASE_DIR / "staticfiles"))
+).expanduser()
 
-MEDIA_URL = "/media/"
+MEDIA_URL = config("MEDIA_URL", default="/media/")
 
-MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_ROOT = Path(
+    config("MEDIA_ROOT", default=str(BASE_DIR / "media"))
+).expanduser()
 
-STATICFILES_STORAGE = (
-    "whitenoise.storage.CompressedManifestStaticFilesStorage"
-)
+STORAGES = {
+    "default": {
+        "BACKEND": "apps.core.storage.SafeMediaStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
+
+WHITENOISE_MAX_AGE = 31536000 if not DEBUG else 0
+WHITENOISE_KEEP_ONLY_HASHED_FILES = not DEBUG
+
+# Uploaded media is untrusted. Apache must serve it as static data and must
+# never execute scripts from MEDIA_ROOT (see deployment/media.htaccess).
+FILE_UPLOAD_PERMISSIONS = 0o644
+FILE_UPLOAD_DIRECTORY_PERMISSIONS = 0o755
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024
+FILE_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024
+
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "production": {
+            "format": "{levelname} {asctime} {name}: {message}",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "production",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": config("DJANGO_LOG_LEVEL", default="INFO"),
+    },
+    "loggers": {
+        "django.request": {
+            "handlers": ["console"],
+            "level": "ERROR",
+            "propagate": False,
+        },
+    },
+}

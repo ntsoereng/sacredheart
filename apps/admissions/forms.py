@@ -1,3 +1,5 @@
+from datetime import date
+
 from django import forms
 
 from apps.admissions.models import Application
@@ -27,31 +29,54 @@ class ApplicationForm(forms.ModelForm):
                 }
             ),
             "student_name": forms.TextInput(
-                attrs={"class": "w-full"}
+                attrs={
+                    "class": "w-full",
+                    "autocomplete": "given-name",
+                    "placeholder": "Student’s first name",
+                }
             ),
             "student_surname": forms.TextInput(
-                attrs={"class": "w-full"}
+                attrs={
+                    "class": "w-full",
+                    "autocomplete": "family-name",
+                    "placeholder": "Student’s surname",
+                }
             ),
             "date_of_birth": forms.DateInput(
                 attrs={
                     "type": "date",
-                    "class": "w-full"
+                    "class": "w-full",
+                    "max": date.today().isoformat(),
                 }
             ),
             "parent_guardian_names": forms.TextInput(
-                attrs={"class": "w-full"}
+                attrs={
+                    "class": "w-full",
+                    "autocomplete": "name",
+                    "placeholder": "Parent or guardian’s full name",
+                }
             ),
             "parent_phone_number": forms.TextInput(
-                attrs={"class": "w-full"}
+                attrs={
+                    "class": "w-full",
+                    "autocomplete": "tel",
+                    "inputmode": "tel",
+                    "placeholder": "+266 …",
+                }
             ),
             "home_address": forms.Textarea(
                 attrs={
                     "rows": 3,
-                    "class": "w-full"
+                    "class": "w-full",
+                    "autocomplete": "street-address",
+                    "placeholder": "Village, town and other address details",
                 }
             ),
             "previous_school": forms.TextInput(
-                attrs={"class": "w-full"}
+                attrs={
+                    "class": "w-full",
+                    "placeholder": "Name of previous school",
+                }
             ),
             "district": forms.Select(
                 attrs={"class": "w-full"}

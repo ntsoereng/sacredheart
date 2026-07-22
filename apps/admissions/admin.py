@@ -1,10 +1,25 @@
 from django.contrib import admin
+from django.utils import timezone
 
-from .models import Application
+from .models import Application, ApplicationNote
+
+
+class ApplicationNoteInline(admin.TabularInline):
+    model = ApplicationNote
+    extra = 0
+    readonly_fields = ("author", "created_at")
 
 
 @admin.register(Application)
 class ApplicationAdmin(admin.ModelAdmin):
+
+    readonly_fields = (
+        "reference_number",
+        "reviewed",
+        "reviewed_by",
+        "reviewed_at",
+        "submitted_at",
+    )
 
     list_display = (
         "student_name",
@@ -12,12 +27,11 @@ class ApplicationAdmin(admin.ModelAdmin):
         "academic_year",
         "district",
         "submitted_at",
-        "reviewed",
+        "status",
+        "reviewed_by",
     )
 
-    list_editable = (
-        "reviewed",
-    )
+    inlines = (ApplicationNoteInline,)
 
     search_fields = (
         "student_name",
@@ -29,6 +43,13 @@ class ApplicationAdmin(admin.ModelAdmin):
 
     list_filter = (
         "district",
-        "reviewed",
+        "status",
         "submitted_at",
     )
+
+    def save_model(self, request, obj, form, change):
+        if "status" in form.changed_data:
+            obj.reviewed = obj.status != "new"
+            obj.reviewed_by = request.user
+            obj.reviewed_at = timezone.now()
+        super().save_model(request, obj, form, change)

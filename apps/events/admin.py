@@ -30,6 +30,8 @@ class EventAdmin(admin.ModelAdmin):
     prepopulated_fields = {
         "slug": ("title",)
     }
+
+    readonly_fields = ("created_by", "created_at")
     
     def save_model(self, request, obj, form, change):
         if not obj.created_by:

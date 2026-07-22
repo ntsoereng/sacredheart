@@ -1,13 +1,23 @@
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.views.generic import FormView, TemplateView
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.db.models import Q
+from django.utils import timezone
+from apps.alumni.models import AlumniStory
 from apps.core.forms import ContactForm
 from apps.posts.models import Post
 from apps.events.models import Event
 from apps.pages.models import Page
 from apps.staff.models import StaffMember
+from apps.core.models import SiteSettings
+
+
+def favicon(request):
+    site_settings = SiteSettings.objects.only("favicon").first()
+    if site_settings and site_settings.favicon:
+        return redirect(site_settings.favicon.url)
+    return redirect("/")
 
 
 class HomeView(TemplateView):
@@ -26,14 +36,18 @@ class HomeView(TemplateView):
         
         context["upcoming_events"] = (
             Event.objects
-            .filter(is_published=True)
+            .filter(
+                is_published=True,
+                event_date__gte=timezone.localdate(),
+            )
             [:3]    
         )
         
         context["featured_event"] = (
             Event.objects.filter(
                 is_published=True,
-                featured=True
+                featured=True,
+                event_date__gte=timezone.localdate(),
             )
             .order_by("event_date")
             .first()
@@ -44,6 +58,12 @@ class HomeView(TemplateView):
                 is_active=True,
                 is_principal=True,
             ).first()
+        )
+
+        context["alumni_stories"] = (
+            AlumniStory.objects
+            .filter(status="approved", consent_to_publish=True)
+            [:3]
         )
 
 
@@ -58,6 +78,14 @@ class AboutView(TemplateView):
 class DonationsView(TemplateView):
 
     template_name = "core/donations.html"
+
+
+class PrivacyPolicyView(TemplateView):
+    template_name = "core/privacy_policy.html"
+
+
+class TermsOfUseView(TemplateView):
+    template_name = "core/terms_of_use.html"
 
 
 class SearchView(TemplateView):

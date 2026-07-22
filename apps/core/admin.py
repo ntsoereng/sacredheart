@@ -2,6 +2,10 @@ from django.contrib import admin
 
 from .models import ContactMessage, SiteSettings
 
+admin.site.site_header = "Sacred Heart Administration"
+admin.site.site_title = "Sacred Heart Admin"
+admin.site.index_title = "School management"
+
 
 @admin.register(SiteSettings)
 class SiteSettingsAdmin(admin.ModelAdmin):

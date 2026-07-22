@@ -30,6 +30,8 @@ class PostAdmin(admin.ModelAdmin):
     prepopulated_fields = {
         "slug": ("title",)
     }
+
+    readonly_fields = ("author", "created_at", "updated_at")
     
     
     

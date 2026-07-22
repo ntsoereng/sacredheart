@@ -47,11 +47,15 @@ class ApplicationCreateView(FormView):
 
     def form_valid(self, form):
 
-        form.save()
+        application = form.save()
+
+        self.request.session[
+            "latest_application_reference"
+        ] = application.reference_number
 
         messages.success(
             self.request,
-            "Application submitted successfully. We will review your application and get back to you soon."
+            "Application submitted successfully."
         )
 
         return super().form_valid(form)
@@ -60,3 +64,10 @@ class ApplicationCreateView(FormView):
 class ApplicationSuccessView(TemplateView):
 
     template_name = "admissions/application_success.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["reference_number"] = self.request.session.get(
+            "latest_application_reference"
+        )
+        return context

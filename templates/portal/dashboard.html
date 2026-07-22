@@ -1,49 +1,56 @@
 {% extends "portal/base.html" %}
 
 {% block portal_content %}
-
-<h1 class="text-4xl font-bold mb-8">
-    Dashboard
-</h1>
-
-<div class="grid md:grid-cols-3 gap-6">
-
-    <div class="bg-white rounded-2xl shadow-sm p-6">
-
-        <h2 class="text-gray-500">
-            Applications
-        </h2>
-
-        <p class="text-4xl font-bold mt-2">
-            {{ portal_total_applications }}
-        </p>
-
+<div class="mb-7 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+        <p class="text-sm font-semibold text-gray-500">Today’s workspace</p>
+        <h2 class="text-3xl font-bold text-gray-900">Dashboard</h2>
     </div>
-
-    <div class="bg-white rounded-2xl shadow-sm p-6">
-
-        <h2 class="text-gray-500">
-            Messages
-        </h2>
-
-        <p class="text-4xl font-bold mt-2">
-            {{ portal_total_messages }}
-        </p>
-
-    </div>
-
-    <div class="bg-white rounded-2xl shadow-sm p-6">
-
-        <h2 class="text-gray-500">
-            Unread Messages
-        </h2>
-
-        <p class="text-4xl font-bold mt-2">
-            {{ portal_unread_messages }}
-        </p>
-
-    </div>
-
+    <a href="{% url 'application-list' %}?status=new" class="btn-primary self-start">Review new applications</a>
 </div>
 
+<section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="Application status summary">
+    <a href="{% url 'application-list' %}?status=new" class="rounded-2xl border border-amber-200 bg-amber-50 p-5 transition hover:-translate-y-0.5 hover:shadow-md">
+        <p class="text-sm font-bold text-amber-800">New</p><p class="mt-2 text-3xl font-bold text-gray-900">{{ new_applications }}</p><p class="mt-1 text-xs text-amber-700">Waiting for first review</p>
+    </a>
+    <a href="{% url 'application-list' %}?status=review" class="rounded-2xl border border-blue-200 bg-blue-50 p-5 transition hover:-translate-y-0.5 hover:shadow-md">
+        <p class="text-sm font-bold text-blue-800">Under review</p><p class="mt-2 text-3xl font-bold text-gray-900">{{ review_applications }}</p><p class="mt-1 text-xs text-blue-700">Work currently in progress</p>
+    </a>
+    <a href="{% url 'application-list' %}?status=accepted" class="rounded-2xl border border-green-200 bg-green-50 p-5 transition hover:-translate-y-0.5 hover:shadow-md">
+        <p class="text-sm font-bold text-green-800">Accepted</p><p class="mt-2 text-3xl font-bold text-gray-900">{{ accepted_applications }}</p><p class="mt-1 text-xs text-green-700">Successful applications</p>
+    </a>
+    <a href="{% url 'message-list' %}" class="rounded-2xl border border-stone-200 bg-white p-5 transition hover:-translate-y-0.5 hover:shadow-md">
+        <p class="text-sm font-bold text-gray-600">Unread messages</p><p class="mt-2 text-3xl font-bold text-gray-900">{{ portal_unread_messages }}</p><p class="mt-1 text-xs text-gray-500">From families and visitors</p>
+    </a>
+</section>
+
+<div class="mt-7 grid gap-7 xl:grid-cols-[1.35fr_.65fr]">
+    <section class="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
+        <div class="flex items-center justify-between border-b border-stone-200 px-5 py-4">
+            <div><h3 class="font-bold text-gray-900">Recent applications</h3><p class="text-sm text-gray-500">Latest submissions and their progress</p></div>
+            <a href="{% url 'application-list' %}" class="text-sm font-bold text-primary">View all →</a>
+        </div>
+        <div class="divide-y divide-stone-100">
+            {% for application in recent_applications %}
+            <a href="{% url 'application-detail' application.pk %}" class="flex items-center justify-between gap-4 px-5 py-4 hover:bg-stone-50">
+                <div class="min-w-0"><p class="truncate font-semibold text-gray-900">{{ application.student_name }} {{ application.student_surname }}</p><p class="mt-1 text-xs text-gray-500">{{ application.reference_number }} · {{ application.submitted_at|timesince }} ago</p></div>
+                <span class="shrink-0 rounded-full px-3 py-1 text-xs font-bold {% if application.status == 'new' %}bg-amber-100 text-amber-800{% elif application.status == 'review' %}bg-blue-100 text-blue-800{% elif application.status == 'accepted' %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">{{ application.get_status_display }}</span>
+            </a>
+            {% empty %}<p class="p-8 text-center text-gray-500">No applications yet.</p>{% endfor %}
+        </div>
+    </section>
+
+    <section class="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
+        <div class="border-b border-stone-200 px-5 py-4"><h3 class="font-bold text-gray-900">Recent messages</h3><p class="text-sm text-gray-500">Contact form inbox</p></div>
+        <div class="divide-y divide-stone-100">
+            {% for message in recent_messages %}
+            <a href="{% url 'message-detail' message.pk %}" class="block px-5 py-4 hover:bg-stone-50"><div class="flex items-center gap-2"><p class="truncate font-semibold text-gray-900">{{ message.subject }}</p>{% if not message.is_read %}<span class="h-2 w-2 shrink-0 rounded-full bg-red-500" aria-label="Unread"></span>{% endif %}</div><p class="mt-1 truncate text-sm text-gray-500">{{ message.name }} · {{ message.created_at|timesince }} ago</p></a>
+            {% empty %}<p class="p-8 text-center text-gray-500">No messages yet.</p>{% endfor %}
+        </div>
+    </section>
+</div>
+<section class="mt-7 rounded-2xl border border-stone-200 bg-white p-5 shadow-sm sm:flex sm:items-center sm:justify-between">
+    <div><p class="text-sm font-bold text-gray-900">Alumni story reviews</p><p class="mt-1 text-sm text-gray-500">{{ pending_alumni }} submission{{ pending_alumni|pluralize }} waiting for review and publication approval.</p></div>
+    <a href="{% url 'alumni-review-list' %}?status=pending" class="btn-primary mt-4 inline-flex sm:mt-0">Review alumni stories</a>
+</section>
 {% endblock %}

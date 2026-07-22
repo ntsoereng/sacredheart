@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 
 class Application(models.Model):
@@ -73,6 +74,19 @@ class Application(models.Model):
     notes = models.TextField(
         blank=True
     )
+
+    reviewed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name="reviewed_applications",
+    )
+
+    reviewed_at = models.DateTimeField(
+        blank=True,
+        null=True,
+    )
     
     reference_number = models.CharField(
         max_length=30,
@@ -105,3 +119,25 @@ class Application(models.Model):
             super().save(
                 update_fields=["reference_number"]
             )
+
+
+class ApplicationNote(models.Model):
+    application = models.ForeignKey(
+        Application,
+        on_delete=models.CASCADE,
+        related_name="review_notes",
+    )
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name="application_notes",
+    )
+    body = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"Note on {self.application.reference_number}"

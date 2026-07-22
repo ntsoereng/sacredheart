@@ -1,217 +1,48 @@
-{% extends "base.html" %} {% block title %} Admissions Application {% endblock%}
+{% extends "base.html" %}
+{% block title %}Admissions Application | Sacred Heart High School{% endblock %}
 {% block content %}
-
-<!-- HERO -->
-
-<section class="page-hero text-white py-20">
-  <div class="max-w-5xl mx-auto px-6 text-center">
-    <h1 class="text-5xl font-bold">Admissions Application</h1>
-
-    <p class="mt-6 text-lg max-w-3xl mx-auto">
-      Begin your application to Sacred Heart High School. We are committed to
-      academic excellence, character formation and holistic development.
-    </p>
-  </div>
-</section>
+<section class="page-hero py-14 text-white md:py-18"><div class="mx-auto max-w-5xl px-6 text-center"><p class="text-sm font-bold uppercase tracking-[0.2em] text-gold-light">Admissions</p><h1 class="mt-3 text-4xl font-bold md:text-5xl">Begin your Sacred Heart journey</h1><p class="mx-auto mt-5 max-w-2xl text-lg leading-8 text-white/80">Tell us about the learner and their current school journey. Our admissions team will review the application and contact the parent or guardian if needed.</p></div></section>
 
 {% if admissions_open %}
+<section class="soft-section py-12 md:py-18"><div class="mx-auto max-w-7xl px-6"><div class="grid gap-8 lg:grid-cols-[20rem_minmax(0,1fr)] lg:items-start">
+    <aside class="space-y-5 lg:sticky lg:top-24">
+        <div class="overflow-hidden rounded-2xl bg-primary text-white shadow-lg"><div class="border-b border-white/10 p-6"><div class="flex items-center gap-2"><span class="h-2.5 w-2.5 rounded-full bg-green-400"></span><p class="text-xs font-bold uppercase tracking-[0.16em] text-green-200">Applications open</p></div><h2 class="mt-3 text-2xl font-bold">Before you begin</h2><p class="mt-2 text-sm leading-6 text-white/65">The form usually takes only a few minutes if you have the learner’s information ready.</p></div><ol class="divide-y divide-white/10"><li class="flex gap-4 p-5"><span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gold font-bold text-primary">1</span><div><p class="font-bold">Complete the form</p><p class="mt-1 text-sm leading-5 text-white/60">Provide accurate learner, guardian, and previous-school details.</p></div></li><li class="flex gap-4 p-5"><span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/10 font-bold text-gold-light">2</span><div><p class="font-bold">Save your reference</p><p class="mt-1 text-sm leading-5 text-white/60">A unique reference number appears after successful submission.</p></div></li><li class="flex gap-4 p-5"><span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/10 font-bold text-gold-light">3</span><div><p class="font-bold">Admissions review</p><p class="mt-1 text-sm leading-5 text-white/60">Staff review the application and may contact the guardian.</p></div></li></ol></div>
+        <div class="rounded-2xl border border-amber-200 bg-amber-50 p-5 text-sm leading-6 text-amber-900"><div class="flex gap-3"><svg class="mt-0.5 h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5m0 3h.01"/></svg><div><p class="font-bold">Important</p><p class="mt-1">Submitting an application does not guarantee admission. The school will communicate the outcome after review.</p></div></div></div>
+        {% if site_settings.admissions_email %}<div class="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm"><p class="text-xs font-bold uppercase tracking-wide text-gray-500">Need help?</p><a href="mailto:{{ site_settings.admissions_email }}" class="mt-2 block break-all font-bold text-primary hover:underline">{{ site_settings.admissions_email }}</a><a href="{% url 'contact' %}" class="mt-3 inline-block text-sm font-bold text-primary">Contact the school →</a></div>{% endif %}
+    </aside>
 
-<!-- INFORMATION -->
+    <div class="content-card rounded-3xl p-6 md:p-10 lg:p-12">
+        <div class="border-b border-stone-200 pb-7"><p class="text-sm font-bold uppercase tracking-[0.18em] text-gold">Online application</p><h2 class="mt-2 text-3xl font-bold">Learner application form</h2><p class="mt-2 text-gray-600"><span class="text-red-600">*</span> indicates required information.</p></div>
+        <form method="post" class="mt-8" novalidate>{% csrf_token %}
+            {% if form.non_field_errors %}<div class="mb-7 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">{{ form.non_field_errors }}</div>{% endif %}
 
-<section class="soft-section py-16">
-  <div class="max-w-5xl mx-auto px-6">
-    <div class="grid md:grid-cols-3 gap-8">
-      <div class="content-card rounded-2xl p-6">
-        <h2 class="font-bold text-xl mb-3">Application Process</h2>
+            <fieldset><legend class="flex items-center gap-3 text-xl font-bold"><span class="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-sm text-white">1</span>Student information</legend><p class="ml-11 mt-1 text-sm text-gray-500">Tell us about the learner applying to Sacred Heart.</p><div class="mt-6 grid gap-6 md:grid-cols-2">
+                <div><label for="{{ form.academic_year.id_for_label }}" class="mb-2 block text-sm font-bold text-gray-700">Academic year <span class="text-red-600">*</span></label>{{ form.academic_year }}<p class="mt-1.5 text-xs text-gray-500">Applications are currently for this intake year.</p>{% for error in form.academic_year.errors %}<p class="mt-1.5 text-sm font-semibold text-red-700">{{ error }}</p>{% endfor %}</div>
+                <div><label for="{{ form.date_of_birth.id_for_label }}" class="mb-2 block text-sm font-bold text-gray-700">Date of birth <span class="text-red-600">*</span></label>{{ form.date_of_birth }}{% for error in form.date_of_birth.errors %}<p class="mt-1.5 text-sm font-semibold text-red-700">{{ error }}</p>{% endfor %}</div>
+                <div><label for="{{ form.student_name.id_for_label }}" class="mb-2 block text-sm font-bold text-gray-700">First name <span class="text-red-600">*</span></label>{{ form.student_name }}{% for error in form.student_name.errors %}<p class="mt-1.5 text-sm font-semibold text-red-700">{{ error }}</p>{% endfor %}</div>
+                <div><label for="{{ form.student_surname.id_for_label }}" class="mb-2 block text-sm font-bold text-gray-700">Surname <span class="text-red-600">*</span></label>{{ form.student_surname }}{% for error in form.student_surname.errors %}<p class="mt-1.5 text-sm font-semibold text-red-700">{{ error }}</p>{% endfor %}</div>
+            </div></fieldset>
 
-        <p class="text-gray-600">
-          Complete the application form below. Applications are reviewed by the
-          school administration and shortlisted applicants may be contacted for
-          further steps.
-        </p>
-      </div>
+            <fieldset class="mt-10 border-t border-stone-200 pt-9"><legend class="flex items-center gap-3 text-xl font-bold"><span class="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-sm text-white">2</span>Parent or guardian</legend><p class="ml-11 mt-1 text-sm text-gray-500">These details are used for admissions follow-up.</p><div class="mt-6 grid gap-6 md:grid-cols-2">
+                <div><label for="{{ form.parent_guardian_names.id_for_label }}" class="mb-2 block text-sm font-bold text-gray-700">Full name <span class="text-red-600">*</span></label>{{ form.parent_guardian_names }}{% for error in form.parent_guardian_names.errors %}<p class="mt-1.5 text-sm font-semibold text-red-700">{{ error }}</p>{% endfor %}</div>
+                <div><label for="{{ form.parent_phone_number.id_for_label }}" class="mb-2 block text-sm font-bold text-gray-700">Phone number <span class="text-red-600">*</span></label>{{ form.parent_phone_number }}<p class="mt-1.5 text-xs text-gray-500">Use a number where the guardian can be reached.</p>{% for error in form.parent_phone_number.errors %}<p class="mt-1.5 text-sm font-semibold text-red-700">{{ error }}</p>{% endfor %}</div>
+                <div class="md:col-span-2"><label for="{{ form.home_address.id_for_label }}" class="mb-2 block text-sm font-bold text-gray-700">Home address <span class="text-red-600">*</span></label>{{ form.home_address }}{% for error in form.home_address.errors %}<p class="mt-1.5 text-sm font-semibold text-red-700">{{ error }}</p>{% endfor %}</div>
+            </div></fieldset>
 
-      <div class="content-card rounded-2xl p-6">
-        <h2 class="font-bold text-xl mb-3">Academic Year</h2>
+            <fieldset class="mt-10 border-t border-stone-200 pt-9"><legend class="flex items-center gap-3 text-xl font-bold"><span class="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-sm text-white">3</span>Previous school</legend><p class="ml-11 mt-1 text-sm text-gray-500">Help the admissions team understand the learner’s current context.</p><div class="mt-6 grid gap-6 md:grid-cols-2">
+                <div><label for="{{ form.previous_school.id_for_label }}" class="mb-2 block text-sm font-bold text-gray-700">Previous school <span class="text-red-600">*</span></label>{{ form.previous_school }}{% for error in form.previous_school.errors %}<p class="mt-1.5 text-sm font-semibold text-red-700">{{ error }}</p>{% endfor %}</div>
+                <div><label for="{{ form.district.id_for_label }}" class="mb-2 block text-sm font-bold text-gray-700">Home district <span class="text-red-600">*</span></label>{{ form.district }}{% for error in form.district.errors %}<p class="mt-1.5 text-sm font-semibold text-red-700">{{ error }}</p>{% endfor %}</div>
+            </div></fieldset>
 
-        <p class="text-gray-600">
-          Applications submitted through this form are intended for the upcoming
-          academic year.
-        </p>
-      </div>
+            {% if form.errors %}<div class="mt-8 flex gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800"><svg class="mt-0.5 h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5m0 3h.01"/></svg><p><strong>Please review the highlighted fields.</strong><br>Nothing has been submitted yet.</p></div>{% endif %}
 
-      <div class="content-card rounded-2xl p-6">
-        <h2 class="font-bold text-xl mb-3">Important Notice</h2>
-
-        <p class="text-gray-600">
-          Submission of an application does not guarantee admission. Applicants
-          will be contacted once their application has been reviewed.
-        </p>
-      </div>
+            <div class="mt-8 rounded-2xl border border-stone-200 bg-stone-50 p-5"><div class="flex gap-3"><svg class="mt-0.5 h-5 w-5 shrink-0 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><div><p class="font-bold text-gray-800">Your information is treated with care</p><p class="mt-1 text-sm leading-6 text-gray-600">By submitting, you confirm that the information is accurate and that you are authorised to provide it. Read our <a href="{% url 'privacy-policy' %}" target="_blank" rel="noopener" class="font-bold text-primary underline">Privacy Policy</a> and <a href="{% url 'terms-of-use' %}" target="_blank" rel="noopener" class="font-bold text-primary underline">Terms of Use</a>.</p></div></div></div>
+            <div class="mt-7 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"><p class="max-w-md text-xs leading-5 text-gray-500">After submission, keep the reference number shown on the confirmation page.</p><button type="submit" class="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-primary px-7 py-3 font-bold text-white shadow-lg shadow-primary/10 hover:bg-primary-dark">Submit application <span aria-hidden="true">→</span></button></div>
+        </form>
     </div>
-  </div>
-</section>
-
-<!-- BOYS SCHOOL NOTICE -->
-
-<!-- APPLICATION FORM -->
-
-<section class="pb-20">
-  <div class="max-w-5xl mx-auto px-6">
-    <div class="content-card rounded-2xl p-8 md:p-10">
-      <h2 class="text-3xl font-bold mb-8">Application Form</h2>
-
-      <form method="post" class="space-y-6">
-        {% csrf_token %}
-
-        <div>
-          <label
-            for="{{ form.academic_year.id_for_label }}"
-            class="block mb-2 font-medium"
-          >
-            Academic Year
-          </label>
-
-          {{ form.academic_year }}
-        </div>
-
-        <div class="grid md:grid-cols-2 gap-6">
-          <div>
-            <label
-              for="{{ form.student_name.id_for_label }}"
-              class="block mb-2 font-medium"
-            >
-              Student Name
-            </label>
-
-            {{ form.student_name }}
-          </div>
-
-          <div>
-            <label
-              for="{{ form.student_surname.id_for_label }}"
-              class="block mb-2 font-medium"
-            >
-              Student Surname
-            </label>
-
-            {{ form.student_surname }}
-          </div>
-        </div>
-
-        <div>
-          <label
-            for="{{ form.date_of_birth.id_for_label }}"
-            class="block mb-2 font-medium"
-          >
-            Date of Birth
-          </label>
-
-          {{ form.date_of_birth }}
-        </div>
-
-        <div>
-          <label
-            for="{{ form.parent_guardian_names.id_for_label }}"
-            class="block mb-2 font-medium"
-          >
-            Parent / Guardian Full Names
-          </label>
-
-          {{ form.parent_guardian_names }}
-        </div>
-
-        <div>
-          <label
-            for="{{ form.parent_phone_number.id_for_label }}"
-            class="block mb-2 font-medium"
-          >
-            Parent / Guardian Phone Number
-          </label>
-
-          {{ form.parent_phone_number }}
-        </div>
-
-        <div>
-          <label
-            for="{{ form.home_address.id_for_label }}"
-            class="block mb-2 font-medium"
-          >
-            Home Address
-          </label>
-
-          {{ form.home_address }}
-        </div>
-
-        <div>
-          <label
-            for="{{ form.previous_school.id_for_label }}"
-            class="block mb-2 font-medium"
-          >
-            Previous School
-          </label>
-
-          {{ form.previous_school }}
-        </div>
-
-        <div>
-          <label
-            for="{{ form.district.id_for_label }}"
-            class="block mb-2 font-medium"
-          >
-            District
-          </label>
-
-          {{ form.district }}
-        </div>
-
-        {% if form.errors %}
-
-        <div class="bg-red-50 border border-red-200 rounded-xl p-4">
-          <p class="font-medium text-red-700">
-            Please correct the errors below.
-          </p>
-
-          {{ form.errors }}
-        </div>
-
-        {% endif %}
-
-        <div class="bg-stone-50 border rounded-xl p-4">
-          <p class="text-sm text-gray-600">
-            By submitting this application, you confirm that the information
-            provided is accurate to the best of your knowledge.
-          </p>
-        </div>
-
-        <button type="submit" class="btn-primary">Submit Application</button>
-      </form>
-    </div>
-  </div>
-</section>
+</div></div></section>
 
 {% else %}
-
-<section class="py-20">
-  <div class="max-w-2xl mx-auto px-6 text-center">
-    <div class="content-card rounded-2xl p-8 md:p-10">
-      <p class="text-gold font-semibold uppercase tracking-[0.2em] text-sm">
-        Admissions update
-      </p>
-
-      <h2 class="text-3xl font-bold mt-3">Admissions are currently not open</h2>
-
-      <p class="text-gray-600 leading-relaxed mt-5">
-        {{ site_settings.admissions_message|default:"Please check back later for application updates." }}
-      </p>
-
-      <a href="{% url 'contact' %}" class="inline-block btn-primary mt-8">
-        Contact the school
-      </a>
-    </div>
-  </div>
-</section>
-
+<section class="soft-section py-16 md:py-24"><div class="mx-auto max-w-3xl px-6"><div class="content-card overflow-hidden rounded-3xl text-center"><div class="bg-primary px-7 py-10 text-white"><span class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gold text-primary" aria-hidden="true"><svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5m0 4h.01"/></svg></span><p class="mt-5 text-sm font-bold uppercase tracking-[0.18em] text-gold-light">Admissions update</p><h2 class="mt-3 text-3xl font-bold">Applications are currently closed</h2></div><div class="p-7 md:p-10"><p class="mx-auto max-w-xl text-lg leading-8 text-gray-600">{{ site_settings.admissions_message|default:"Online applications are not being accepted at this time. Please check back for the next admissions update." }}</p><div class="mt-8 flex flex-wrap justify-center gap-3"><a href="{% url 'contact' %}" class="btn-primary">Contact the school</a><a href="{% url 'subject-list' %}" class="inline-flex items-center rounded-xl border border-primary px-5 py-3 font-bold text-primary hover:bg-primary/5">Explore our subjects</a></div>{% if site_settings.admissions_email %}<p class="mt-6 text-sm text-gray-500">Admissions enquiries: <a href="mailto:{{ site_settings.admissions_email }}" class="font-bold text-primary">{{ site_settings.admissions_email }}</a></p>{% endif %}</div></div></div></section>
 {% endif %}
-
 {% endblock %}

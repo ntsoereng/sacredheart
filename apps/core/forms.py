@@ -17,9 +17,25 @@ class ContactForm(forms.ModelForm):
         )
 
         widgets = {
+            "name": forms.TextInput(
+                attrs={
+                    "autocomplete": "name",
+                    "placeholder": "Your full name",
+                }
+            ),
+            "email": forms.EmailInput(
+                attrs={
+                    "autocomplete": "email",
+                    "placeholder": "you@example.com",
+                }
+            ),
+            "subject": forms.TextInput(
+                attrs={"placeholder": "What can we help with?"}
+            ),
             "message": forms.Textarea(
                 attrs={
-                    "rows": 6
+                    "rows": 7,
+                    "placeholder": "Share the details of your question or request…",
                 }
             )
         }

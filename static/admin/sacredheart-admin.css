@@ -1,0 +1,157 @@
+:root,
+html[data-theme="light"] {
+    --primary: #6d1f2f;
+    --secondary: #521722;
+    --accent: #e2c45a;
+    --primary-fg: #ffffff;
+    --header-bg: #521722;
+    --header-color: #ffffff;
+    --header-branding-color: #ffffff;
+    --header-link-color: #ffffff;
+    --breadcrumbs-bg: #6d1f2f;
+    --breadcrumbs-fg: #f4e6b5;
+    --breadcrumbs-link-fg: #ffffff;
+    --link-fg: #6d1f2f;
+    --link-hover-color: #521722;
+    --link-selected-fg: #521722;
+    --button-bg: #6d1f2f;
+    --button-hover-bg: #521722;
+    --default-button-bg: #6d1f2f;
+    --default-button-hover-bg: #521722;
+    --selected-row: #f8f0d9;
+}
+
+body {
+    background: #f7f3ed;
+    font-family: "Source Sans 3", system-ui, sans-serif;
+}
+
+h1,
+h2,
+h3,
+.module caption,
+.inline-group h2 {
+    font-family: "Lusitana", Georgia, serif;
+}
+
+#header {
+    min-height: 4.5rem;
+    padding: 0.7rem 2rem;
+    box-shadow: 0 3px 14px rgba(47, 12, 20, 0.18);
+}
+
+#branding {
+    align-items: center;
+    display: flex;
+}
+
+.sacredheart-brand-link {
+    align-items: center;
+    color: white !important;
+    display: inline-flex;
+    gap: 0.8rem;
+    text-decoration: none;
+}
+
+.sacredheart-monogram {
+    align-items: center;
+    background: #c9a227;
+    border-radius: 0.7rem;
+    color: #521722;
+    display: inline-flex;
+    font-family: "Lusitana", Georgia, serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    height: 2.75rem;
+    justify-content: center;
+    width: 2.75rem;
+}
+
+.sacredheart-brand-name,
+.sacredheart-brand-subtitle {
+    display: block;
+}
+
+.sacredheart-brand-name {
+    font-family: "Lusitana", Georgia, serif;
+    font-size: 1.35rem;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.sacredheart-brand-subtitle {
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    margin-top: 0.2rem;
+    text-transform: uppercase;
+}
+
+.sacredheart-view-site {
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    border-radius: 0.55rem;
+    color: white !important;
+    display: inline-flex;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.55rem 0.8rem;
+}
+
+.sacredheart-view-site:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #c9a227;
+    text-decoration: none;
+}
+
+#content {
+    padding: 2rem;
+}
+
+#content h1 {
+    color: #3d2026;
+    font-size: 2rem;
+}
+
+.module,
+.inline-group,
+#content-related {
+    border-radius: 0.75rem;
+    box-shadow: 0 5px 20px rgba(68, 53, 37, 0.06);
+    overflow: hidden;
+}
+
+.module h2,
+.module caption,
+.inline-group h2 {
+    letter-spacing: 0.01em;
+}
+
+input[type="submit"],
+button,
+.button,
+.submit-row input {
+    border-radius: 0.5rem;
+    font-family: "Source Sans 3", system-ui, sans-serif;
+    font-weight: 700;
+}
+
+.submit-row {
+    border-radius: 0.75rem;
+}
+
+@media (max-width: 767px) {
+    #header {
+        align-items: flex-start;
+        padding: 0.7rem 1rem;
+    }
+
+    .sacredheart-brand-subtitle,
+    .sacredheart-view-site {
+        display: none;
+    }
+
+    #content {
+        padding: 1.25rem 1rem;
+    }
+}

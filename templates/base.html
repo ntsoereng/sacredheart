@@ -19,15 +19,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Lusitana:wght@400;700&family=Source+Sans+3:wght@400;500;600;700&display=swap"
         rel="stylesheet">
 
     {% if site_settings.favicon %}
-
-    <link
-        rel="icon"
-        href="{{ site_settings.favicon.url }}">
-
+    <link rel="icon" type="image/png" sizes="64x64" href="{{ site_settings.favicon.url }}?v={{ site_settings.updated_at|date:'U' }}">
+    <link rel="shortcut icon" href="{% url 'favicon' %}?v={{ site_settings.updated_at|date:'U' }}">
+    <link rel="apple-touch-icon" href="{{ site_settings.favicon.url }}?v={{ site_settings.updated_at|date:'U' }}">
     {% endif %}
 
     <link rel="stylesheet"

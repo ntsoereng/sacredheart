@@ -1,0 +1,28 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{{ title }} | Sacred Heart Administration{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lusitana:wght@400;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'admin/sacredheart-admin.css' %}">
+{% endblock %}
+
+{% block branding %}
+<div id="sacredheart-branding">
+    <a href="{% url 'admin:index' %}" class="sacredheart-brand-link">
+        <span class="sacredheart-monogram" aria-hidden="true">SH</span>
+        <span>
+            <span class="sacredheart-brand-name">Sacred Heart</span>
+            <span class="sacredheart-brand-subtitle">School Administration</span>
+        </span>
+    </a>
+</div>
+{% endblock %}
+
+{% block nav-global %}
+<a class="sacredheart-view-site" href="{% url 'home' %}">View school website →</a>
+{% endblock %}

@@ -1,11 +1,18 @@
 {% if site_settings.show_announcement and site_settings.homepage_announcement %}
-<div class="bg-primary text-white overflow-hidden">
-    <div class="announcement-wrapper">
-        <div class="announcement-track">
-            {% for i in "1234567890" %}
-                <span class="announcement-item">📢 {{ site_settings.homepage_announcement }}</span>
-            {% endfor %}
+<div x-data="{ visible: true }" x-show="visible" x-transition.opacity class="relative overflow-hidden bg-primary text-white" role="status" aria-label="School announcement">
+    <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(226,196,90,.22),transparent_45%)]"></div>
+    <div class="relative mx-auto flex max-w-7xl items-start gap-3 px-5 py-3 sm:items-center sm:px-6">
+        <span class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gold text-primary sm:mt-0" aria-hidden="true">
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11v2a1 1 0 0 0 1 1h2l3 5h2l-1-5 8-3V7l-8-3H6v10"/><path d="M18 8a3 3 0 0 1 0 6"/></svg>
+        </span>
+        <div class="min-w-0 flex-1 sm:flex sm:items-center sm:gap-3">
+            <p class="text-xs font-bold uppercase tracking-[0.16em] text-gold-light">School notice</p>
+            <span class="hidden h-4 w-px bg-white/25 sm:block"></span>
+            <p class="mt-0.5 text-sm leading-relaxed text-white/95 sm:mt-0">{{ site_settings.homepage_announcement }}</p>
         </div>
+        <button type="button" @click="visible = false" class="shrink-0 rounded-lg p-1.5 text-white/70 hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gold" aria-label="Dismiss announcement">
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+        </button>
     </div>
 </div>
 {% endif %}
@@ -43,6 +50,7 @@
                     <div x-cloak x-show="communityOpen" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 -translate-y-1 scale-95" x-transition:enter-end="opacity-100 translate-y-0 scale-100" x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0 -translate-y-1" class="nav-dropdown">
                         <a href="{% url 'event-list' %}" class="nav-dropdown-link">Events</a>
                         <a href="{% url 'post-list' %}" class="nav-dropdown-link">News</a>
+                        <a href="{% url 'alumni-list' %}" class="nav-dropdown-link">Alumni corner</a>
                         <a href="{% url 'donations' %}" class="nav-dropdown-link">Donations</a>
                     </div>
                 </div>
@@ -83,6 +91,7 @@
                 <div class="mt-2 grid grid-cols-2 gap-2">
                     <a href="{% url 'event-list' %}" class="nav-mobile-link">Events</a>
                     <a href="{% url 'post-list' %}" class="nav-mobile-link">News</a>
+                    <a href="{% url 'alumni-list' %}" class="nav-mobile-link">Alumni corner</a>
                     <a href="{% url 'donations' %}" class="nav-mobile-link">Donations</a>
                 </div>
             </div>
