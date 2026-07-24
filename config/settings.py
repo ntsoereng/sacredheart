@@ -203,11 +203,28 @@ STATIC_ROOT = Path(
     config("STATIC_ROOT", default=str(BASE_DIR / "staticfiles"))
 ).expanduser()
 
+# Let WhiteNoise fall back to Django's static-file finders when a cPanel
+# deployment has not populated STATIC_ROOT yet. collectstatic remains the
+# preferred production path, but this prevents an unstyled site after deploys.
+WHITENOISE_USE_FINDERS = config(
+    "WHITENOISE_USE_FINDERS",
+    default=True,
+    cast=bool,
+)
+
 MEDIA_URL = config("MEDIA_URL", default="/media/")
 
 MEDIA_ROOT = Path(
     config("MEDIA_ROOT", default=str(BASE_DIR / "media"))
 ).expanduser()
+
+# cPanel normally serves MEDIA_ROOT through Apache. Some Passenger setups send
+# /media/ to Django instead, so retain a controlled application fallback.
+SERVE_MEDIA = config(
+    "DJANGO_SERVE_MEDIA",
+    default=True,
+    cast=bool,
+)
 
 STORAGES = {
     "default": {

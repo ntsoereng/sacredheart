@@ -1,7 +1,8 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import include, path, re_path
+from django.views.static import serve
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -23,3 +24,15 @@ if settings.DEBUG:
         settings.MEDIA_URL,
         document_root=settings.MEDIA_ROOT,
     )
+elif settings.SERVE_MEDIA:
+    # Production fallback for Passenger/cPanel installations where Apache does
+    # not map MEDIA_URL to MEDIA_ROOT. django.views.static.serve normalizes the
+    # requested path and prevents traversal outside the configured media root.
+    media_prefix = settings.MEDIA_URL.lstrip("/").rstrip("/")
+    urlpatterns += [
+        re_path(
+            rf"^{media_prefix}/(?P<path>.*)$",
+            serve,
+            {"document_root": settings.MEDIA_ROOT},
+        ),
+    ]

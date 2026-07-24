@@ -100,8 +100,10 @@ chmod 644 /home/USERNAME/public_html/media/.htaccess
 
 Apache should serve existing files under `/media/` directly before Passenger.
 Verify this by uploading an image through Django Admin and opening its `/media/`
-URL. Do not use WhiteNoise for user uploads, and do not add a production Django
-URL route that serves `MEDIA_ROOT`.
+URL. The application includes a Django media fallback for cPanel installations
+that route `/media/` through Passenger. Once Apache is confirmed to serve the
+directory directly, set `DJANGO_SERVE_MEDIA=False` to remove that fallback.
+WhiteNoise is used only for static assets, not uploaded media.
 
 Back up `MEDIA_ROOT` together with the MySQL database. Database backups alone do
 not contain uploaded logos, photographs, or hero images.
@@ -136,6 +138,11 @@ python manage.py check --deploy
 on the server. Review any local changes reported by `git status` before pulling.
 The ignored `.env`, `staticfiles/`, and external `MEDIA_ROOT` are not replaced
 by a normal pull.
+
+If the site loads without styling before `collectstatic` has been run,
+`WHITENOISE_USE_FINDERS=True` allows WhiteNoise to find repository static
+assets as a fallback. Keep running `collectstatic` on every deployment for
+compressed, cache-friendly production assets.
 
 If cPanel provides environment-variable fields, prefer them to `.env`. If you
 use `.env`, create it directly on the server after cloning; never add or commit
