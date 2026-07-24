@@ -46,11 +46,13 @@
 
 <body class="bg-stone-50 text-gray-800 min-h-screen flex flex-col">
 
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
     {% include "partials/navbar.html" %}
 
     {% include "partials/messages.html" %}
 
-    <main class="grow">
+    <main id="main-content" class="grow" tabindex="-1">
 
         {% block content %}
         {% endblock %}
