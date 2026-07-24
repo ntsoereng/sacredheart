@@ -1,79 +1,304 @@
 <footer class="relative overflow-hidden bg-[#401019] text-white">
-    <div class="absolute -right-28 top-24 h-80 w-80 rounded-full border-[3.5rem] border-white/[.025]" aria-hidden="true"></div>
-    <div class="h-1 bg-gradient-to-r from-primary via-gold to-primary"></div>
+  <div
+    class="absolute -right-28 top-24 h-80 w-80 rounded-full border-[3.5rem] border-white/[.025]"
+    aria-hidden="true"
+  ></div>
+  <div class="h-1 bg-gradient-to-r from-primary via-gold to-primary"></div>
 
-    <div class="relative mx-auto max-w-7xl px-6 pb-7 pt-12 md:pt-14">
-        <div class="mb-12 grid gap-6 rounded-2xl border border-white/10 bg-white/[.055] p-6 sm:grid-cols-[1fr_auto] sm:items-center md:p-7">
-            <div class="flex items-start gap-4">
-                <span class="hidden h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gold text-primary sm:flex" aria-hidden="true">
-                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3h14v18H5zM8 7h8m-8 4h8m-8 4h5"/></svg>
-                </span>
-                <div>
-                    <div class="flex flex-wrap items-center gap-2">
-                        <h2 class="text-xl font-bold">Interested in joining Sacred Heart?</h2>
-                        {% if site_settings.admissions_open %}<span class="rounded-full bg-green-400/15 px-2.5 py-1 text-xs font-bold text-green-200">Admissions open</span>{% else %}<span class="rounded-full bg-white/10 px-2.5 py-1 text-xs font-bold text-white/65">Admissions information</span>{% endif %}
-                    </div>
-                    <p class="mt-1.5 max-w-2xl text-sm leading-6 text-white/65">Find application information, explore our subjects, or speak with the school before taking your next step.</p>
-                </div>
-            </div>
-            <a href="{% url 'application-create' %}" class="inline-flex min-h-11 items-center justify-center rounded-xl bg-gold px-5 py-3 text-sm font-bold text-primary hover:-translate-y-0.5 hover:bg-gold-light">Explore admissions <span class="ml-2" aria-hidden="true">→</span></a>
+  <div class="relative mx-auto max-w-7xl px-6 pb-7 pt-12 md:pt-14">
+    <div
+      class="mb-12 grid gap-6 rounded-2xl border border-white/10 bg-white/[.055] p-6 sm:grid-cols-[1fr_auto] sm:items-center md:p-7"
+    >
+      <div class="flex items-start gap-4">
+        <span
+          class="hidden h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gold text-primary sm:flex"
+          aria-hidden="true"
+        >
+          <svg
+            class="h-5 w-5"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M5 3h14v18H5zM8 7h8m-8 4h8m-8 4h5" />
+          </svg>
+        </span>
+        <div>
+          <div class="flex flex-wrap items-center gap-2">
+            <h2 class="text-xl font-bold">
+              Interested in joining Sacred Heart?
+            </h2>
+            {% if site_settings.admissions_open %}<span
+              class="rounded-full bg-green-400/15 px-2.5 py-1 text-xs font-bold text-green-200"
+              >Admissions open</span
+            >{% else %}<span
+              class="rounded-full bg-white/10 px-2.5 py-1 text-xs font-bold text-white/65"
+              >Admissions information</span
+            >{% endif %}
+          </div>
+          <p class="mt-1.5 max-w-2xl text-sm leading-6 text-white/65">
+            Find application information, explore our subjects, or speak with
+            the school before taking your next step.
+          </p>
         </div>
-
-        <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-12 lg:gap-8">
-            <div class="sm:col-span-2 lg:col-span-4">
-                <a href="{% url 'home' %}" class="inline-flex items-center gap-4 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-gold">
-                    {% if site_settings.logo %}<span class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-white p-1.5 shadow-lg"><img src="{{ site_settings.logo.url }}" alt="" class="max-h-full max-w-full rounded-xl object-contain"></span>{% endif %}
-                    <span><span class="block font-serif text-2xl font-bold leading-tight">{{ site_settings.school_name|default:"Sacred Heart High School" }}</span>{% if site_settings.tagline %}<span class="mt-1 block text-sm text-gold-light">{{ site_settings.tagline }}</span>{% endif %}</span>
-                </a>
-                <p class="mt-6 max-w-sm text-sm leading-7 text-white/65">A caring school community committed to purposeful learning, strong character, faith, and service.</p>
-                <div class="mt-6 flex flex-wrap gap-3">
-                    <a href="{% url 'contact' %}" class="inline-flex items-center rounded-lg border border-white/20 px-4 py-2.5 text-sm font-bold text-white hover:border-gold/60 hover:bg-white/5">Contact the school</a>
-                    <a href="{% url 'donations' %}" class="inline-flex items-center rounded-lg px-3 py-2.5 text-sm font-bold text-gold-light hover:bg-white/5 hover:text-white">Support learners →</a>
-                </div>
-            </div>
-
-            <nav class="lg:col-span-2" aria-label="School links">
-                <h2 class="text-sm font-bold uppercase tracking-[0.16em] text-gold-light">Our school</h2>
-                <ul class="mt-5 space-y-3.5">
-                    <li><a href="{% url 'about-us' %}" class="footer-link">About Sacred Heart</a></li>
-                    <li><a href="{% url 'subject-list' %}" class="footer-link">Subjects and learning</a></li>
-                    <li><a href="{% url 'staff-list' %}" class="footer-link">Meet our staff</a></li>
-                    <li><a href="{% url 'application-create' %}" class="footer-link">Admissions</a></li>
-                    <li><a href="{% url 'contact' %}" class="footer-link">Contact us</a></li>
-                </ul>
-            </nav>
-
-            <nav class="lg:col-span-2" aria-label="Community links">
-                <h2 class="text-sm font-bold uppercase tracking-[0.16em] text-gold-light">Community</h2>
-                <ul class="mt-5 space-y-3.5">
-                    <li><a href="{% url 'event-list' %}" class="footer-link">Events calendar</a></li>
-                    <li><a href="{% url 'post-list' %}" class="footer-link">School news</a></li>
-                    <li><a href="{% url 'alumni-list' %}" class="footer-link">Alumni Corner</a></li>
-                    <li><a href="{% url 'alumni-create' %}" class="footer-link">Share an alumni story</a></li>
-                    <li><a href="{% url 'donations' %}" class="footer-link">Donations</a></li>
-                </ul>
-            </nav>
-
-            <div class="sm:col-span-2 lg:col-span-4">
-                <h2 class="text-sm font-bold uppercase tracking-[0.16em] text-gold-light">Contact and visit</h2>
-                <div class="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-1">
-                    {% if site_settings.address %}<div class="flex gap-3"><svg class="mt-0.5 h-5 w-5 shrink-0 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg><div><p class="text-xs font-bold uppercase tracking-wide text-white/40">Address</p><p class="mt-1 whitespace-pre-line text-sm leading-6 text-white/70">{{ site_settings.address }}</p></div></div>{% endif %}
-                    {% if site_settings.phone %}<div class="flex gap-3"><svg class="mt-0.5 h-5 w-5 shrink-0 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.78.62 2.63a2 2 0 0 1-.45 2.11L8 9.73a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.85.29 1.73.5 2.63.62A2 2 0 0 1 22 16.92Z"/></svg><div><p class="text-xs font-bold uppercase tracking-wide text-white/40">Telephone</p><a href="tel:{{ site_settings.phone }}" class="mt-1 block text-sm font-semibold text-white/75 hover:text-gold-light">{{ site_settings.phone }}</a></div></div>{% endif %}
-                    {% if site_settings.email %}<div class="flex min-w-0 gap-3"><svg class="mt-0.5 h-5 w-5 shrink-0 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg><div class="min-w-0"><p class="text-xs font-bold uppercase tracking-wide text-white/40">Email</p><a href="mailto:{{ site_settings.email }}" class="mt-1 block break-all text-sm font-semibold text-white/75 hover:text-gold-light">{{ site_settings.email }}</a></div></div>{% endif %}
-                    {% if site_settings.office_hours %}<div class="flex gap-3"><svg class="mt-0.5 h-5 w-5 shrink-0 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><div><p class="text-xs font-bold uppercase tracking-wide text-white/40">Office hours</p><p class="mt-1 text-sm leading-6 text-white/70">{{ site_settings.office_hours }}</p></div></div>{% endif %}
-                </div>
-            </div>
-        </div>
-
-        <div class="mt-12 grid gap-4 border-t border-white/10 pt-6 text-xs text-white/45 sm:grid-cols-[1fr_auto] sm:items-center">
-            <p>© {% now "Y" %} {{ site_settings.school_name|default:"Sacred Heart High School" }}. All rights reserved.</p>
-            <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
-                <a href="{% url 'privacy-policy' %}" class="hover:text-gold-light">Privacy Policy</a>
-                <a href="{% url 'terms-of-use' %}" class="hover:text-gold-light">Terms of Use</a>
-                <a href="{% url 'staff-login' %}" class="hover:text-gold-light">Staff portal</a>
-                <span class="hidden text-white/20 sm:inline" aria-hidden="true">|</span>
-                <span>Website by <a href="https://creativematrix.co.ls" target="_blank" rel="noopener noreferrer" class="font-semibold text-gold/80 hover:text-gold-light">Creative Matrix</a></span>
-            </div>
-        </div>
+      </div>
+      <a
+        href="{% url 'application-create' %}"
+        class="inline-flex min-h-11 items-center justify-center rounded-xl bg-gold px-5 py-3 text-sm font-bold text-primary hover:-translate-y-0.5 hover:bg-gold-light"
+        >Explore admissions <span class="ml-2" aria-hidden="true">→</span></a
+      >
     </div>
+
+    <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-12 lg:gap-8">
+      <div class="sm:col-span-2 lg:col-span-4">
+        <a
+          href="{% url 'home' %}"
+          class="inline-flex items-center gap-4 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+        >
+          {% if site_settings.logo %}<span
+            class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-white p-1.5 shadow-lg"
+            ><img
+              src="{{ site_settings.logo.url }}"
+              alt=""
+              class="max-h-full max-w-full rounded-xl object-contain" /></span
+          >{% endif %}
+          <span
+            ><span class="block font-serif text-2xl font-bold leading-tight"
+              >{{ site_settings.school_name|default:"Sacred Heart High School"
+              }}</span
+            >{% if site_settings.tagline %}<span
+              class="mt-1 block text-sm text-gold-light"
+              >{{ site_settings.tagline }}</span
+            >{% endif %}</span
+          >
+        </a>
+        <p class="mt-6 max-w-sm text-sm leading-7 text-white/65">
+          A caring school community committed to purposeful learning, strong
+          character, faith, and service.
+        </p>
+        <div class="mt-6 flex flex-wrap gap-3">
+          <a
+            href="{% url 'contact' %}"
+            class="inline-flex items-center rounded-lg border border-white/20 px-4 py-2.5 text-sm font-bold text-white hover:border-gold/60 hover:bg-white/5"
+            >Contact the school</a
+          >
+          <a
+            href="{% url 'donations' %}"
+            class="inline-flex items-center rounded-lg px-3 py-2.5 text-sm font-bold text-gold-light hover:bg-white/5 hover:text-white"
+            >Support learners →</a
+          >
+        </div>
+      </div>
+
+      <nav class="lg:col-span-2" aria-label="School links">
+        <h2
+          class="text-sm font-bold uppercase tracking-[0.16em] text-gold-light"
+        >
+          Our school
+        </h2>
+        <ul class="mt-5 space-y-3.5">
+          <li>
+            <a href="{% url 'about-us' %}" class="footer-link"
+              >About Sacred Heart</a
+            >
+          </li>
+          <li>
+            <a href="{% url 'subject-list' %}" class="footer-link"
+              >Subjects and learning</a
+            >
+          </li>
+          <li>
+            <a href="{% url 'staff-list' %}" class="footer-link"
+              >Meet our staff</a
+            >
+          </li>
+          <li>
+            <a href="{% url 'application-create' %}" class="footer-link"
+              >Admissions</a
+            >
+          </li>
+          <li>
+            <a href="{% url 'contact' %}" class="footer-link">Contact us</a>
+          </li>
+        </ul>
+      </nav>
+
+      <nav class="lg:col-span-2" aria-label="Community links">
+        <h2
+          class="text-sm font-bold uppercase tracking-[0.16em] text-gold-light"
+        >
+          Community
+        </h2>
+        <ul class="mt-5 space-y-3.5">
+          <li>
+            <a href="{% url 'event-list' %}" class="footer-link"
+              >Events calendar</a
+            >
+          </li>
+          <li>
+            <a href="{% url 'post-list' %}" class="footer-link">School news</a>
+          </li>
+          <li>
+            <a href="{% url 'alumni-list' %}" class="footer-link"
+              >Alumni Corner</a
+            >
+          </li>
+          <li>
+            <a href="{% url 'alumni-create' %}" class="footer-link"
+              >Share an alumni story</a
+            >
+          </li>
+          <li>
+            <a href="{% url 'donations' %}" class="footer-link">Donations</a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="sm:col-span-2 lg:col-span-4">
+        <h2
+          class="text-sm font-bold uppercase tracking-[0.16em] text-gold-light"
+        >
+          Contact and visit
+        </h2>
+        <div class="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-1">
+          {% if site_settings.address %}
+          <div class="flex gap-3">
+            <svg
+              class="mt-0.5 h-5 w-5 shrink-0 text-gold"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              aria-hidden="true"
+            >
+              <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" />
+              <circle cx="12" cy="10" r="2.5" />
+            </svg>
+            <div>
+              <p
+                class="text-xs font-bold uppercase tracking-wide text-white/40"
+              >
+                Address
+              </p>
+              <p
+                class="mt-1 whitespace-pre-line text-sm leading-6 text-white/70"
+              >
+                {{ site_settings.address }}
+              </p>
+            </div>
+          </div>
+          {% endif %} {% if site_settings.phone %}
+          <div class="flex gap-3">
+            <svg
+              class="mt-0.5 h-5 w-5 shrink-0 text-gold"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              aria-hidden="true"
+            >
+              <path
+                d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.78.62 2.63a2 2 0 0 1-.45 2.11L8 9.73a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.85.29 1.73.5 2.63.62A2 2 0 0 1 22 16.92Z"
+              />
+            </svg>
+            <div>
+              <p
+                class="text-xs font-bold uppercase tracking-wide text-white/40"
+              >
+                Telephone
+              </p>
+              <a
+                href="tel:{{ site_settings.phone }}"
+                class="mt-1 block text-sm font-semibold text-white/75 hover:text-gold-light"
+                >{{ site_settings.phone }}</a
+              >
+            </div>
+          </div>
+          {% endif %} {% if site_settings.email %}
+          <div class="flex min-w-0 gap-3">
+            <svg
+              class="mt-0.5 h-5 w-5 shrink-0 text-gold"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              aria-hidden="true"
+            >
+              <rect x="3" y="5" width="18" height="14" rx="2" />
+              <path d="m3 7 9 6 9-6" />
+            </svg>
+            <div class="min-w-0">
+              <p
+                class="text-xs font-bold uppercase tracking-wide text-white/40"
+              >
+                Email
+              </p>
+              <a
+                href="mailto:{{ site_settings.email }}"
+                class="mt-1 block break-all text-sm font-semibold text-white/75 hover:text-gold-light"
+                >{{ site_settings.email }}</a
+              >
+            </div>
+          </div>
+          {% endif %} {% if site_settings.office_hours %}
+          <div class="flex gap-3">
+            <svg
+              class="mt-0.5 h-5 w-5 shrink-0 text-gold"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 7v5l3 2" />
+            </svg>
+            <div>
+              <p
+                class="text-xs font-bold uppercase tracking-wide text-white/40"
+              >
+                Office hours
+              </p>
+              <p class="mt-1 text-sm leading-6 text-white/70">
+                {{ site_settings.office_hours }}
+              </p>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="mt-12 grid gap-4 border-t border-white/10 pt-6 text-xs text-white/45 sm:grid-cols-[1fr_auto] sm:items-center"
+    >
+      <p>
+        © {% now "Y" %} {{ site_settings.school_name|default:"Sacred Heart High
+        School" }}. All rights reserved.
+      </p>
+      <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
+        <a href="{% url 'privacy-policy' %}" class="hover:text-gold-light"
+          >Privacy Policy</a
+        >
+        <a href="{% url 'terms-of-use' %}" class="hover:text-gold-light"
+          >Terms of Use</a
+        >
+        <a href="{% url 'staff-login' %}" class="hover:text-gold-light"
+          >Staff portal</a
+        >
+        <span class="hidden text-white/20 sm:inline" aria-hidden="true">|</span>
+        <span
+          >Website by
+          <a
+            href="https://cletusntsoereng.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="font-semibold text-gold/80 hover:text-gold-light"
+            >Cletus Ntsoereng</a
+          ></span
+        >
+      </div>
+    </div>
+  </div>
 </footer>
