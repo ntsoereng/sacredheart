@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import ContactMessage, SiteSettings
+from .models import ContactMessage, ExtracurricularActivity, SiteSettings
 
 admin.site.site_header = "Sacred Heart Administration"
 admin.site.site_title = "Sacred Heart Admin"
@@ -87,4 +87,49 @@ class ContactMessageAdmin(admin.ModelAdmin):
         "name",
         "email",
         "subject",
+    )
+
+
+@admin.register(ExtracurricularActivity)
+class ExtracurricularActivityAdmin(admin.ModelAdmin):
+    list_display = (
+        "name",
+        "category",
+        "display_order",
+        "is_featured",
+        "is_published",
+        "updated_at",
+    )
+    list_editable = ("display_order", "is_featured", "is_published")
+    list_filter = ("category", "is_featured", "is_published")
+    search_fields = (
+        "name",
+        "short_description",
+        "description",
+        "achievements",
+    )
+    prepopulated_fields = {"slug": ("name",)}
+    readonly_fields = ("created_at", "updated_at")
+    fieldsets = (
+        ("Activity", {
+            "fields": (
+                "name",
+                "slug",
+                "category",
+                "short_description",
+                "description",
+                "featured_image",
+            ),
+        }),
+        ("Achievements", {"fields": ("achievements",)}),
+        ("Publishing", {
+            "fields": (
+                "is_published",
+                "is_featured",
+                "display_order",
+            ),
+        }),
+        ("Record information", {
+            "fields": ("created_at", "updated_at"),
+        }),
     )

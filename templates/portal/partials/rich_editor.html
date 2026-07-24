@@ -1,0 +1,23 @@
+<div class="mt-6" data-rich-editor>
+    <label class="mb-2 block text-sm font-bold">{{ label }}</label>
+    {{ field }}
+    <div class="overflow-hidden rounded-xl border border-stone-300 bg-white focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/15">
+        <div class="flex flex-wrap gap-1 border-b border-stone-200 bg-stone-50 p-2" role="toolbar" aria-label="{{ label }} formatting">
+            <button type="button" class="editor-tool" data-command="bold" title="Bold"><strong>B</strong></button>
+            <button type="button" class="editor-tool italic" data-command="italic" title="Italic">I</button>
+            <span class="mx-1 w-px bg-stone-300"></span>
+            <button type="button" class="editor-tool" data-block="p">Paragraph</button>
+            <button type="button" class="editor-tool" data-block="h2">Heading</button>
+            <button type="button" class="editor-tool" data-block="h3">Subheading</button>
+            <span class="mx-1 w-px bg-stone-300"></span>
+            <button type="button" class="editor-tool" data-command="insertUnorderedList">• List</button>
+            <button type="button" class="editor-tool" data-command="insertOrderedList">1. List</button>
+            <button type="button" class="editor-tool" data-command="formatBlock" data-value="blockquote">Quote</button>
+            <button type="button" class="editor-tool" data-link="true">Link</button>
+        </div>
+        <div class="rich-content min-h-56 px-5 py-4 text-gray-800 outline-none" contenteditable="true" role="textbox" aria-multiline="true" aria-label="{{ label }}"></div>
+    </div>
+    <template data-rich-initial>{{ field.value|default:""|escape }}</template>
+    {% for error in field.errors %}<p class="mt-1 text-sm text-red-700">{{ error }}</p>{% endfor %}
+    <p class="mt-2 text-xs text-gray-500">Formatting is safely cleaned before publication.</p>
+</div>

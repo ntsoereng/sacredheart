@@ -2,6 +2,7 @@ from django.conf import settings
 from django.db import models
 from django.utils.text import slugify
 from django.utils import timezone
+from apps.posts.content import sanitize_post_html
 
 class Event(models.Model):
 
@@ -67,6 +68,7 @@ class Event(models.Model):
                 suffix += 1
             self.slug = slug
 
+        self.description = sanitize_post_html(self.description)
         super().save(*args, **kwargs)
         
     

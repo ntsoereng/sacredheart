@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.text import slugify
+from apps.posts.content import sanitize_post_html
 
 
 class Subject(models.Model):
@@ -32,4 +33,5 @@ class Subject(models.Model):
                 slug = f"{base_slug}-{suffix}"
                 suffix += 1
             self.slug = slug
+        self.description = sanitize_post_html(self.description)
         super().save(*args, **kwargs)

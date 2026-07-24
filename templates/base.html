@@ -9,11 +9,22 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
-    <title>
-        {% block title %}
-        Sacred Heart High School
-        {% endblock %}
-    </title>
+    <title>{% block title %}{{ seo_school_name }}{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}{{ seo_default_description }}{% endblock %}">
+    <meta name="robots" content="{% block robots %}index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1{% endblock %}">
+    <link rel="canonical" href="{% block canonical_url %}{{ seo_canonical_url }}{% endblock %}">
+
+    <meta property="og:site_name" content="{{ seo_school_name }}">
+    <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+    <meta property="og:title" content="{% block og_title %}{{ seo_school_name }}{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}{{ seo_default_description }}{% endblock %}">
+    <meta property="og:url" content="{{ seo_canonical_url }}">
+    {% block og_image %}{% if seo_default_image %}<meta property="og:image" content="{{ seo_default_image }}">{% endif %}{% endblock %}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{% block twitter_title %}{{ seo_school_name }}{% endblock %}">
+    <meta name="twitter:description" content="{% block twitter_description %}{{ seo_default_description }}{% endblock %}">
+    <script type="application/ld+json">{{ organization_schema }}</script>
+    {% block structured_data %}{% endblock %}
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

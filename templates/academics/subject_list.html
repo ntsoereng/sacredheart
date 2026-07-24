@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
-{% block title %}Subjects{% endblock %}
+{% block title %}Subjects and Academics | Sacred Heart High School{% endblock %}
+{% block meta_description %}Explore the subjects and learning pathways available to students at Sacred Heart High School.{% endblock %}
 
 {% block content %}
 <section class="page-hero py-20 text-white">
@@ -22,7 +23,7 @@
                     {% if subject.featured_image %}<img src="{{ subject.featured_image.url }}" alt="" class="h-52 w-full object-cover">{% else %}<div class="flex h-52 items-center justify-center bg-primary/10"><span class="icon-disc" aria-hidden="true"><svg class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m4 6 8-3 8 3-8 3-8-3Zm0 6 8 3 8-3M4 18l8 3 8-3"/></svg></span></div>{% endif %}
                     <div class="p-7">
                     <h2 class="font-bold text-xl mt-5">{{ subject.name }}</h2>
-                    <p class="text-gray-600 mt-4">{{ subject.description|truncatewords:24 }}</p>
+                    <p class="text-gray-600 mt-4">{{ subject.description|striptags|truncatewords:24 }}</p>
                     <a href="{% url 'subject-detail' subject.slug %}" class="inline-block mt-5 text-link">
                         Learn more →
                     </a>

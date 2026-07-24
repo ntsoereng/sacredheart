@@ -5,6 +5,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from apps.admissions.models import Application, ApplicationNote
+from apps.core.models import ExtracurricularActivity, SiteSettings
 from apps.events.models import Event
 from apps.posts.models import Post
 from apps.academics.models import Subject
@@ -113,6 +114,45 @@ class StaffApplicationWorkflowTests(TestCase):
         self.assertRedirects(response, reverse("content-manager"))
         event = Event.objects.get(title="Open Day")
         self.assertEqual(event.created_by, self.staff_user)
+
+    def test_staff_can_create_activity_with_safe_rich_text(self):
+        response = self.client.post(
+            reverse("activity-create"),
+            {
+                "name": "Marimba Band",
+                "category": "music",
+                "short_description": "Music, confidence and teamwork.",
+                "description": "<h2>About the band</h2><script>alert(1)</script>",
+                "achievements": "<ul><li>Community performance</li></ul>",
+                "is_published": "on",
+                "is_featured": "on",
+                "display_order": 1,
+            },
+        )
+
+        self.assertRedirects(response, reverse("content-manager"))
+        activity = ExtracurricularActivity.objects.get(name="Marimba Band")
+        self.assertIn("<h2>", activity.description)
+        self.assertNotIn("<script", activity.description)
+        self.assertTrue(activity.is_featured)
+
+    def test_staff_can_update_public_announcement(self):
+        settings = SiteSettings.objects.create(school_name="Sacred Heart")
+        response = self.client.post(
+            reverse("announcement-edit"),
+            {
+                "homepage_announcement": "Applications close on Friday.",
+                "show_announcement": "on",
+            },
+        )
+
+        self.assertRedirects(response, reverse("content-manager"))
+        settings.refresh_from_db()
+        self.assertEqual(
+            settings.homepage_announcement,
+            "Applications close on Friday.",
+        )
+        self.assertTrue(settings.show_announcement)
 
     def test_staff_can_create_subject_with_generated_slug(self):
         response = self.client.post(

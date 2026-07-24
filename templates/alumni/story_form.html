@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Share Your Alumni Story | Sacred Heart{% endblock %}
+{% block robots %}noindex, follow{% endblock %}
 {% block content %}
 <section class="page-hero py-16 text-white"><div class="mx-auto max-w-4xl px-6 text-center"><p class="text-sm font-bold uppercase tracking-[0.2em] text-gold-light">Alumni Corner</p><h1 class="mt-4 text-4xl font-bold md:text-5xl">Share your Sacred Heart story</h1><p class="mx-auto mt-5 max-w-2xl text-lg leading-8 text-white/80">Tell us where life has taken you, the memories you treasure, and what you would like today’s learners to know.</p></div></section>
 <section class="soft-section py-14 md:py-18"><div class="mx-auto max-w-4xl px-6"><div class="mb-7 rounded-2xl border border-blue-200 bg-blue-50 p-5 text-sm leading-6 text-blue-900"><strong>Your privacy matters.</strong> Your email and phone number are available only to authorised staff for follow-up. They are never shown in Alumni Corner.</div><form method="post" enctype="multipart/form-data" class="content-card rounded-3xl p-6 md:p-10">{% csrf_token %}{% if form.non_field_errors %}<div class="mb-6 rounded-xl bg-red-50 p-4 text-red-700">{{ form.non_field_errors }}</div>{% endif %}

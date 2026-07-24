@@ -9,6 +9,7 @@
             <p class="text-xs font-bold uppercase tracking-[0.16em] text-gold-light">School notice</p>
             <span class="hidden h-4 w-px bg-white/25 sm:block"></span>
             <p class="mt-0.5 text-sm leading-relaxed text-white/95 sm:mt-0">{{ site_settings.homepage_announcement }}</p>
+            {% if request.user.is_staff %}<a href="{% url 'announcement-edit' %}" class="mt-1 inline-block text-xs font-bold text-gold-light underline sm:mt-0">Edit announcement</a>{% endif %}
         </div>
         <button type="button" @click="visible = false" class="shrink-0 rounded-lg p-1.5 text-white/70 hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gold" aria-label="Dismiss announcement">
             <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
@@ -38,6 +39,7 @@
                     <div x-cloak x-show="schoolOpen" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 -translate-y-1 scale-95" x-transition:enter-end="opacity-100 translate-y-0 scale-100" x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0 -translate-y-1" class="nav-dropdown">
                         <a href="{% url 'about-us' %}" class="nav-dropdown-link">About us</a>
                         <a href="{% url 'subject-list' %}" class="nav-dropdown-link">Subjects</a>
+                        <a href="{% url 'activity-list' %}" class="nav-dropdown-link">Clubs and activities</a>
                         <a href="{% url 'staff-list' %}" class="nav-dropdown-link">Our staff</a>
                     </div>
                 </div>
@@ -59,6 +61,7 @@
             </div>
 
             <div class="hidden lg:flex items-center gap-3">
+                {% if request.user.is_staff %}<a href="{% url 'announcement-edit' %}" class="text-xs font-bold text-primary hover:text-gold">Edit announcement</a>{% endif %}
                 <form action="{% url 'search' %}" method="get" class="relative w-36 xl:w-44">
                     <label for="site-search" class="sr-only">Search the site</label>
                     <input id="site-search" type="search" name="q" value="{{ request.GET.q }}" placeholder="Search" class="nav-search">
@@ -83,6 +86,7 @@
                 <div class="mt-2 grid grid-cols-2 gap-2">
                     <a href="{% url 'about-us' %}" class="nav-mobile-link">About us</a>
                     <a href="{% url 'subject-list' %}" class="nav-mobile-link">Subjects</a>
+                    <a href="{% url 'activity-list' %}" class="nav-mobile-link">Activities</a>
                     <a href="{% url 'staff-list' %}" class="nav-mobile-link">Our staff</a>
                 </div>
             </div>
@@ -98,6 +102,7 @@
             <div class="grid grid-cols-2 gap-2 border-t border-stone-100 pt-4">
                 <a href="{% url 'contact' %}" class="nav-mobile-link">Contact</a>
                 <a href="{% url 'application-create' %}" class="nav-mobile-cta">Apply now</a>
+                {% if request.user.is_staff %}<a href="{% url 'announcement-edit' %}" class="nav-mobile-link">Edit announcement</a>{% endif %}
             </div>
         </div>
     </div>

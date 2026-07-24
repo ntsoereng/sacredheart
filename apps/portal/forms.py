@@ -6,7 +6,15 @@ from apps.events.models import Event
 from apps.posts.models import Post
 from apps.posts.content import sanitize_post_html
 from apps.academics.models import Subject
+from apps.core.models import ExtracurricularActivity, SiteSettings
 from apps.staff.models import StaffMember
+
+
+def _clean_rich_text(value, required_message):
+    cleaned = sanitize_post_html(value)
+    if not strip_tags(cleaned).strip():
+        raise forms.ValidationError(required_message)
+    return cleaned
 
 
 class StaffPostForm(forms.ModelForm):
@@ -50,12 +58,16 @@ class StaffEventForm(forms.ModelForm):
         )
         widgets = {
             "title": forms.TextInput(attrs={"placeholder": "Event title"}),
-            "description": forms.Textarea(
-                attrs={"rows": 7, "placeholder": "What should families know?"}
-            ),
+            "description": forms.HiddenInput(),
             "event_date": forms.DateInput(attrs={"type": "date"}),
             "location": forms.TextInput(attrs={"placeholder": "Venue or location"}),
         }
+
+    def clean_description(self):
+        return _clean_rich_text(
+            self.cleaned_data["description"],
+            "Please add the event description.",
+        )
 
 
 class StaffSubjectForm(forms.ModelForm):
@@ -70,10 +82,14 @@ class StaffSubjectForm(forms.ModelForm):
         )
         widgets = {
             "name": forms.TextInput(attrs={"placeholder": "Subject name"}),
-            "description": forms.Textarea(
-                attrs={"rows": 8, "placeholder": "Describe what learners study…"}
-            ),
+            "description": forms.HiddenInput(),
         }
+
+    def clean_description(self):
+        return _clean_rich_text(
+            self.cleaned_data["description"],
+            "Please add the subject description.",
+        )
 
 
 class StaffMemberForm(forms.ModelForm):
@@ -95,13 +111,69 @@ class StaffMemberForm(forms.ModelForm):
         widgets = {
             "full_name": forms.TextInput(attrs={"placeholder": "Full name"}),
             "role": forms.TextInput(attrs={"placeholder": "Teacher, Principal…"}),
-            "short_bio": forms.Textarea(
-                attrs={"rows": 6, "placeholder": "A short public biography…"}
-            ),
+            "short_bio": forms.HiddenInput(),
             "motto": forms.TextInput(attrs={"placeholder": "Optional motto"}),
             "started_at_shhs": forms.DateInput(attrs={"type": "date"}),
             "subjects": forms.CheckboxSelectMultiple(),
-            "welcome_remarks": forms.Textarea(attrs={"rows": 6}),
+            "welcome_remarks": forms.HiddenInput(),
+        }
+
+    def clean_short_bio(self):
+        return _clean_rich_text(
+            self.cleaned_data["short_bio"],
+            "Please add a short biography.",
+        )
+
+    def clean_welcome_remarks(self):
+        value = self.cleaned_data.get("welcome_remarks", "")
+        return sanitize_post_html(value) if value else ""
+
+
+class StaffActivityForm(forms.ModelForm):
+    class Meta:
+        model = ExtracurricularActivity
+        fields = (
+            "name",
+            "category",
+            "short_description",
+            "description",
+            "achievements",
+            "featured_image",
+            "is_featured",
+            "is_published",
+            "display_order",
+        )
+        widgets = {
+            "name": forms.TextInput(attrs={"placeholder": "Club or activity name"}),
+            "short_description": forms.Textarea(
+                attrs={"rows": 3, "placeholder": "A concise public selling point"}
+            ),
+            "description": forms.HiddenInput(),
+            "achievements": forms.HiddenInput(),
+        }
+
+    def clean_description(self):
+        return _clean_rich_text(
+            self.cleaned_data["description"],
+            "Please add the activity description.",
+        )
+
+    def clean_achievements(self):
+        value = self.cleaned_data.get("achievements", "")
+        return sanitize_post_html(value) if value else ""
+
+
+class AnnouncementForm(forms.ModelForm):
+    class Meta:
+        model = SiteSettings
+        fields = ("homepage_announcement", "show_announcement")
+        widgets = {
+            "homepage_announcement": forms.Textarea(
+                attrs={
+                    "rows": 3,
+                    "placeholder": "Write a short, timely school announcement.",
+                }
+            ),
         }
 
 

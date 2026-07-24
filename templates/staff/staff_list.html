@@ -26,8 +26,8 @@
                 <p class="text-gold font-semibold uppercase tracking-[0.18em] text-sm">A welcome from the principal</p>
                 <h2 class="text-3xl font-bold mt-3">{{ principal.full_name }}</h2>
                 <p class="mt-1 font-semibold text-primary">{{ principal.role }}</p>
-                <p class="mt-5 text-gray-600 leading-relaxed">{{ principal.short_bio }}</p>
-                <div class="mt-6 text-gray-700 leading-relaxed whitespace-pre-line">{{ principal.welcome_remarks|linebreaksbr }}</div>
+                <p class="mt-5 text-gray-600 leading-relaxed">{{ principal.short_bio|striptags }}</p>
+                <div class="mt-6 text-gray-700 leading-relaxed">{{ principal.welcome_remarks|striptags|truncatewords:55 }}</div>
                 {% if principal.subjects.all %}<div class="mt-6 flex flex-wrap gap-2">{% for subject in principal.subjects.all %}{% if subject.is_active %}<a href="{% url 'subject-detail' subject.slug %}" class="rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">{{ subject.name }}</a>{% endif %}{% endfor %}</div>{% endif %}
                 <p class="mt-6 border-l-4 border-gold pl-4 italic text-gray-600">“{{ principal.motto|default:"Leading with purpose, care, and excellence." }}”</p>
                 <a href="{% url 'staff-detail' principal.pk %}" class="mt-6 inline-block text-link">View profile →</a>
@@ -56,7 +56,7 @@
                     <div class="p-7">
                         <h3 class="text-xl font-bold">{{ staff_member.full_name }}</h3>
                         <p class="mt-1 font-semibold text-primary">{{ staff_member.role }}</p>
-                        <p class="mt-4 text-gray-600 leading-relaxed">{{ staff_member.short_bio }}</p>
+                        <p class="mt-4 text-gray-600 leading-relaxed">{{ staff_member.short_bio|striptags|truncatewords:35 }}</p>
                         {% if staff_member.subjects.all %}<div class="mt-5 flex flex-wrap gap-2">{% for subject in staff_member.subjects.all %}{% if subject.is_active %}<a href="{% url 'subject-detail' subject.slug %}" class="rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">{{ subject.name }}</a>{% endif %}{% endfor %}</div>{% endif %}
                         {% if staff_member.motto %}<p class="mt-5 border-l-2 border-gold pl-3 text-sm italic text-gray-600">“{{ staff_member.motto }}”</p>{% endif %}
                         {% if staff_member.started_at_shhs %}<p class="mt-5 text-sm font-medium text-gray-500">At SHHS since {{ staff_member.started_at_shhs|date:"Y" }}</p>{% endif %}

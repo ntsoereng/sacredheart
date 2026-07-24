@@ -65,8 +65,7 @@
           >{% endif %}
           <span
             ><span class="block font-serif text-2xl font-bold leading-tight"
-              >{{ site_settings.school_name|default:"Sacred Heart High School"
-              }}</span
+              >{{ site_settings.school_name|default:"Sacred Heart High School"}}</span
             >{% if site_settings.tagline %}<span
               class="mt-1 block text-sm text-gold-light"
               >{{ site_settings.tagline }}</span
@@ -111,6 +110,11 @@
           <li>
             <a href="{% url 'staff-list' %}" class="footer-link"
               >Meet our staff</a
+            >
+          </li>
+          <li>
+            <a href="{% url 'activity-list' %}" class="footer-link"
+              >Clubs and activities</a
             >
           </li>
           <li>

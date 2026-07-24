@@ -18,7 +18,7 @@ from django.views.generic import (
 from apps.admissions.models import Application
 from apps.alumni.forms import AlumniReviewForm
 from apps.alumni.models import AlumniStory
-from apps.core.models import ContactMessage
+from apps.core.models import ContactMessage, ExtracurricularActivity, SiteSettings
 from apps.events.models import Event
 from apps.posts.models import Post
 from apps.academics.models import Subject
@@ -26,6 +26,8 @@ from apps.staff.models import StaffMember
 from apps.portal.forms import (
     ApplicationNoteForm,
     ApplicationStatusForm,
+    AnnouncementForm,
+    StaffActivityForm,
     StaffEventForm,
     StaffMemberForm,
     StaffPostForm,
@@ -67,6 +69,10 @@ class ContentManagerView(LoginRequiredMixin, StaffRequiredMixin, TemplateView):
         context["staff_members"] = StaffMember.objects.prefetch_related("subjects")[:10]
         context["active_subjects"] = Subject.objects.filter(is_active=True).count()
         context["active_staff"] = StaffMember.objects.filter(is_active=True).count()
+        context["activities"] = ExtracurricularActivity.objects.all()[:10]
+        context["published_activities"] = ExtracurricularActivity.objects.filter(
+            is_published=True
+        ).count()
         return context
 
 
@@ -154,6 +160,36 @@ class StaffMemberUpdateView(StaffContentFormMixin, UpdateView):
     form_class = StaffMemberForm
     content_kind = "staff member"
     page_title = "Edit staff profile"
+
+
+class ActivityCreateView(StaffContentFormMixin, CreateView):
+    model = ExtracurricularActivity
+    form_class = StaffActivityForm
+    content_kind = "activity"
+    page_title = "Create club or activity"
+
+
+class ActivityUpdateView(StaffContentFormMixin, UpdateView):
+    model = ExtracurricularActivity
+    form_class = StaffActivityForm
+    content_kind = "activity"
+    page_title = "Edit club or activity"
+
+
+class AnnouncementUpdateView(LoginRequiredMixin, StaffRequiredMixin, UpdateView):
+    model = SiteSettings
+    form_class = AnnouncementForm
+    template_name = "portal/announcement_form.html"
+
+    def get_object(self, queryset=None):
+        return SiteSettings.objects.first()
+
+    def get_success_url(self):
+        return reverse("content-manager")
+
+    def form_valid(self, form):
+        messages.success(self.request, "Homepage announcement updated.")
+        return super().form_valid(form)
     
     
 class ApplicationListView(LoginRequiredMixin, StaffRequiredMixin, ListView):

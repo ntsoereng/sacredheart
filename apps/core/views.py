@@ -1,7 +1,8 @@
 from django.urls import reverse_lazy
 from django.contrib import messages
-from django.views.generic import FormView, TemplateView
-from django.shortcuts import redirect, render
+from django.views.generic import DetailView, FormView, ListView, TemplateView
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Q
 from django.utils import timezone
 from apps.alumni.models import AlumniStory
@@ -10,7 +11,7 @@ from apps.posts.models import Post
 from apps.events.models import Event
 from apps.pages.models import Page
 from apps.staff.models import StaffMember
-from apps.core.models import SiteSettings
+from apps.core.models import ExtracurricularActivity, SiteSettings
 
 
 def favicon(request):
@@ -18,6 +19,20 @@ def favicon(request):
     if site_settings and site_settings.favicon:
         return redirect(site_settings.favicon.url)
     return redirect("/")
+
+
+def robots_txt(request):
+    sitemap_url = request.build_absolute_uri("/sitemap.xml")
+    content = (
+        "User-agent: *\n"
+        "Allow: /\n"
+        "Disallow: /admin/\n"
+        "Disallow: /dashboard/\n"
+        "Disallow: /accounts/\n"
+        "Disallow: /search/\n\n"
+        f"Sitemap: {sitemap_url}\n"
+    )
+    return HttpResponse(content, content_type="text/plain")
 
 
 class HomeView(TemplateView):
@@ -66,6 +81,11 @@ class HomeView(TemplateView):
             [:3]
         )
 
+        context["featured_activities"] = (
+            ExtracurricularActivity.objects
+            .filter(is_published=True, is_featured=True)
+            [:3]
+        )
 
         return context
 
@@ -78,6 +98,27 @@ class AboutView(TemplateView):
 class DonationsView(TemplateView):
 
     template_name = "core/donations.html"
+
+
+class ActivityListView(ListView):
+    model = ExtracurricularActivity
+    template_name = "core/activity_list.html"
+    context_object_name = "activities"
+    paginate_by = 12
+    queryset = ExtracurricularActivity.objects.filter(is_published=True)
+
+
+class ActivityDetailView(DetailView):
+    model = ExtracurricularActivity
+    template_name = "core/activity_detail.html"
+    context_object_name = "activity"
+
+    def get_object(self):
+        return get_object_or_404(
+            ExtracurricularActivity,
+            slug=self.kwargs["slug"],
+            is_published=True,
+        )
 
 
 class PrivacyPolicyView(TemplateView):
@@ -102,6 +143,7 @@ class SearchView(TemplateView):
             context["pages"] = Page.objects.none()
             context["posts"] = Post.objects.none()
             context["events"] = Event.objects.none()
+            context["activities"] = ExtracurricularActivity.objects.none()
 
             return context
 
@@ -138,6 +180,17 @@ class SearchView(TemplateView):
             .filter(
                 Q(title__icontains=query) |
                 Q(description__icontains=query)
+            )
+        )
+
+        context["activities"] = (
+            ExtracurricularActivity.objects
+            .filter(is_published=True)
+            .filter(
+                Q(name__icontains=query)
+                | Q(short_description__icontains=query)
+                | Q(description__icontains=query)
+                | Q(achievements__icontains=query)
             )
         )
 

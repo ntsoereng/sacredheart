@@ -1,6 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
+from apps.posts.content import sanitize_post_html
 
 
 class StaffMember(models.Model):
@@ -41,6 +42,12 @@ class StaffMember(models.Model):
             raise ValidationError(
                 {"welcome_remarks": "Please add the principal's welcome remarks."}
             )
+
+    def save(self, *args, **kwargs):
+        self.short_bio = sanitize_post_html(self.short_bio)
+        if self.welcome_remarks:
+            self.welcome_remarks = sanitize_post_html(self.welcome_remarks)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.full_name} — {self.role}"

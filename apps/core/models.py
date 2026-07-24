@@ -1,4 +1,6 @@
 from django.db import models
+from django.utils.text import slugify
+from apps.posts.content import sanitize_post_html
 
 
 class SiteSettings(models.Model):
@@ -145,3 +147,77 @@ class ContactMessage(models.Model):
 
     def __str__(self):
         return self.subject
+
+
+class ExtracurricularActivity(models.Model):
+    CATEGORY_CHOICES = (
+        ("music", "Music and performance"),
+        ("sport", "Sport"),
+        ("academic", "Academic club"),
+        ("service", "Service and leadership"),
+        ("culture", "Culture and society"),
+        ("other", "Other"),
+    )
+
+    name = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=220, unique=True, blank=True)
+    category = models.CharField(
+        max_length=20,
+        choices=CATEGORY_CHOICES,
+        default="other",
+    )
+    short_description = models.CharField(
+        max_length=240,
+        help_text="A short selling point shown on activity cards.",
+    )
+    description = models.TextField(
+        help_text="Describe what the activity offers and how learners benefit.",
+    )
+    achievements = models.TextField(
+        blank=True,
+        help_text="Notable awards, performances or milestones. Enter one achievement per line.",
+    )
+    featured_image = models.ImageField(
+        upload_to="activities/",
+        blank=True,
+        null=True,
+        help_text="A wide, high-quality image works best.",
+    )
+    is_featured = models.BooleanField(
+        default=False,
+        help_text="Show this activity as a selling point on the homepage.",
+    )
+    is_published = models.BooleanField(
+        default=True,
+        help_text="Allow visitors to see this activity on the public website.",
+    )
+    display_order = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("display_order", "name")
+        verbose_name = "Club or activity"
+        verbose_name_plural = "Clubs and activities"
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base_slug = slugify(self.name) or "school-activity"
+            slug = base_slug
+            suffix = 2
+            while (
+                ExtracurricularActivity.objects
+                .filter(slug=slug)
+                .exclude(pk=self.pk)
+                .exists()
+            ):
+                slug = f"{base_slug}-{suffix}"
+                suffix += 1
+            self.slug = slug
+        self.description = sanitize_post_html(self.description)
+        if self.achievements:
+            self.achievements = sanitize_post_html(self.achievements)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
