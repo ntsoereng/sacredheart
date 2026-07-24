@@ -274,8 +274,7 @@
       class="mt-12 grid gap-4 border-t border-white/10 pt-6 text-xs text-white/45 sm:grid-cols-[1fr_auto] sm:items-center"
     >
       <p>
-        © {% now "Y" %} {{ site_settings.school_name|default:"Sacred Heart High
-        School" }}. All rights reserved.
+        &copy; {% now "Y" %} {{ site_settings.school_name|default:"Sacred Heart High School" }}. All rights reserved.
       </p>
       <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
         <a href="{% url 'privacy-policy' %}" class="hover:text-gold-light"
