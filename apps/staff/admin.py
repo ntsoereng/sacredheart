@@ -5,6 +5,7 @@ from .models import StaffMember
 
 @admin.register(StaffMember)
 class StaffMemberAdmin(admin.ModelAdmin):
+    filter_horizontal = ("subjects",)
     list_display = (
         "full_name",
         "role",
@@ -25,6 +26,7 @@ class StaffMemberAdmin(admin.ModelAdmin):
                 "short_bio",
                 "motto",
                 "started_at_shhs",
+                "subjects",
             ),
         }),
         ("Principal welcome", {

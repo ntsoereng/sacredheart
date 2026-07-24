@@ -5,6 +5,8 @@ from apps.admissions.models import Application, ApplicationNote
 from apps.events.models import Event
 from apps.posts.models import Post
 from apps.posts.content import sanitize_post_html
+from apps.academics.models import Subject
+from apps.staff.models import StaffMember
 
 
 class StaffPostForm(forms.ModelForm):
@@ -53,6 +55,53 @@ class StaffEventForm(forms.ModelForm):
             ),
             "event_date": forms.DateInput(attrs={"type": "date"}),
             "location": forms.TextInput(attrs={"placeholder": "Venue or location"}),
+        }
+
+
+class StaffSubjectForm(forms.ModelForm):
+    class Meta:
+        model = Subject
+        fields = (
+            "name",
+            "description",
+            "featured_image",
+            "display_order",
+            "is_active",
+        )
+        widgets = {
+            "name": forms.TextInput(attrs={"placeholder": "Subject name"}),
+            "description": forms.Textarea(
+                attrs={"rows": 8, "placeholder": "Describe what learners study…"}
+            ),
+        }
+
+
+class StaffMemberForm(forms.ModelForm):
+    class Meta:
+        model = StaffMember
+        fields = (
+            "full_name",
+            "role",
+            "profile_picture",
+            "short_bio",
+            "motto",
+            "started_at_shhs",
+            "subjects",
+            "is_principal",
+            "welcome_remarks",
+            "display_order",
+            "is_active",
+        )
+        widgets = {
+            "full_name": forms.TextInput(attrs={"placeholder": "Full name"}),
+            "role": forms.TextInput(attrs={"placeholder": "Teacher, Principal…"}),
+            "short_bio": forms.Textarea(
+                attrs={"rows": 6, "placeholder": "A short public biography…"}
+            ),
+            "motto": forms.TextInput(attrs={"placeholder": "Optional motto"}),
+            "started_at_shhs": forms.DateInput(attrs={"type": "date"}),
+            "subjects": forms.CheckboxSelectMultiple(),
+            "welcome_remarks": forms.Textarea(attrs={"rows": 6}),
         }
 
 

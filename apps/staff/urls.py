@@ -1,8 +1,9 @@
 from django.urls import path
 
-from .views import StaffListView
+from .views import StaffDetailView, StaffListView
 
 
 urlpatterns = [
     path("staff/", StaffListView.as_view(), name="staff-list"),
+    path("staff/<int:pk>/", StaffDetailView.as_view(), name="staff-detail"),
 ]

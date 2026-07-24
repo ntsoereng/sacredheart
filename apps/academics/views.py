@@ -9,7 +9,9 @@ class SubjectListView(ListView):
     template_name = "academics/subject_list.html"
 
     def get_queryset(self):
-        return Subject.objects.filter(is_active=True)
+        return Subject.objects.filter(is_active=True).prefetch_related(
+            "teachers"
+        )
 
 
 class SubjectDetailView(DetailView):
@@ -18,7 +20,7 @@ class SubjectDetailView(DetailView):
     template_name = "academics/subject_detail.html"
 
     def get_queryset(self):
-        return Subject.objects.filter(is_active=True)
+        return Subject.objects.filter(is_active=True).prefetch_related("teachers")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -26,4 +28,5 @@ class SubjectDetailView(DetailView):
             Subject.objects.filter(is_active=True)
             .exclude(pk=self.object.pk)[:3]
         )
+        context["teachers"] = self.object.teachers.filter(is_active=True)
         return context

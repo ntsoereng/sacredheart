@@ -21,11 +21,15 @@ from apps.alumni.models import AlumniStory
 from apps.core.models import ContactMessage
 from apps.events.models import Event
 from apps.posts.models import Post
+from apps.academics.models import Subject
+from apps.staff.models import StaffMember
 from apps.portal.forms import (
     ApplicationNoteForm,
     ApplicationStatusForm,
     StaffEventForm,
+    StaffMemberForm,
     StaffPostForm,
+    StaffSubjectForm,
 )
 from apps.portal.mixins import StaffRequiredMixin
 
@@ -59,6 +63,10 @@ class ContentManagerView(LoginRequiredMixin, StaffRequiredMixin, TemplateView):
         )[:10]
         context["published_posts"] = Post.objects.filter(is_published=True).count()
         context["published_events"] = Event.objects.filter(is_published=True).count()
+        context["subjects"] = Subject.objects.all()[:10]
+        context["staff_members"] = StaffMember.objects.prefetch_related("subjects")[:10]
+        context["active_subjects"] = Subject.objects.filter(is_active=True).count()
+        context["active_staff"] = StaffMember.objects.filter(is_active=True).count()
         return context
 
 
@@ -118,6 +126,34 @@ class EventUpdateView(StaffContentFormMixin, UpdateView):
     form_class = StaffEventForm
     content_kind = "event"
     page_title = "Edit event"
+
+
+class SubjectCreateView(StaffContentFormMixin, CreateView):
+    model = Subject
+    form_class = StaffSubjectForm
+    content_kind = "subject"
+    page_title = "Create subject"
+
+
+class SubjectUpdateView(StaffContentFormMixin, UpdateView):
+    model = Subject
+    form_class = StaffSubjectForm
+    content_kind = "subject"
+    page_title = "Edit subject"
+
+
+class StaffMemberCreateView(StaffContentFormMixin, CreateView):
+    model = StaffMember
+    form_class = StaffMemberForm
+    content_kind = "staff member"
+    page_title = "Create staff profile"
+
+
+class StaffMemberUpdateView(StaffContentFormMixin, UpdateView):
+    model = StaffMember
+    form_class = StaffMemberForm
+    content_kind = "staff member"
+    page_title = "Edit staff profile"
     
     
 class ApplicationListView(LoginRequiredMixin, StaffRequiredMixin, ListView):

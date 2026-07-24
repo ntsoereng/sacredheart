@@ -14,6 +14,10 @@ from .views import (
     EventUpdateView,
     PostCreateView,
     PostUpdateView,
+    StaffMemberCreateView,
+    StaffMemberUpdateView,
+    SubjectCreateView,
+    SubjectUpdateView,
 )
 
 urlpatterns = [
@@ -59,4 +63,8 @@ urlpatterns = [
     path("content/posts/<int:pk>/edit/", PostUpdateView.as_view(), name="post-edit"),
     path("content/events/new/", EventCreateView.as_view(), name="event-create"),
     path("content/events/<int:pk>/edit/", EventUpdateView.as_view(), name="event-edit"),
+    path("content/subjects/new/", SubjectCreateView.as_view(), name="subject-create"),
+    path("content/subjects/<int:pk>/edit/", SubjectUpdateView.as_view(), name="subject-edit"),
+    path("content/staff/new/", StaffMemberCreateView.as_view(), name="staff-member-create"),
+    path("content/staff/<int:pk>/edit/", StaffMemberUpdateView.as_view(), name="staff-member-edit"),
 ]

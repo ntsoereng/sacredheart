@@ -10,6 +10,12 @@ class StaffMember(models.Model):
     short_bio = models.TextField()
     motto = models.CharField(max_length=255, blank=True)
     started_at_shhs = models.DateField(blank=True, null=True)
+    subjects = models.ManyToManyField(
+        "academics.Subject",
+        blank=True,
+        related_name="teachers",
+        help_text="Optional: select the subjects this staff member teaches.",
+    )
     is_principal = models.BooleanField(default=False)
     welcome_remarks = models.TextField(
         blank=True,

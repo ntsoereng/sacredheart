@@ -38,8 +38,8 @@
                     <span>Alumni stories</span>
                     {% if portal_pending_alumni %}<span class="rounded-full bg-gold px-2 py-0.5 text-xs text-primary">{{ portal_pending_alumni }} new</span>{% endif %}
                 </a>
-                <a href="{% url 'content-manager' %}" class="flex shrink-0 items-center justify-between gap-4 rounded-xl px-4 py-3 text-sm font-semibold {% if request.resolver_match.url_name == 'content-manager' or request.resolver_match.url_name == 'post-create' or request.resolver_match.url_name == 'post-edit' or request.resolver_match.url_name == 'event-create' or request.resolver_match.url_name == 'event-edit' %}bg-primary text-white{% else %}text-gray-700 hover:bg-stone-100{% endif %}">
-                    <span>News &amp; events</span>
+                <a href="{% url 'content-manager' %}" class="flex shrink-0 items-center justify-between gap-4 rounded-xl px-4 py-3 text-sm font-semibold {% if 'create' in request.resolver_match.url_name or 'edit' in request.resolver_match.url_name or request.resolver_match.url_name == 'content-manager' %}bg-primary text-white{% else %}text-gray-700 hover:bg-stone-100{% endif %}">
+                    <span>Website content</span>
                 </a>
             </nav>
         </aside>

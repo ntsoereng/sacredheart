@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from .models import Subject
+from apps.staff.models import StaffMember
 
 
 class SubjectViewsTests(TestCase):
@@ -39,3 +40,24 @@ class SubjectViewsTests(TestCase):
         response = self.client.get(reverse("subject-detail", args=["inactive-subject"]))
 
         self.assertEqual(response.status_code, 404)
+
+    def test_subject_detail_lists_only_active_linked_teachers(self):
+        teacher = StaffMember.objects.create(
+            full_name="Lebo Molefe",
+            role="Mathematics Teacher",
+            short_bio="A committed educator.",
+        )
+        inactive_teacher = StaffMember.objects.create(
+            full_name="Hidden Teacher",
+            short_bio="Not public.",
+            is_active=False,
+        )
+        teacher.subjects.add(self.active_subject)
+        inactive_teacher.subjects.add(self.active_subject)
+
+        response = self.client.get(
+            reverse("subject-detail", args=[self.active_subject.slug])
+        )
+
+        self.assertContains(response, teacher.full_name)
+        self.assertNotContains(response, inactive_teacher.full_name)

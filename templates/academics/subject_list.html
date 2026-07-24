@@ -18,13 +18,15 @@
         <div class="mb-10 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"><div><p class="text-gold font-semibold uppercase tracking-[0.2em] text-sm">Explore learning</p><h2 class="mt-2 text-3xl font-bold">Subjects that open doors</h2></div><a href="{% url 'staff-list' %}" class="text-link">Meet our educators →</a></div>
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {% for subject in subjects %}
-                <article class="content-card rounded-2xl transition p-7">
-                    <span class="icon-disc" aria-hidden="true"><svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m4 6 8-3 8 3-8 3-8-3Zm0 6 8 3 8-3M4 18l8 3 8-3"/></svg></span>
+                <article class="content-card overflow-hidden rounded-2xl transition">
+                    {% if subject.featured_image %}<img src="{{ subject.featured_image.url }}" alt="" class="h-52 w-full object-cover">{% else %}<div class="flex h-52 items-center justify-center bg-primary/10"><span class="icon-disc" aria-hidden="true"><svg class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m4 6 8-3 8 3-8 3-8-3Zm0 6 8 3 8-3M4 18l8 3 8-3"/></svg></span></div>{% endif %}
+                    <div class="p-7">
                     <h2 class="font-bold text-xl mt-5">{{ subject.name }}</h2>
                     <p class="text-gray-600 mt-4">{{ subject.description|truncatewords:24 }}</p>
                     <a href="{% url 'subject-detail' subject.slug %}" class="inline-block mt-5 text-link">
                         Learn more →
                     </a>
+                    </div>
                 </article>
             {% empty %}
                 <p class="text-gray-600">Subject information will be available soon.</p>

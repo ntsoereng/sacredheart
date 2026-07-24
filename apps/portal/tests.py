@@ -7,6 +7,8 @@ from django.urls import reverse
 from apps.admissions.models import Application, ApplicationNote
 from apps.events.models import Event
 from apps.posts.models import Post
+from apps.academics.models import Subject
+from apps.staff.models import StaffMember
 
 
 class StaffApplicationWorkflowTests(TestCase):
@@ -111,3 +113,39 @@ class StaffApplicationWorkflowTests(TestCase):
         self.assertRedirects(response, reverse("content-manager"))
         event = Event.objects.get(title="Open Day")
         self.assertEqual(event.created_by, self.staff_user)
+
+    def test_staff_can_create_subject_with_generated_slug(self):
+        response = self.client.post(
+            reverse("subject-create"),
+            {
+                "name": "Physical Science",
+                "description": "Investigating the physical world.",
+                "display_order": 1,
+                "is_active": "on",
+            },
+        )
+
+        self.assertRedirects(response, reverse("content-manager"))
+        subject = Subject.objects.get(name="Physical Science")
+        self.assertEqual(subject.slug, "physical-science")
+
+    def test_staff_can_create_teacher_and_link_subjects(self):
+        subject = Subject.objects.create(
+            name="Mathematics",
+            description="Logical and numerical reasoning.",
+        )
+        response = self.client.post(
+            reverse("staff-member-create"),
+            {
+                "full_name": "Lebo Molefe",
+                "role": "Teacher",
+                "short_bio": "A committed educator.",
+                "subjects": [subject.pk],
+                "display_order": 0,
+                "is_active": "on",
+            },
+        )
+
+        self.assertRedirects(response, reverse("content-manager"))
+        teacher = StaffMember.objects.get(full_name="Lebo Molefe")
+        self.assertQuerySetEqual(teacher.subjects.all(), [subject])
