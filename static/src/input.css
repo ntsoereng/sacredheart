@@ -222,6 +222,13 @@ button:focus-visible {
     outline: none;
 }
 
+.portal-shell h1,
+.portal-shell h2,
+.portal-shell h3 {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+}
+
 ::selection {
     background-color: #c9a227;
     color: white;
