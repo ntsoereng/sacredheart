@@ -1,55 +1,11 @@
-<footer class="relative overflow-hidden bg-[#401019] text-white">
+<footer
+  class="relative overflow-hidden bg-gradient-to-b from-primary-dark to-[#401019] text-white"
+>
   <div
     class="absolute -right-28 top-24 h-80 w-80 rounded-full border-[3.5rem] border-white/[.025]"
     aria-hidden="true"
   ></div>
-  <div class="h-1 bg-gradient-to-r from-primary via-gold to-primary"></div>
-
   <div class="relative mx-auto max-w-7xl px-6 pb-7 pt-12 md:pt-14">
-    <div
-      class="mb-12 grid gap-6 rounded-2xl border border-white/10 bg-white/[.055] p-6 sm:grid-cols-[1fr_auto] sm:items-center md:p-7"
-    >
-      <div class="flex items-start gap-4">
-        <span
-          class="hidden h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gold text-primary sm:flex"
-          aria-hidden="true"
-        >
-          <svg
-            class="h-5 w-5"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path d="M5 3h14v18H5zM8 7h8m-8 4h8m-8 4h5" />
-          </svg>
-        </span>
-        <div>
-          <div class="flex flex-wrap items-center gap-2">
-            <h2 class="text-xl font-bold">
-              Interested in joining Sacred Heart?
-            </h2>
-            {% if site_settings.admissions_open %}<span
-              class="rounded-full bg-green-400/15 px-2.5 py-1 text-xs font-bold text-green-200"
-              >Admissions open</span
-            >{% else %}<span
-              class="rounded-full bg-white/10 px-2.5 py-1 text-xs font-bold text-white/65"
-              >Admissions information</span
-            >{% endif %}
-          </div>
-          <p class="mt-1.5 max-w-2xl text-sm leading-6 text-white/65">
-            Find application information, explore our subjects, or speak with
-            the school before taking your next step.
-          </p>
-        </div>
-      </div>
-      <a
-        href="{% url 'application-create' %}"
-        class="inline-flex min-h-11 items-center justify-center rounded-xl bg-gold px-5 py-3 text-sm font-bold text-primary hover:-translate-y-0.5 hover:bg-gold-light"
-        >Explore admissions <span class="ml-2" aria-hidden="true">→</span></a
-      >
-    </div>
-
     <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-12 lg:gap-8">
       <div class="sm:col-span-2 lg:col-span-4">
         <a
