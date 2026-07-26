@@ -69,7 +69,18 @@
     <script defer
         src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js">
     </script>
-    <script defer src="{% static 'js/webp-images.js' %}"></script>
+    <script>
+        document.querySelectorAll("img[data-webp-src]").forEach((image) => {
+            const webpUrl = image.dataset.webpSrc;
+            if (!webpUrl) return;
+
+            const candidate = new Image();
+            candidate.onload = () => {
+                image.src = webpUrl;
+            };
+            candidate.src = webpUrl;
+        });
+    </script>
 </body>
 
 </html>
