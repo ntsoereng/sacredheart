@@ -216,6 +216,10 @@ button:focus-visible {
     font-size: 0.875rem;
 }
 
+.site-footer {
+    background: linear-gradient(to bottom, var(--color-primary-dark), #401019);
+}
+
 .footer-link:hover,
 .footer-link:focus-visible {
     color: var(--color-gold-light);
