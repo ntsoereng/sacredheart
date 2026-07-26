@@ -1,3 +1,5 @@
+from pathlib import PurePosixPath
+
 from django.conf import settings
 from django.db import models
 from django.utils.text import slugify
@@ -53,6 +55,17 @@ class Post(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+
+    @property
+    def featured_image_url(self):
+        """Use the converted WebP when it exists, otherwise use the upload."""
+        if not self.featured_image:
+            return ""
+
+        webp_name = str(PurePosixPath(self.featured_image.name).with_suffix(".webp"))
+        if self.featured_image.storage.exists(webp_name):
+            return self.featured_image.storage.url(webp_name)
+        return self.featured_image.url
 
     def save(self, *args, **kwargs):
 
