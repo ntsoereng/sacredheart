@@ -57,15 +57,18 @@ class Post(models.Model):
         ordering = ["-created_at"]
 
     @property
-    def featured_image_url(self):
-        """Use the converted WebP when it exists, otherwise use the upload."""
+    def featured_image_webp_url(self):
+        """Return the converted WebP candidate when storage can find it."""
         if not self.featured_image:
             return ""
 
         webp_name = str(PurePosixPath(self.featured_image.name).with_suffix(".webp"))
-        if self.featured_image.storage.exists(webp_name):
-            return self.featured_image.storage.url(webp_name)
-        return self.featured_image.url
+        try:
+            if self.featured_image.storage.exists(webp_name):
+                return self.featured_image.storage.url(webp_name)
+        except OSError:
+            pass
+        return ""
 
     def save(self, *args, **kwargs):
 

@@ -15,24 +15,24 @@ class PostContentTests(TestCase):
 
 
 class PostFeaturedImageTests(TestCase):
-    def test_featured_image_url_uses_converted_webp_when_available(self):
+    def test_featured_image_webp_url_returns_candidate_when_available(self):
         post = Post(featured_image="posts/school-news.png")
         storage = post.featured_image.storage
 
         with patch.object(storage, "exists", return_value=True) as exists:
             with patch.object(storage, "url", return_value="/media/posts/school-news.webp"):
                 self.assertEqual(
-                    post.featured_image_url,
+                    post.featured_image_webp_url,
                     "/media/posts/school-news.webp",
                 )
 
         exists.assert_called_once_with("posts/school-news.webp")
 
-    def test_featured_image_url_falls_back_to_original(self):
+    def test_featured_image_webp_url_is_empty_when_conversion_is_missing(self):
         post = Post(featured_image="posts/school-news.png")
         storage = post.featured_image.storage
 
         with patch.object(storage, "exists", return_value=False):
-            self.assertEqual(post.featured_image_url, post.featured_image.url)
+            self.assertEqual(post.featured_image_webp_url, "")
 
 # Create your tests here.
