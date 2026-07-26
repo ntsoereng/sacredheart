@@ -4,11 +4,13 @@ from django.utils.html import linebreaks
 
 ALLOWED_POST_TAGS = {
     "a",
+    "b",
     "blockquote",
     "br",
     "em",
     "h2",
     "h3",
+    "i",
     "li",
     "ol",
     "p",

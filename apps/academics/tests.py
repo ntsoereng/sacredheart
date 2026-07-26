@@ -41,6 +41,21 @@ class SubjectViewsTests(TestCase):
 
         self.assertEqual(response.status_code, 404)
 
+    def test_related_subject_descriptions_are_rendered_as_plain_text(self):
+        Subject.objects.create(
+            name="Science",
+            slug="science",
+            description="<p>Explore <strong>the natural world</strong>.</p>",
+            display_order=3,
+        )
+
+        response = self.client.get(
+            reverse("subject-detail", args=[self.active_subject.slug])
+        )
+
+        self.assertContains(response, "Explore the natural world.")
+        self.assertNotContains(response, "&lt;p&gt;Explore")
+
     def test_subject_detail_lists_only_active_linked_teachers(self):
         teacher = StaffMember.objects.create(
             full_name="Lebo Molefe",
