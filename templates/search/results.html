@@ -41,7 +41,7 @@ Search
                 {% for page in pages %}
 
                 <a
-                    href="/{{ page.slug }}/"
+                    href="{% url 'page-detail' page.slug %}"
                     class="content-card block rounded-xl p-6">
 
                     <h3 class="font-bold">
@@ -58,6 +58,48 @@ Search
 
         </div>
 
+        {% endif %}
+
+        {% if subjects %}
+        <div class="mb-12">
+            <h2 class="mb-6 text-2xl font-bold">Subjects</h2>
+            <div class="space-y-4">
+                {% for subject in subjects %}
+                <a href="{% url 'subject-detail' subject.slug %}" class="content-card block rounded-xl p-6">
+                    <h3 class="font-bold">{{ subject.name }}</h3>
+                    <p class="mt-2 text-gray-600">{{ subject.description|striptags|truncatewords:25 }}</p>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if staff_members %}
+        <div class="mb-12">
+            <h2 class="mb-6 text-2xl font-bold">Staff</h2>
+            <div class="space-y-4">
+                {% for staff_member in staff_members %}
+                <a href="{% url 'staff-detail' staff_member.pk %}" class="content-card block rounded-xl p-6">
+                    <h3 class="font-bold">{{ staff_member.full_name }}</h3>
+                    <p class="mt-2 text-gray-600">{{ staff_member.role }}</p>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if alumni_stories %}
+        <div class="mb-12">
+            <h2 class="mb-6 text-2xl font-bold">Alumni stories</h2>
+            <div class="space-y-4">
+                {% for story in alumni_stories %}
+                <a href="{% url 'alumni-detail' story.slug %}" class="content-card block rounded-xl p-6">
+                    <h3 class="font-bold">{{ story.full_name }}</h3>
+                    <p class="mt-2 text-gray-600">Class of {{ story.graduation_year }}{% if story.occupation %} · {{ story.occupation }}{% endif %}</p>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
         {% endif %}
 
         {% if activities %}
@@ -160,7 +202,7 @@ Search
 
         {% endif %}
 
-        {% if not pages and not posts and not events and not activities %}
+        {% if not pages and not posts and not events and not activities and not subjects and not staff_members and not alumni_stories %}
 
         <div
             class="content-card rounded-xl p-10 text-center">

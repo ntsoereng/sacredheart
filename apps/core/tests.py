@@ -1,6 +1,10 @@
 from django.test import TestCase
 from django.urls import reverse
 
+from apps.academics.models import Subject
+from apps.pages.models import Page
+from apps.posts.models import Post
+
 from .models import ExtracurricularActivity
 
 
@@ -96,3 +100,47 @@ class ExtracurricularActivityTests(TestCase):
         )
 
         self.assertEqual(response.status_code, 404)
+
+
+class SearchViewTests(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.page = Page.objects.create(
+            title="School Library",
+            content="Browse our reading collection.",
+        )
+        cls.post = Post.objects.create(
+            title="Library Week",
+            summary="A week celebrating books.",
+            content="Learners visited the library.",
+        )
+        cls.subject = Subject.objects.create(
+            name="Literature",
+            description="Study novels, poetry, and drama.",
+        )
+
+    def test_search_returns_pages_posts_and_other_public_content_types(self):
+        response = self.client.get(reverse("search"), {"q": "library"})
+
+        self.assertContains(response, self.page.title)
+        self.assertContains(response, reverse("page-detail", args=[self.page.slug]))
+        self.assertContains(response, self.post.title)
+
+        subject_response = self.client.get(reverse("search"), {"q": "poetry"})
+        self.assertContains(subject_response, self.subject.name)
+        self.assertContains(
+            subject_response,
+            reverse("subject-detail", args=[self.subject.slug]),
+        )
+
+    def test_search_excludes_unpublished_content(self):
+        hidden_page = Page.objects.create(
+            title="Hidden archive",
+            content="Private records",
+            is_published=False,
+        )
+
+        response = self.client.get(reverse("search"), {"q": "archive"})
+
+        self.assertNotContains(response, hidden_page.title)

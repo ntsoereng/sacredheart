@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Q
 from django.utils import timezone
 from apps.alumni.models import AlumniStory
+from apps.academics.models import Subject
 from apps.core.forms import ContactForm
 from apps.posts.models import Post
 from apps.events.models import Event
@@ -138,16 +139,18 @@ class SearchView(TemplateView):
         context = super().get_context_data(**kwargs)
 
         query = self.request.GET.get("q", "").strip()
+        context["query"] = query
         
         if not query:
             context["pages"] = Page.objects.none()
             context["posts"] = Post.objects.none()
             context["events"] = Event.objects.none()
             context["activities"] = ExtracurricularActivity.objects.none()
+            context["subjects"] = Subject.objects.none()
+            context["staff_members"] = StaffMember.objects.none()
+            context["alumni_stories"] = AlumniStory.objects.none()
 
             return context
-
-        context["query"] = query
 
         context["pages"] = (
             Page.objects
@@ -191,6 +194,41 @@ class SearchView(TemplateView):
                 | Q(short_description__icontains=query)
                 | Q(description__icontains=query)
                 | Q(achievements__icontains=query)
+            )
+        )
+
+        context["subjects"] = (
+            Subject.objects
+            .filter(is_active=True)
+            .filter(
+                Q(name__icontains=query)
+                | Q(description__icontains=query)
+            )
+        )
+
+        context["staff_members"] = (
+            StaffMember.objects
+            .filter(is_active=True)
+            .filter(
+                Q(full_name__icontains=query)
+                | Q(role__icontains=query)
+                | Q(short_bio__icontains=query)
+                | Q(motto__icontains=query)
+                | Q(subjects__name__icontains=query)
+            )
+            .distinct()
+        )
+
+        context["alumni_stories"] = (
+            AlumniStory.objects
+            .filter(status="approved", consent_to_publish=True)
+            .filter(
+                Q(full_name__icontains=query)
+                | Q(occupation__icontains=query)
+                | Q(current_location__icontains=query)
+                | Q(life_story__icontains=query)
+                | Q(school_memories__icontains=query)
+                | Q(message_to_students__icontains=query)
             )
         )
 
