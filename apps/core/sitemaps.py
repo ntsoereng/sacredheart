@@ -7,6 +7,7 @@ from apps.events.models import Event
 from apps.pages.models import Page
 from apps.posts.models import Post
 from apps.core.models import ExtracurricularActivity
+from apps.staff.models import StaffMember
 
 
 class StaticViewSitemap(Sitemap):
@@ -25,6 +26,8 @@ class StaticViewSitemap(Sitemap):
             "alumni-list",
             "contact",
             "donations",
+            "privacy-policy",
+            "terms-of-use",
         ]
 
     def location(self, item):
@@ -118,6 +121,20 @@ class ActivitySitemap(Sitemap):
         return reverse("activity-detail", kwargs={"slug": item.slug})
 
 
+class StaffSitemap(Sitemap):
+    changefreq = "monthly"
+    priority = 0.6
+
+    def items(self):
+        return StaffMember.objects.filter(is_active=True)
+
+    def lastmod(self, item):
+        return item.updated_at
+
+    def location(self, item):
+        return reverse("staff-detail", kwargs={"pk": item.pk})
+
+
 sitemaps = {
     "static": StaticViewSitemap,
     "news": PostSitemap,
@@ -126,4 +143,5 @@ sitemaps = {
     "pages": PageSitemap,
     "alumni": AlumniSitemap,
     "activities": ActivitySitemap,
+    "staff": StaffSitemap,
 }

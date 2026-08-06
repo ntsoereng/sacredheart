@@ -1,4 +1,5 @@
 import json
+from urllib.parse import urlencode
 
 from django.utils.safestring import mark_safe
 
@@ -13,7 +14,11 @@ def site_settings(request):
         if settings and settings.tagline
         else "Sacred Heart High School nurtures academic excellence, character, faith, and service in a caring school community."
     )
-    canonical_url = request.build_absolute_uri(request.path)
+    canonical_path = request.path
+    page_number = request.GET.get("page", "")
+    if page_number.isdigit() and int(page_number) > 1:
+        canonical_path = f"{canonical_path}?{urlencode({'page': page_number})}"
+    canonical_url = request.build_absolute_uri(canonical_path)
 
     organization = {
         "@context": "https://schema.org",

@@ -4,6 +4,9 @@
 {% block og_title %}{{ activity.name }} | Sacred Heart High School{% endblock %}
 {% block og_description %}{{ activity.short_description|striptags|truncatechars:200 }}{% endblock %}
 {% block og_image %}{% if activity.featured_image %}<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ activity.featured_image.url }}">{% else %}{{ block.super }}{% endif %}{% endblock %}
+{% block twitter_title %}{{ activity.name }} | Sacred Heart High School{% endblock %}
+{% block twitter_description %}{{ activity.short_description|striptags|truncatechars:200 }}{% endblock %}
+{% block twitter_image %}{% if activity.featured_image %}<meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ activity.featured_image.url }}">{% else %}{{ block.super }}{% endif %}{% endblock %}
 {% block content %}
 <section class="page-hero py-14 text-white md:py-18">
     <div class="mx-auto max-w-5xl px-6">

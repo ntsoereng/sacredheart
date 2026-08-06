@@ -3,6 +3,7 @@ from django.views.generic import ListView
 from django.shortcuts import get_object_or_404
 
 from .models import Event
+from apps.core.seo import event_schema
 
 
 class EventListView(ListView):
@@ -40,4 +41,5 @@ class EventDetailView(DetailView):
             Event.objects.filter(is_published=True)
             .exclude(pk=self.object.pk)[:3]
         )
+        context["event_schema"] = event_schema(self.request, self.object)
         return context

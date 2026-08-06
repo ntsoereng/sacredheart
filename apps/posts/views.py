@@ -3,6 +3,7 @@ from django.views.generic import ListView
 from django.shortcuts import get_object_or_404
 
 from .models import Post
+from apps.core.seo import article_schema
 
 
 class PostListView(ListView):
@@ -40,4 +41,5 @@ class PostDetailView(DetailView):
             Post.objects.filter(is_published=True)
             .exclude(pk=self.object.pk)[:3]
         )
+        context["article_schema"] = article_schema(self.request, self.object)
         return context

@@ -19,10 +19,12 @@
     <meta property="og:title" content="{% block og_title %}{{ seo_school_name }}{% endblock %}">
     <meta property="og:description" content="{% block og_description %}{{ seo_default_description }}{% endblock %}">
     <meta property="og:url" content="{{ seo_canonical_url }}">
+    <meta property="og:locale" content="en_LS">
     {% block og_image %}{% if seo_default_image %}<meta property="og:image" content="{{ seo_default_image }}">{% endif %}{% endblock %}
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{% block twitter_title %}{{ seo_school_name }}{% endblock %}">
     <meta name="twitter:description" content="{% block twitter_description %}{{ seo_default_description }}{% endblock %}">
+    {% block twitter_image %}{% if seo_default_image %}<meta name="twitter:image" content="{{ seo_default_image }}">{% endif %}{% endblock %}
     <script type="application/ld+json">{{ organization_schema }}</script>
     {% block structured_data %}{% endblock %}
 
