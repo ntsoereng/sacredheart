@@ -46,6 +46,18 @@
             >Support learners →</a
           >
         </div>
+        {% if site_settings.facebook_url or site_settings.instagram_url or site_settings.youtube_url or site_settings.tiktok_url or site_settings.x_url %}
+        <div class="mt-7">
+          <p class="text-xs font-bold uppercase tracking-[0.16em] text-white/45">Follow the school</p>
+          <div class="mt-3 flex flex-wrap gap-2" aria-label="School social media profiles">
+            {% if site_settings.facebook_url %}<a href="{{ site_settings.facebook_url }}" target="_blank" rel="noopener noreferrer" class="inline-flex min-h-10 items-center rounded-lg border border-white/15 px-3 text-sm font-semibold text-white/75 hover:border-gold/60 hover:bg-white/5 hover:text-gold-light" aria-label="Sacred Heart on Facebook (opens in a new tab)">Facebook</a>{% endif %}
+            {% if site_settings.instagram_url %}<a href="{{ site_settings.instagram_url }}" target="_blank" rel="noopener noreferrer" class="inline-flex min-h-10 items-center rounded-lg border border-white/15 px-3 text-sm font-semibold text-white/75 hover:border-gold/60 hover:bg-white/5 hover:text-gold-light" aria-label="Sacred Heart on Instagram (opens in a new tab)">Instagram</a>{% endif %}
+            {% if site_settings.youtube_url %}<a href="{{ site_settings.youtube_url }}" target="_blank" rel="noopener noreferrer" class="inline-flex min-h-10 items-center rounded-lg border border-white/15 px-3 text-sm font-semibold text-white/75 hover:border-gold/60 hover:bg-white/5 hover:text-gold-light" aria-label="Sacred Heart on YouTube (opens in a new tab)">YouTube</a>{% endif %}
+            {% if site_settings.tiktok_url %}<a href="{{ site_settings.tiktok_url }}" target="_blank" rel="noopener noreferrer" class="inline-flex min-h-10 items-center rounded-lg border border-white/15 px-3 text-sm font-semibold text-white/75 hover:border-gold/60 hover:bg-white/5 hover:text-gold-light" aria-label="Sacred Heart on TikTok (opens in a new tab)">TikTok</a>{% endif %}
+            {% if site_settings.x_url %}<a href="{{ site_settings.x_url }}" target="_blank" rel="noopener noreferrer" class="inline-flex min-h-10 items-center rounded-lg border border-white/15 px-3 text-sm font-semibold text-white/75 hover:border-gold/60 hover:bg-white/5 hover:text-gold-light" aria-label="Sacred Heart on X (opens in a new tab)">X / Twitter</a>{% endif %}
+          </div>
+        </div>
+        {% endif %}
       </div>
 
       <nav class="lg:col-span-2" aria-label="School links">

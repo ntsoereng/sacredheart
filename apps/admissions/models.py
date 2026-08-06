@@ -46,6 +46,12 @@ class Application(models.Model):
         max_length=30
     )
 
+    parent_guardian_email = models.EmailField(
+        blank=True,
+        max_length=254,
+        verbose_name="Parent or guardian email",
+    )
+
     home_address = models.TextField()
 
     previous_school = models.CharField(

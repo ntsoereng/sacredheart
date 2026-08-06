@@ -259,6 +259,10 @@ class ApplicationListView(LoginRequiredMixin, StaffRequiredMixin, ListView):
 
                 |
 
+                Q(parent_guardian_email__icontains=search)
+
+                |
+
                 Q(reference_number__icontains=search)
             )
 
@@ -451,6 +455,7 @@ class ApplicationExportView(LoginRequiredMixin, StaffRequiredMixin, View):
             "Date Of Birth",
             "Guardian",
             "Phone",
+            "Email",
             "Address",
             "Previous School",
             "District",
@@ -468,6 +473,7 @@ class ApplicationExportView(LoginRequiredMixin, StaffRequiredMixin, View):
                 app.date_of_birth,
                 app.parent_guardian_names,
                 app.parent_phone_number,
+                app.parent_guardian_email,
                 app.home_address,
                 app.previous_school,
                 app.district,

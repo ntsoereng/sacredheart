@@ -21,6 +21,18 @@
     </section>
 
     <section class="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm sm:p-7">
+        <h3 class="text-xl font-bold">Social media</h3>
+        <p class="mt-1 text-sm text-gray-500">Add the full profile URL for each official account. Platforms left empty will not appear on the website.</p>
+        <div class="mt-5 grid min-w-0 gap-5 md:grid-cols-2">
+            {% include "portal/partials/settings_field.html" with field=form.facebook_url %}
+            {% include "portal/partials/settings_field.html" with field=form.instagram_url %}
+            {% include "portal/partials/settings_field.html" with field=form.youtube_url %}
+            {% include "portal/partials/settings_field.html" with field=form.tiktok_url %}
+            {% include "portal/partials/settings_field.html" with field=form.x_url %}
+        </div>
+    </section>
+
+    <section class="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm sm:p-7">
         <h3 class="text-xl font-bold">Contact details</h3>
         <div class="mt-5 grid min-w-0 gap-5 md:grid-cols-2">
             {% include "portal/partials/settings_field.html" with field=form.email %}

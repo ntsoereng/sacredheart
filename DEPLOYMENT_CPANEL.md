@@ -51,6 +51,12 @@ python -c "from django.core.management.utils import get_random_secret_key; print
 
 Never copy the local development `SECRET_KEY` or commit the production `.env`.
 
+For application confirmation emails, configure the `EMAIL_*` values from
+`.env.example` with a dedicated school mailbox. Prefer an app password or
+mailbox-specific credential, keep TLS enabled on port 587 (or SSL on port 465,
+but never both), and make `DEFAULT_FROM_EMAIL` an address authorised by that
+SMTP account. Do not enter mail credentials in Django Admin or Site Settings.
+
 ## 3. Install the application
 
 Activate the virtual environment using the command shown by cPanel, then run:

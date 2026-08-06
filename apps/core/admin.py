@@ -30,6 +30,15 @@ class SiteSettingsAdmin(admin.ModelAdmin):
                 "google_maps_embed_url",
             ),
         }),
+        ("Social media", {
+            "fields": (
+                "facebook_url",
+                "instagram_url",
+                "youtube_url",
+                "tiktok_url",
+                "x_url",
+            ),
+        }),
         ("Homepage", {
             "fields": (
                 "hero_title",

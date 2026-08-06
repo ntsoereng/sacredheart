@@ -5,7 +5,7 @@ from apps.academics.models import Subject
 from apps.pages.models import Page
 from apps.posts.models import Post
 
-from .models import ExtracurricularActivity
+from .models import ExtracurricularActivity, SiteSettings
 
 
 class AboutViewTests(TestCase):
@@ -59,6 +59,19 @@ class SeoTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response["Content-Type"], "application/xml")
         self.assertContains(response, "http://testserver/")
+
+    def test_configured_social_profiles_appear_in_footer_and_schema(self):
+        SiteSettings.objects.create(
+            school_name="Sacred Heart",
+            facebook_url="https://facebook.com/sacredheart",
+            instagram_url="https://instagram.com/sacredheart",
+        )
+
+        response = self.client.get(reverse("home"), HTTP_HOST="testserver")
+
+        self.assertContains(response, "Follow the school")
+        self.assertContains(response, "https://facebook.com/sacredheart")
+        self.assertContains(response, '"sameAs"', html=False)
 
 
 class ExtracurricularActivityTests(TestCase):

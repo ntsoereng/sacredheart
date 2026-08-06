@@ -35,6 +35,19 @@ def site_settings(request):
                 "streetAddress": settings.address,
                 "addressCountry": "LS",
             }
+        social_profiles = [
+            url
+            for url in (
+                settings.facebook_url,
+                settings.instagram_url,
+                settings.youtube_url,
+                settings.tiktok_url,
+                settings.x_url,
+            )
+            if url
+        ]
+        if social_profiles:
+            organization["sameAs"] = social_profiles
 
     return {
         "site_settings": settings,

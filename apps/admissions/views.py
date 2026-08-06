@@ -1,4 +1,5 @@
 from datetime import date
+import logging
 
 from django.contrib import messages
 from django.urls import reverse_lazy
@@ -7,6 +8,10 @@ from django.views.generic import FormView, TemplateView
 from apps.core.models import SiteSettings
 
 from .forms import ApplicationForm
+from .emails import send_application_confirmation
+
+
+logger = logging.getLogger(__name__)
 
 
 class ApplicationCreateView(FormView):
@@ -53,6 +58,16 @@ class ApplicationCreateView(FormView):
             "latest_application_reference"
         ] = application.reference_number
 
+        try:
+            confirmation_sent = send_application_confirmation(application)
+        except Exception:
+            confirmation_sent = False
+            logger.exception(
+                "Could not send confirmation for application %s",
+                application.reference_number,
+            )
+        self.request.session["application_confirmation_email_sent"] = confirmation_sent
+
         messages.success(
             self.request,
             "Application submitted successfully."
@@ -69,5 +84,9 @@ class ApplicationSuccessView(TemplateView):
         context = super().get_context_data(**kwargs)
         context["reference_number"] = self.request.session.get(
             "latest_application_reference"
+        )
+        context["confirmation_email_sent"] = self.request.session.get(
+            "application_confirmation_email_sent",
+            False,
         )
         return context

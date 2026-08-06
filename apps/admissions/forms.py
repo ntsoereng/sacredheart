@@ -7,6 +7,19 @@ from apps.admissions.models import Application
 
 class ApplicationForm(forms.ModelForm):
 
+    parent_guardian_email = forms.EmailField(
+        label="Parent or guardian email",
+        help_text="We will send the application reference to this address.",
+        widget=forms.EmailInput(
+            attrs={
+                "class": "w-full",
+                "autocomplete": "email",
+                "inputmode": "email",
+                "placeholder": "guardian@example.com",
+            }
+        ),
+    )
+
     class Meta:
         model = Application
         fields = (
@@ -16,6 +29,7 @@ class ApplicationForm(forms.ModelForm):
             "date_of_birth",
             "parent_guardian_names",
             "parent_phone_number",
+            "parent_guardian_email",
             "home_address",
             "previous_school",
             "district",

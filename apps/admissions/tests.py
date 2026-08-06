@@ -1,4 +1,6 @@
 from django.test import TestCase
+from django.test import override_settings
+from django.core import mail
 from django.urls import reverse
 from datetime import date
 
@@ -59,6 +61,7 @@ class ApplicationCreateViewTests(TestCase):
                 "date_of_birth": "2012-05-10",
                 "parent_guardian_names": "Thabo Mokoena",
                 "parent_phone_number": "+266 5000 0000",
+                "parent_guardian_email": "guardian@example.com",
                 "home_address": "Maseru",
                 "previous_school": "Example Primary",
                 "district": "Maseru",
@@ -70,3 +73,38 @@ class ApplicationCreateViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, application.reference_number)
         self.assertContains(response, "Keep this reference number safe")
+
+    @override_settings(
+        EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend",
+        DEFAULT_FROM_EMAIL="Sacred Heart Admissions <admissions@example.org>",
+    )
+    def test_submission_sends_privacy_conscious_confirmation_email(self):
+        SiteSettings.objects.create(
+            school_name="Sacred Heart High School",
+            admissions_open=True,
+            admissions_email="admissions@example.org",
+        )
+
+        response = self.client.post(
+            self.url,
+            {
+                "academic_year": str(date.today().year + 1),
+                "student_name": "Lerato",
+                "student_surname": "Mokoena",
+                "date_of_birth": "2012-05-10",
+                "parent_guardian_names": "Thabo Mokoena",
+                "parent_phone_number": "+266 5000 0000",
+                "parent_guardian_email": "guardian@example.com",
+                "home_address": "Private home address",
+                "previous_school": "Example Primary",
+                "district": "Maseru",
+            },
+            follow=True,
+        )
+
+        application = Application.objects.get()
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, ["guardian@example.com"])
+        self.assertIn(application.reference_number, mail.outbox[0].body)
+        self.assertNotIn("Private home address", mail.outbox[0].body)
+        self.assertContains(response, "Confirmation email sent")

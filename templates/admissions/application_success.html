@@ -28,6 +28,7 @@
                     <svg class="mt-0.5 h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5m0 3h.01"/></svg>
                     <div><p class="font-bold">Keep this reference number safe</p><p class="mt-1 text-sm leading-relaxed">Save it or take a screenshot. The school may ask for it when discussing or tracking this application.</p></div>
                 </div>
+                {% if confirmation_email_sent %}<div class="mt-4 flex gap-3 rounded-xl border border-green-200 bg-green-50 p-4 text-green-900"><span aria-hidden="true">✓</span><p class="text-sm"><strong>Confirmation email sent.</strong> Check the guardian email inbox and spam folder for a copy of this reference.</p></div>{% endif %}
                 {% else %}
                 <div class="rounded-xl border border-stone-200 bg-stone-50 p-5 text-center"><p class="font-bold text-gray-800">Your application has already been submitted.</p><p class="mt-1 text-sm text-gray-600">If you need the reference number, contact the school using the applicant’s details.</p></div>
                 {% endif %}

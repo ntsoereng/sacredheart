@@ -26,6 +26,7 @@ class ApplicationAdmin(admin.ModelAdmin):
         "student_surname",
         "academic_year",
         "district",
+        "parent_guardian_email",
         "submitted_at",
         "status",
         "reviewed_by",
@@ -37,6 +38,7 @@ class ApplicationAdmin(admin.ModelAdmin):
         "student_name",
         "student_surname",
         "parent_guardian_names",
+        "parent_guardian_email",
         "previous_school",
         "academic_year"
     )

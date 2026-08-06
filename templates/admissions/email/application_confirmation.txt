@@ -1,0 +1,16 @@
+Application received
+
+Dear {{ application.parent_guardian_names }},
+
+Thank you for submitting an application to {{ school_name }} for {{ application.student_name }} {{ application.student_surname }}.
+
+Application reference: {{ application.reference_number }}
+Academic year: {{ application.academic_year }}
+
+Please keep the reference number safe. The admissions team will review the application and contact you if further information is required. Submission does not guarantee admission.
+
+{% if admissions_email %}Questions? Reply to this email or contact {{ admissions_email }}.
+{% endif %}
+For your security, this receipt does not contain the full application details.
+
+{{ school_name }} Admissions

@@ -89,6 +89,36 @@ class SiteSettings(models.Model):
             "Share > Embed a map. Ordinary maps.app.goo.gl share links cannot be embedded."
         ),
     )
+
+    facebook_url = models.URLField(
+        blank=True,
+        max_length=500,
+        verbose_name="Facebook page URL",
+    )
+
+    instagram_url = models.URLField(
+        blank=True,
+        max_length=500,
+        verbose_name="Instagram profile URL",
+    )
+
+    youtube_url = models.URLField(
+        blank=True,
+        max_length=500,
+        verbose_name="YouTube channel URL",
+    )
+
+    tiktok_url = models.URLField(
+        blank=True,
+        max_length=500,
+        verbose_name="TikTok profile URL",
+    )
+
+    x_url = models.URLField(
+        blank=True,
+        max_length=500,
+        verbose_name="X (Twitter) profile URL",
+    )
     
     logo = models.ImageField(
         upload_to="site/",

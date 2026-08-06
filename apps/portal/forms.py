@@ -211,6 +211,11 @@ class SiteSettingsForm(forms.ModelForm):
             "address",
             "office_hours",
             "google_maps_embed_url",
+            "facebook_url",
+            "instagram_url",
+            "youtube_url",
+            "tiktok_url",
+            "x_url",
             "hero_title",
             "hero_subtitle",
             "hero_image",
@@ -230,6 +235,11 @@ class SiteSettingsForm(forms.ModelForm):
             "about_vision": forms.Textarea(attrs={"rows": 4}),
             "about_values": forms.Textarea(attrs={"rows": 5}),
             "admissions_message": forms.Textarea(attrs={"rows": 3}),
+            "facebook_url": forms.URLInput(attrs={"placeholder": "https://facebook.com/your-page"}),
+            "instagram_url": forms.URLInput(attrs={"placeholder": "https://instagram.com/your-handle"}),
+            "youtube_url": forms.URLInput(attrs={"placeholder": "https://youtube.com/@your-channel"}),
+            "tiktok_url": forms.URLInput(attrs={"placeholder": "https://tiktok.com/@your-handle"}),
+            "x_url": forms.URLInput(attrs={"placeholder": "https://x.com/your-handle"}),
         }
 
     def __init__(self, *args, **kwargs):
