@@ -82,7 +82,12 @@ class SiteSettings(models.Model):
 )
 
     google_maps_embed_url = models.URLField(
-        blank=True
+        blank=True,
+        max_length=2000,
+        help_text=(
+            "Paste the Google Maps embed URL or the complete iframe code from "
+            "Share > Embed a map. Ordinary maps.app.goo.gl share links cannot be embedded."
+        ),
     )
     
     logo = models.ImageField(

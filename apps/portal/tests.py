@@ -177,6 +177,43 @@ class StaffApplicationWorkflowTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(SiteSettings.objects.exists())
 
+    def test_site_settings_extracts_google_maps_url_from_iframe(self):
+        settings = SiteSettings.objects.create(school_name="Sacred Heart")
+        embed_url = "https://www.google.com/maps/embed?pb=test-map"
+
+        response = self.client.post(
+            reverse("site-settings"),
+            {
+                "school_name": "Sacred Heart",
+                "google_maps_embed_url": (
+                    f'<iframe src="{embed_url}" width="600" height="450"></iframe>'
+                ),
+            },
+        )
+
+        self.assertRedirects(response, reverse("site-settings"))
+        settings.refresh_from_db()
+        self.assertEqual(settings.google_maps_embed_url, embed_url)
+
+    def test_site_settings_rejects_non_embeddable_maps_share_link(self):
+        SiteSettings.objects.create(school_name="Sacred Heart")
+
+        response = self.client.post(
+            reverse("site-settings"),
+            {
+                "school_name": "Sacred Heart",
+                "google_maps_embed_url": "https://maps.app.goo.gl/n3dTaH8F4x8SDcHz7",
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(
+            response.context["form"],
+            "google_maps_embed_url",
+            "This is not an embeddable Google Maps URL. In Google Maps, use "
+            "Share > Embed a map instead of Copy link.",
+        )
+
     def test_staff_can_create_subject_with_generated_slug(self):
         response = self.client.post(
             reverse("subject-create"),

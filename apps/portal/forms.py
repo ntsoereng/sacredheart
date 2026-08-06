@@ -1,4 +1,10 @@
+import html
+import re
+from urllib.parse import urlparse
+
 from django import forms
+from django.core.exceptions import ValidationError
+from django.core.validators import URLValidator
 from django.utils.html import strip_tags
 
 from apps.admissions.models import Application, ApplicationNote
@@ -178,6 +184,21 @@ class AnnouncementForm(forms.ModelForm):
 
 
 class SiteSettingsForm(forms.ModelForm):
+    google_maps_embed_url = forms.CharField(
+        required=False,
+        label="Google Maps embed code or URL",
+        help_text=(
+            "In Google Maps choose Share, then Embed a map, and paste either the "
+            "complete iframe code or its https://www.google.com/maps/embed URL."
+        ),
+        widget=forms.Textarea(
+            attrs={
+                "rows": 3,
+                "placeholder": '<iframe src="https://www.google.com/maps/embed?pb=…"></iframe>',
+            }
+        ),
+    )
+
     class Meta:
         model = SiteSettings
         fields = (
@@ -217,6 +238,36 @@ class SiteSettingsForm(forms.ModelForm):
         for field in self.fields.values():
             if not isinstance(field.widget, forms.CheckboxInput):
                 field.widget.attrs["class"] = control_classes
+
+    def clean_google_maps_embed_url(self):
+        value = self.cleaned_data.get("google_maps_embed_url", "").strip()
+        if not value:
+            return ""
+
+        iframe_src = re.search(
+            r"<iframe[^>]+src\s*=\s*(['\"])(.*?)\1",
+            value,
+            flags=re.IGNORECASE | re.DOTALL,
+        )
+        if iframe_src:
+            value = html.unescape(iframe_src.group(2).strip())
+
+        try:
+            URLValidator(schemes=("https",))(value)
+        except ValidationError:
+            raise ValidationError(
+                "Paste the Google Maps iframe code or its HTTPS embed URL."
+            )
+
+        parsed = urlparse(value)
+        if parsed.hostname not in {"google.com", "www.google.com"} or not parsed.path.startswith(
+            "/maps/embed"
+        ):
+            raise ValidationError(
+                "This is not an embeddable Google Maps URL. In Google Maps, use "
+                "Share > Embed a map instead of Copy link."
+            )
+        return value
 
 
 class ApplicationStatusForm(forms.ModelForm):
