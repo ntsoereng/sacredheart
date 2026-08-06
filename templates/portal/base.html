@@ -20,26 +20,29 @@
         </div>
     </header>
 
-    <div class="mx-auto grid max-w-7xl gap-6 px-5 py-7 sm:px-6 lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-8">
-        <aside>
-            <nav class="flex gap-2 overflow-x-auto rounded-2xl border border-stone-200 bg-white p-2 shadow-sm lg:block lg:space-y-1" aria-label="Staff portal">
-                <a href="{% url 'dashboard' %}" class="flex shrink-0 items-center justify-between rounded-xl px-4 py-3 text-sm font-semibold {% if request.resolver_match.url_name == 'dashboard' %}bg-primary text-white{% else %}text-gray-700 hover:bg-stone-100{% endif %}">
+    <div class="mx-auto grid min-w-0 max-w-7xl gap-6 px-4 py-7 sm:px-6 lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-8">
+        <aside class="min-w-0">
+            <nav class="grid min-w-0 grid-cols-2 gap-2 rounded-2xl border border-stone-200 bg-white p-2 shadow-sm sm:grid-cols-3 lg:block lg:space-y-1" aria-label="Staff portal">
+                <a href="{% url 'dashboard' %}" class="flex min-w-0 items-center justify-between rounded-xl px-3 py-3 text-sm font-semibold lg:px-4 {% if request.resolver_match.url_name == 'dashboard' %}bg-primary text-white{% else %}text-gray-700 hover:bg-stone-100{% endif %}">
                     <span>Overview</span>
                 </a>
-                <a href="{% url 'application-list' %}" class="flex shrink-0 items-center justify-between gap-4 rounded-xl px-4 py-3 text-sm font-semibold {% if 'application' in request.resolver_match.url_name %}bg-primary text-white{% else %}text-gray-700 hover:bg-stone-100{% endif %}">
+                <a href="{% url 'application-list' %}" class="flex min-w-0 flex-col items-start justify-center gap-1 rounded-xl px-3 py-3 text-sm font-semibold sm:flex-row sm:items-center sm:justify-between lg:px-4 {% if 'application' in request.resolver_match.url_name %}bg-primary text-white{% else %}text-gray-700 hover:bg-stone-100{% endif %}">
                     <span>Applications</span>
                     {% if portal_new_applications %}<span class="rounded-full bg-gold px-2 py-0.5 text-xs text-primary">{{ portal_new_applications }} new</span>{% endif %}
                 </a>
-                <a href="{% url 'message-list' %}" class="flex shrink-0 items-center justify-between gap-4 rounded-xl px-4 py-3 text-sm font-semibold {% if 'message' in request.resolver_match.url_name %}bg-primary text-white{% else %}text-gray-700 hover:bg-stone-100{% endif %}">
+                <a href="{% url 'message-list' %}" class="flex min-w-0 flex-col items-start justify-center gap-1 rounded-xl px-3 py-3 text-sm font-semibold sm:flex-row sm:items-center sm:justify-between lg:px-4 {% if 'message' in request.resolver_match.url_name %}bg-primary text-white{% else %}text-gray-700 hover:bg-stone-100{% endif %}">
                     <span>Messages</span>
                     {% if portal_unread_messages %}<span class="rounded-full bg-red-100 px-2 py-0.5 text-xs text-red-700">{{ portal_unread_messages }}</span>{% endif %}
                 </a>
-                <a href="{% url 'alumni-review-list' %}" class="flex shrink-0 items-center justify-between gap-4 rounded-xl px-4 py-3 text-sm font-semibold {% if 'alumni-review' in request.resolver_match.url_name %}bg-primary text-white{% else %}text-gray-700 hover:bg-stone-100{% endif %}">
+                <a href="{% url 'alumni-review-list' %}" class="flex min-w-0 flex-col items-start justify-center gap-1 rounded-xl px-3 py-3 text-sm font-semibold sm:flex-row sm:items-center sm:justify-between lg:px-4 {% if 'alumni-review' in request.resolver_match.url_name %}bg-primary text-white{% else %}text-gray-700 hover:bg-stone-100{% endif %}">
                     <span>Alumni stories</span>
                     {% if portal_pending_alumni %}<span class="rounded-full bg-gold px-2 py-0.5 text-xs text-primary">{{ portal_pending_alumni }} new</span>{% endif %}
                 </a>
-                <a href="{% url 'content-manager' %}" class="flex shrink-0 items-center justify-between gap-4 rounded-xl px-4 py-3 text-sm font-semibold {% if 'create' in request.resolver_match.url_name or 'edit' in request.resolver_match.url_name or request.resolver_match.url_name == 'content-manager' %}bg-primary text-white{% else %}text-gray-700 hover:bg-stone-100{% endif %}">
+                <a href="{% url 'content-manager' %}" class="flex min-w-0 items-center justify-between rounded-xl px-3 py-3 text-sm font-semibold lg:px-4 {% if 'create' in request.resolver_match.url_name or 'edit' in request.resolver_match.url_name or request.resolver_match.url_name == 'content-manager' %}bg-primary text-white{% else %}text-gray-700 hover:bg-stone-100{% endif %}">
                     <span>Website content</span>
+                </a>
+                <a href="{% url 'site-settings' %}" class="flex min-w-0 items-center justify-between rounded-xl px-3 py-3 text-sm font-semibold lg:px-4 {% if request.resolver_match.url_name == 'site-settings' %}bg-primary text-white{% else %}text-gray-700 hover:bg-stone-100{% endif %}">
+                    <span>Site settings</span>
                 </a>
             </nav>
         </aside>

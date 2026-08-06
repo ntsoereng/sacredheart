@@ -53,4 +53,8 @@
     <div><p class="text-sm font-bold text-gray-900">Alumni story reviews</p><p class="mt-1 text-sm text-gray-500">{{ pending_alumni }} submission{{ pending_alumni|pluralize }} waiting for review and publication approval.</p></div>
     <a href="{% url 'alumni-review-list' %}?status=pending" class="btn-primary mt-4 inline-flex sm:mt-0">Review alumni stories</a>
 </section>
+<section class="mt-7 rounded-2xl border border-stone-200 bg-white p-5 shadow-sm sm:flex sm:items-center sm:justify-between">
+    <div><p class="text-sm font-bold text-gray-900">Online applications are {% if site_settings and site_settings.admissions_open %}<span class="text-green-700">open</span>{% else %}<span class="text-red-700">closed</span>{% endif %}</p><p class="mt-1 text-sm text-gray-500">Manage school information, contact details, homepage imagery and admissions availability.</p></div>
+    <a href="{% url 'site-settings' %}" class="mt-4 inline-flex rounded-xl border border-primary px-4 py-2.5 text-sm font-bold text-primary sm:mt-0">Manage site settings</a>
+</section>
 {% endblock %}

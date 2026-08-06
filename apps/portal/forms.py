@@ -177,6 +177,48 @@ class AnnouncementForm(forms.ModelForm):
         }
 
 
+class SiteSettingsForm(forms.ModelForm):
+    class Meta:
+        model = SiteSettings
+        fields = (
+            "school_name",
+            "tagline",
+            "logo",
+            "favicon",
+            "email",
+            "phone",
+            "address",
+            "office_hours",
+            "google_maps_embed_url",
+            "hero_title",
+            "hero_subtitle",
+            "hero_image",
+            "about_history",
+            "about_mission",
+            "about_vision",
+            "about_values",
+            "admissions_email",
+            "admissions_open",
+            "admissions_message",
+        )
+        widgets = {
+            "address": forms.Textarea(attrs={"rows": 3}),
+            "hero_subtitle": forms.Textarea(attrs={"rows": 3}),
+            "about_history": forms.Textarea(attrs={"rows": 5}),
+            "about_mission": forms.Textarea(attrs={"rows": 4}),
+            "about_vision": forms.Textarea(attrs={"rows": 4}),
+            "about_values": forms.Textarea(attrs={"rows": 5}),
+            "admissions_message": forms.Textarea(attrs={"rows": 3}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        control_classes = "w-full max-w-full rounded-xl border-stone-300"
+        for field in self.fields.values():
+            if not isinstance(field.widget, forms.CheckboxInput):
+                field.widget.attrs["class"] = control_classes
+
+
 class ApplicationStatusForm(forms.ModelForm):
     class Meta:
         model = Application

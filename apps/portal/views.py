@@ -31,6 +31,7 @@ from apps.portal.forms import (
     StaffEventForm,
     StaffMemberForm,
     StaffPostForm,
+    SiteSettingsForm,
     StaffSubjectForm,
 )
 from apps.portal.mixins import StaffRequiredMixin
@@ -189,6 +190,27 @@ class AnnouncementUpdateView(LoginRequiredMixin, StaffRequiredMixin, UpdateView)
 
     def form_valid(self, form):
         messages.success(self.request, "Homepage announcement updated.")
+        return super().form_valid(form)
+
+
+class SiteSettingsUpdateView(LoginRequiredMixin, StaffRequiredMixin, UpdateView):
+    model = SiteSettings
+    form_class = SiteSettingsForm
+    template_name = "portal/site_settings.html"
+
+    def get_object(self, queryset=None):
+        settings = SiteSettings.objects.first()
+        if settings is None:
+            settings = SiteSettings.objects.create(
+                school_name="Sacred Heart High School"
+            )
+        return settings
+
+    def get_success_url(self):
+        return reverse("site-settings")
+
+    def form_valid(self, form):
+        messages.success(self.request, "Site settings updated successfully.")
         return super().form_valid(form)
     
     

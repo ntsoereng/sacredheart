@@ -154,6 +154,29 @@ class StaffApplicationWorkflowTests(TestCase):
         )
         self.assertTrue(settings.show_announcement)
 
+    def test_staff_can_update_site_info_and_open_applications(self):
+        settings = SiteSettings.objects.create(school_name="Sacred Heart")
+        response = self.client.post(
+            reverse("site-settings"),
+            {
+                "school_name": "Sacred Heart High School",
+                "tagline": "Faith and excellence",
+                "admissions_email": "admissions@example.org",
+                "admissions_open": "on",
+            },
+        )
+
+        self.assertRedirects(response, reverse("site-settings"))
+        settings.refresh_from_db()
+        self.assertEqual(settings.school_name, "Sacred Heart High School")
+        self.assertTrue(settings.admissions_open)
+
+    def test_site_settings_page_creates_missing_singleton(self):
+        response = self.client.get(reverse("site-settings"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(SiteSettings.objects.exists())
+
     def test_staff_can_create_subject_with_generated_slug(self):
         response = self.client.post(
             reverse("subject-create"),

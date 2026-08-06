@@ -19,6 +19,7 @@ from .views import (
     PostUpdateView,
     StaffMemberCreateView,
     StaffMemberUpdateView,
+    SiteSettingsUpdateView,
     SubjectCreateView,
     SubjectUpdateView,
 )
@@ -62,6 +63,7 @@ urlpatterns = [
     path("alumni/", AlumniReviewListView.as_view(), name="alumni-review-list"),
     path("alumni/<int:pk>/", AlumniReviewDetailView.as_view(), name="alumni-review-detail"),
     path("content/", ContentManagerView.as_view(), name="content-manager"),
+    path("settings/", SiteSettingsUpdateView.as_view(), name="site-settings"),
     path("content/announcement/edit/", AnnouncementUpdateView.as_view(), name="announcement-edit"),
     path("content/activities/new/", ActivityCreateView.as_view(), name="activity-create"),
     path("content/activities/<int:pk>/edit/", ActivityUpdateView.as_view(), name="activity-edit"),
