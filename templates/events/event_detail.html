@@ -7,7 +7,7 @@
 {% block twitter_description %}{{ event.description|striptags|truncatechars:200 }}{% endblock %}
 {% block og_image %}{% if event.image %}<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ event.image.url }}">{% else %}{{ block.super }}{% endif %}{% endblock %}
 {% block twitter_image %}{% if event.image %}<meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ event.image.url }}">{% else %}{{ block.super }}{% endif %}{% endblock %}
-{% block structured_data %}<script type="application/ld+json">{{ event_schema }}</script>{% endblock %}
+{% block structured_data %}<script nonce="{{ csp_nonce }}" type="application/ld+json">{{ event_schema }}</script>{% endblock %}
 {% block content %}
 <section class="page-hero py-14 text-white md:py-18">
     <div class="mx-auto max-w-5xl px-6">

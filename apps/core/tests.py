@@ -1,3 +1,5 @@
+import re
+
 from django.test import TestCase
 from django.urls import reverse
 
@@ -6,6 +8,35 @@ from apps.pages.models import Page
 from apps.posts.models import Post
 
 from .models import ExtracurricularActivity, SiteSettings
+
+
+class BrowserSecurityHeaderTests(TestCase):
+    def test_html_response_has_enforced_nonce_based_csp(self):
+        response = self.client.get(reverse("home"))
+
+        policy = response["Content-Security-Policy"]
+        self.assertIn("default-src 'self'", policy)
+        self.assertIn("object-src 'none'", policy)
+        self.assertIn("frame-ancestors 'none'", policy)
+        self.assertIn("https://cdn.jsdelivr.net", policy)
+        self.assertNotIn("script-src 'unsafe-inline'", policy)
+
+        nonce_match = re.search(r"'nonce-([^']+)'", policy)
+        self.assertIsNotNone(nonce_match)
+        self.assertContains(
+            response,
+            f'nonce="{nonce_match.group(1)}"',
+            html=False,
+        )
+
+    def test_response_disables_unused_browser_capabilities(self):
+        response = self.client.get(reverse("home"))
+
+        policy = response["Permissions-Policy"]
+        self.assertIn("camera=()", policy)
+        self.assertIn("geolocation=()", policy)
+        self.assertIn("microphone=()", policy)
+        self.assertIn("payment=()", policy)
 
 
 class AboutViewTests(TestCase):

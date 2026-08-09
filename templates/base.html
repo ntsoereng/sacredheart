@@ -25,7 +25,7 @@
     <meta name="twitter:title" content="{% block twitter_title %}{{ seo_school_name }}{% endblock %}">
     <meta name="twitter:description" content="{% block twitter_description %}{{ seo_default_description }}{% endblock %}">
     {% block twitter_image %}{% if seo_default_image %}<meta name="twitter:image" content="{{ seo_default_image }}">{% endif %}{% endblock %}
-    <script type="application/ld+json">{{ organization_schema }}</script>
+    <script nonce="{{ csp_nonce }}" type="application/ld+json">{{ organization_schema }}</script>
     {% block structured_data %}{% endblock %}
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -71,7 +71,7 @@
     <script defer
         src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js">
     </script>
-    <script>
+    <script nonce="{{ csp_nonce }}">
         document.querySelectorAll("img[data-webp-src]").forEach((image) => {
             const webpUrl = image.dataset.webpSrc;
             if (!webpUrl) return;

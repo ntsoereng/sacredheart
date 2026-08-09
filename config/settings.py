@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 from django.core.exceptions import ImproperlyConfigured
+from django.utils.csp import CSP
 from decouple import Csv, config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -127,6 +128,8 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'django.middleware.csp.ContentSecurityPolicyMiddleware',
+    'apps.core.middleware.PermissionsPolicyMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -149,12 +152,59 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.csp',
                 'apps.core.context_processors.site_settings',
                 'apps.portal.context_processors.portal_stats',
             ],
         },
     },
 ]
+
+# Scripts are restricted to same-origin files, the pinned Alpine CDN origin,
+# and per-response nonces on intentional inline scripts. Alpine's x-show
+# behavior requires inline style attributes, so unsafe-inline is limited to
+# styles and is never allowed for scripts.
+SECURE_CSP = {
+    "default-src": [CSP.SELF],
+    "base-uri": [CSP.SELF],
+    "connect-src": [CSP.SELF],
+    "font-src": [CSP.SELF, "https://fonts.gstatic.com"],
+    "form-action": [CSP.SELF],
+    "frame-ancestors": [CSP.NONE],
+    "frame-src": [CSP.SELF, "https://www.google.com"],
+    "img-src": [CSP.SELF, "data:"],
+    "media-src": [CSP.SELF],
+    "object-src": [CSP.NONE],
+    "script-src": [CSP.SELF, CSP.NONCE, "https://cdn.jsdelivr.net"],
+    "style-src": [CSP.SELF, CSP.UNSAFE_INLINE, "https://fonts.googleapis.com"],
+}
+
+PERMISSIONS_POLICY = ", ".join(
+    (
+        "accelerometer=()",
+        "ambient-light-sensor=()",
+        "autoplay=()",
+        "camera=()",
+        "display-capture=()",
+        "encrypted-media=()",
+        "fullscreen=()",
+        "gamepad=()",
+        "geolocation=()",
+        "gyroscope=()",
+        "magnetometer=()",
+        "microphone=()",
+        "midi=()",
+        "payment=()",
+        "picture-in-picture=()",
+        "publickey-credentials-create=()",
+        "publickey-credentials-get=()",
+        "screen-wake-lock=()",
+        "serial=()",
+        "usb=()",
+        "web-share=()",
+        "xr-spatial-tracking=()",
+    )
+)
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
