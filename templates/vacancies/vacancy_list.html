@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Vacancies | Sacred Heart High School{% endblock %}
+{% block content %}
+<section class="page-hero py-14 text-white md:py-18"><div class="mx-auto max-w-5xl px-6 text-center"><p class="text-sm font-bold uppercase tracking-[0.2em] text-gold-light">Join our team</p><h1 class="mt-3 text-4xl font-bold md:text-5xl">Current vacancies</h1><p class="mx-auto mt-5 max-w-2xl text-lg leading-8 text-white/80">Explore current opportunities to serve and grow within the Sacred Heart High School community.</p></div></section>
+<section class="soft-section py-12 md:py-18"><div class="mx-auto max-w-5xl px-6">
+    <div class="grid gap-5">
+        {% for vacancy in vacancies %}<article class="content-card rounded-2xl p-6 md:p-8"><div class="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between"><div class="min-w-0"><div class="flex flex-wrap gap-2 text-xs font-bold uppercase tracking-wide text-primary"><span>{{ vacancy.get_employment_type_display }}</span><span class="text-stone-300">•</span><span>{{ vacancy.department }}</span></div><h2 class="mt-2 text-2xl font-bold text-gray-900"><a href="{% url 'vacancy-detail' vacancy.slug %}" class="hover:text-primary">{{ vacancy.job_title }}</a></h2><p class="mt-3 max-w-3xl leading-7 text-gray-600">{{ vacancy.short_summary }}</p><div class="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm text-gray-500"><span>{{ vacancy.location }}</span><span>Closes {{ vacancy.application_deadline|date:"d F Y" }}</span>{% if vacancy.reference_number %}<span>Ref: {{ vacancy.reference_number }}</span>{% endif %}</div></div><a href="{% url 'vacancy-detail' vacancy.slug %}" class="btn-primary shrink-0">View vacancy</a></div></article>
+        {% empty %}<div class="content-card rounded-2xl p-10 text-center"><h2 class="text-2xl font-bold">No current vacancies</h2><p class="mt-3 text-gray-600">There are no open positions at present. Please check again later.</p></div>{% endfor %}
+    </div>
+    {% if is_paginated %}<nav class="mt-8 flex justify-center gap-3 text-sm font-bold">{% if page_obj.has_previous %}<a class="rounded-lg border border-stone-300 px-4 py-2" href="?page={{ page_obj.previous_page_number }}">Previous</a>{% endif %}<span class="px-4 py-2">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>{% if page_obj.has_next %}<a class="rounded-lg border border-stone-300 px-4 py-2" href="?page={{ page_obj.next_page_number }}">Next</a>{% endif %}</nav>{% endif %}
+</div></section>
+{% endblock %}

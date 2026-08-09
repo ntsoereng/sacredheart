@@ -23,12 +23,14 @@ from apps.events.models import Event
 from apps.posts.models import Post
 from apps.academics.models import Subject
 from apps.staff.models import StaffMember
+from apps.vacancies.models import Vacancy
 from apps.portal.forms import (
     ApplicationNoteForm,
     ApplicationStatusForm,
     AnnouncementForm,
     StaffActivityForm,
     StaffEventForm,
+    StaffVacancyForm,
     StaffMemberForm,
     StaffPostForm,
     SiteSettingsForm,
@@ -55,6 +57,8 @@ class DashboardView(LoginRequiredMixin, StaffRequiredMixin, TemplateView):
             "recent_messages": ContactMessage.objects.all()[:5],
             "pending_alumni": AlumniStory.objects.filter(status="pending").count(),
             "recent_alumni": AlumniStory.objects.select_related("reviewed_by")[:5],
+            "open_vacancies": Vacancy.objects.publicly_visible().count(),
+            "draft_vacancies": Vacancy.objects.filter(is_published=False).count(),
         })
         return context
 
@@ -68,6 +72,7 @@ class ContentManagerView(LoginRequiredMixin, AnyStaffPermissionRequiredMixin, Te
         "staff.view_staffmember",
         "core.view_extracurricularactivity",
         "core.change_sitesettings",
+        "vacancies.view_vacancy",
     )
 
     def get_context_data(self, **kwargs):
@@ -86,6 +91,8 @@ class ContentManagerView(LoginRequiredMixin, AnyStaffPermissionRequiredMixin, Te
         context["published_activities"] = ExtracurricularActivity.objects.filter(
             is_published=True
         ).count()
+        context["vacancies"] = Vacancy.objects.all()[:10]
+        context["open_vacancies"] = Vacancy.objects.publicly_visible().count()
         return context
 
 
@@ -149,6 +156,26 @@ class EventUpdateView(StaffContentFormMixin, UpdateView):
     form_class = StaffEventForm
     content_kind = "event"
     page_title = "Edit event"
+
+
+class VacancyCreateView(StaffContentFormMixin, CreateView):
+    permission_required = "vacancies.add_vacancy"
+    model = Vacancy
+    form_class = StaffVacancyForm
+    content_kind = "vacancy"
+    page_title = "Create vacancy"
+
+    def form_valid(self, form):
+        form.instance.created_by = self.request.user
+        return super().form_valid(form)
+
+
+class VacancyUpdateView(StaffContentFormMixin, UpdateView):
+    permission_required = "vacancies.change_vacancy"
+    model = Vacancy
+    form_class = StaffVacancyForm
+    content_kind = "vacancy"
+    page_title = "Edit vacancy"
 
 
 class SubjectCreateView(StaffContentFormMixin, CreateView):

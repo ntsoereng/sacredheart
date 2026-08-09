@@ -12,6 +12,7 @@ from apps.posts.models import Post
 from apps.events.models import Event
 from apps.pages.models import Page
 from apps.staff.models import StaffMember
+from apps.vacancies.models import Vacancy
 from apps.core.models import ExtracurricularActivity, SiteSettings
 
 
@@ -149,6 +150,7 @@ class SearchView(TemplateView):
             context["subjects"] = Subject.objects.none()
             context["staff_members"] = StaffMember.objects.none()
             context["alumni_stories"] = AlumniStory.objects.none()
+            context["vacancies"] = Vacancy.objects.none()
 
             return context
 
@@ -229,6 +231,15 @@ class SearchView(TemplateView):
                 | Q(life_story__icontains=query)
                 | Q(school_memories__icontains=query)
                 | Q(message_to_students__icontains=query)
+            )
+        )
+
+        context["vacancies"] = (
+            Vacancy.objects.publicly_visible().filter(
+                Q(job_title__icontains=query)
+                | Q(department__icontains=query)
+                | Q(short_summary__icontains=query)
+                | Q(job_description__icontains=query)
             )
         )
 

@@ -8,6 +8,7 @@ from apps.pages.models import Page
 from apps.posts.models import Post
 from apps.core.models import ExtracurricularActivity
 from apps.staff.models import StaffMember
+from apps.vacancies.models import Vacancy
 
 
 class StaticViewSitemap(Sitemap):
@@ -24,6 +25,7 @@ class StaticViewSitemap(Sitemap):
             "activity-list",
             "staff-list",
             "alumni-list",
+            "vacancy-list",
             "contact",
             "donations",
             "privacy-policy",
@@ -135,6 +137,20 @@ class StaffSitemap(Sitemap):
         return reverse("staff-detail", kwargs={"pk": item.pk})
 
 
+class VacancySitemap(Sitemap):
+    changefreq = "daily"
+    priority = 0.8
+
+    def items(self):
+        return Vacancy.objects.publicly_visible()
+
+    def lastmod(self, item):
+        return item.updated_at
+
+    def location(self, item):
+        return reverse("vacancy-detail", kwargs={"slug": item.slug})
+
+
 sitemaps = {
     "static": StaticViewSitemap,
     "news": PostSitemap,
@@ -144,4 +160,5 @@ sitemaps = {
     "alumni": AlumniSitemap,
     "activities": ActivitySitemap,
     "staff": StaffSitemap,
+    "vacancies": VacancySitemap,
 }

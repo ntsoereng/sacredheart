@@ -18,6 +18,7 @@ urlpatterns = [
     path("", include("apps.staff.urls")),
     path("", include("apps.admissions.urls")),
     path("", include("apps.alumni.urls")),
+    path("", include("apps.vacancies.urls")),
     path("dashboard/", include("apps.portal.urls")),
     path("", include("apps.pages.urls")),
 ]

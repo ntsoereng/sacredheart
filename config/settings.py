@@ -96,6 +96,7 @@ INSTALLED_APPS = [
     "apps.staff",
     "apps.admissions",
     "apps.alumni",
+    "apps.vacancies",
     "apps.portal",
 ]
 

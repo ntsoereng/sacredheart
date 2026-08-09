@@ -14,6 +14,7 @@ from apps.posts.content import sanitize_post_html
 from apps.academics.models import Subject
 from apps.core.models import ExtracurricularActivity, SiteSettings
 from apps.staff.models import StaffMember
+from apps.vacancies.models import Vacancy
 
 
 def _clean_rich_text(value, required_message):
@@ -74,6 +75,61 @@ class StaffEventForm(forms.ModelForm):
             self.cleaned_data["description"],
             "Please add the event description.",
         )
+
+
+class StaffVacancyForm(forms.ModelForm):
+    rich_text_fields = (
+        "job_description",
+        "minimum_qualifications",
+        "experience_requirements",
+        "skills_competencies",
+        "additional_requirements",
+        "application_instructions",
+    )
+
+    class Meta:
+        model = Vacancy
+        fields = (
+            "job_title", "department", "employment_type", "location",
+            "application_deadline", "expected_start_date", "status",
+            "reference_number", "short_summary", "job_description",
+            "minimum_qualifications", "experience_requirements",
+            "skills_competencies", "additional_requirements",
+            "application_instructions", "contact_email", "contact_person",
+            "is_published",
+        )
+        widgets = {
+            "application_deadline": forms.DateInput(attrs={"type": "date"}),
+            "expected_start_date": forms.DateInput(attrs={"type": "date"}),
+            "short_summary": forms.Textarea(attrs={"rows": 3}),
+            "job_description": forms.HiddenInput(),
+            "minimum_qualifications": forms.HiddenInput(),
+            "experience_requirements": forms.HiddenInput(),
+            "skills_competencies": forms.HiddenInput(),
+            "additional_requirements": forms.HiddenInput(),
+            "application_instructions": forms.HiddenInput(),
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        required = {
+            "job_description": "Please add the job description.",
+            "minimum_qualifications": "Please add the minimum qualifications.",
+            "experience_requirements": "Please add the experience requirements.",
+            "skills_competencies": "Please add the skills or competencies.",
+            "application_instructions": "Please add application instructions.",
+        }
+        for field, message in required.items():
+            value = cleaned_data.get(field)
+            if value is not None:
+                try:
+                    cleaned_data[field] = _clean_rich_text(value, message)
+                except forms.ValidationError as error:
+                    self.add_error(field, error)
+        additional = cleaned_data.get("additional_requirements")
+        if additional:
+            cleaned_data["additional_requirements"] = sanitize_post_html(additional)
+        return cleaned_data
 
 
 class StaffSubjectForm(forms.ModelForm):
