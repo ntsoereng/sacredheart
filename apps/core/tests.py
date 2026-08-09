@@ -38,6 +38,8 @@ class BrowserSecurityHeaderTests(TestCase):
         self.assertIn("geolocation=()", policy)
         self.assertIn("microphone=()", policy)
         self.assertIn("payment=()", policy)
+        self.assertNotIn(", ", policy)
+        self.assertNotIn("publickey-credentials", policy)
 
 
 class AboutViewTests(TestCase):

@@ -177,7 +177,7 @@ SECURE_CSP = {
     "style-src": [CSP.SELF, "https://fonts.googleapis.com"],
 }
 
-PERMISSIONS_POLICY = ", ".join(
+PERMISSIONS_POLICY = ",".join(
     (
         "accelerometer=()",
         "ambient-light-sensor=()",
@@ -194,8 +194,6 @@ PERMISSIONS_POLICY = ", ".join(
         "midi=()",
         "payment=()",
         "picture-in-picture=()",
-        "publickey-credentials-create=()",
-        "publickey-credentials-get=()",
         "screen-wake-lock=()",
         "serial=()",
         "usb=()",
