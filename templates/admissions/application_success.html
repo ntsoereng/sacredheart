@@ -16,12 +16,12 @@
 
             <div class="p-6 md:p-10">
                 {% if reference_number %}
-                <div x-data="{ copied: false }" class="rounded-2xl border-2 border-gold/50 bg-gold/10 p-6 text-center">
+                <div class="rounded-2xl border-2 border-gold/50 bg-gold/10 p-6 text-center">
                     <p class="text-xs font-bold uppercase tracking-[0.18em] text-primary">Your application reference</p>
                     <p class="mt-3 break-all font-mono text-2xl font-bold tracking-wide text-gray-900 md:text-3xl">{{ reference_number }}</p>
-                    <button type="button" @click="navigator.clipboard.writeText('{{ reference_number|escapejs }}'); copied = true; setTimeout(() => copied = false, 2000)" class="mt-4 inline-flex items-center gap-2 rounded-lg border border-primary/20 bg-white px-4 py-2 text-sm font-bold text-primary hover:bg-primary/5">
+                    <button type="button" data-copy-reference="{{ reference_number }}" class="mt-4 inline-flex items-center gap-2 rounded-lg border border-primary/20 bg-white px-4 py-2 text-sm font-bold text-primary hover:bg-primary/5">
                         <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M15 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h3"/></svg>
-                        <span x-text="copied ? 'Copied' : 'Copy reference'">Copy reference</span>
+                        <span data-copy-label>Copy reference</span>
                     </button>
                 </div>
 

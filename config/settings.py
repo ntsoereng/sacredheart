@@ -160,10 +160,8 @@ TEMPLATES = [
     },
 ]
 
-# Scripts are restricted to same-origin files, the pinned Alpine CDN origin,
-# and per-response nonces on intentional inline scripts. Alpine's x-show
-# behavior requires inline style attributes, so unsafe-inline is limited to
-# styles and is never allowed for scripts.
+# Scripts are restricted to same-origin files and per-response nonces on
+# intentional inline scripts. Inline scripts and styles are otherwise blocked.
 SECURE_CSP = {
     "default-src": [CSP.SELF],
     "base-uri": [CSP.SELF],
@@ -175,8 +173,8 @@ SECURE_CSP = {
     "img-src": [CSP.SELF, "data:"],
     "media-src": [CSP.SELF],
     "object-src": [CSP.NONE],
-    "script-src": [CSP.SELF, CSP.NONCE, "https://cdn.jsdelivr.net"],
-    "style-src": [CSP.SELF, CSP.UNSAFE_INLINE, "https://fonts.googleapis.com"],
+    "script-src": [CSP.SELF, CSP.NONCE],
+    "style-src": [CSP.SELF, "https://fonts.googleapis.com"],
 }
 
 PERMISSIONS_POLICY = ", ".join(

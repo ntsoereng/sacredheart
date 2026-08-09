@@ -18,8 +18,9 @@ class BrowserSecurityHeaderTests(TestCase):
         self.assertIn("default-src 'self'", policy)
         self.assertIn("object-src 'none'", policy)
         self.assertIn("frame-ancestors 'none'", policy)
-        self.assertIn("https://cdn.jsdelivr.net", policy)
+        self.assertNotIn("cdn.jsdelivr.net", policy)
         self.assertNotIn("script-src 'unsafe-inline'", policy)
+        self.assertNotIn("style-src 'unsafe-inline'", policy)
 
         nonce_match = re.search(r"'nonce-([^']+)'", policy)
         self.assertIsNotNone(nonce_match)

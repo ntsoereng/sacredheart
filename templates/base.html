@@ -30,10 +30,8 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link rel="dns-prefetch" href="//fonts.googleapis.com">
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
-    <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
 
     <link
         href="https://fonts.googleapis.com/css2?family=Lusitana:wght@400;700&family=Source+Sans+3:wght@400;500;600;700&display=swap"
@@ -68,10 +66,70 @@
     {% include "partials/footer.html" %}
 
 
-    <script defer
-        src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js">
-    </script>
     <script nonce="{{ csp_nonce }}">
+        (() => {
+            const navigation = document.getElementById("site-navigation");
+            const dropdowns = navigation
+                ? [...navigation.querySelectorAll("[data-nav-dropdown]")]
+                : [];
+
+            const closeDropdown = (dropdown) => {
+                dropdown.querySelector("[data-dropdown-panel]")?.classList.add("hidden");
+                dropdown.querySelector("[data-dropdown-button]")?.setAttribute("aria-expanded", "false");
+                dropdown.querySelector("[data-dropdown-icon]")?.classList.remove("rotate-180");
+            };
+
+            dropdowns.forEach((dropdown) => {
+                const button = dropdown.querySelector("[data-dropdown-button]");
+                const panel = dropdown.querySelector("[data-dropdown-panel]");
+                button?.addEventListener("click", () => {
+                    const opening = panel.classList.contains("hidden");
+                    dropdowns.forEach(closeDropdown);
+                    if (opening) {
+                        panel.classList.remove("hidden");
+                        button.setAttribute("aria-expanded", "true");
+                        dropdown.querySelector("[data-dropdown-icon]")?.classList.add("rotate-180");
+                    }
+                });
+            });
+
+            document.addEventListener("click", (event) => {
+                dropdowns.forEach((dropdown) => {
+                    if (!dropdown.contains(event.target)) closeDropdown(dropdown);
+                });
+            });
+            document.addEventListener("keydown", (event) => {
+                if (event.key === "Escape") dropdowns.forEach(closeDropdown);
+            });
+
+            const mobileToggle = document.getElementById("mobile-navigation-toggle");
+            const mobileMenu = document.getElementById("mobile-navigation");
+            mobileToggle?.addEventListener("click", () => {
+                const opening = mobileMenu.classList.contains("hidden");
+                mobileMenu.classList.toggle("hidden", !opening);
+                mobileToggle.setAttribute("aria-expanded", String(opening));
+                mobileToggle.querySelector("[data-menu-open-icon]")?.classList.toggle("hidden", opening);
+                mobileToggle.querySelector("[data-menu-close-icon]")?.classList.toggle("hidden", !opening);
+            });
+
+            document.querySelector("[data-dismiss-announcement]")?.addEventListener("click", () => {
+                document.getElementById("school-announcement")?.remove();
+            });
+
+            document.querySelectorAll("[data-copy-reference]").forEach((button) => {
+                button.addEventListener("click", async () => {
+                    try {
+                        await navigator.clipboard.writeText(button.dataset.copyReference);
+                        const label = button.querySelector("[data-copy-label]");
+                        label.textContent = "Copied";
+                        window.setTimeout(() => { label.textContent = "Copy reference"; }, 2000);
+                    } catch (error) {
+                        button.querySelector("[data-copy-label]").textContent = "Copy failed";
+                    }
+                });
+            });
+        })();
+
         document.querySelectorAll("img[data-webp-src]").forEach((image) => {
             const webpUrl = image.dataset.webpSrc;
             if (!webpUrl) return;

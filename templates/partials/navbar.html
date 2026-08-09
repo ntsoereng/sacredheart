@@ -1,5 +1,5 @@
 {% if site_settings.show_announcement and site_settings.homepage_announcement %}
-<div x-data="{ visible: true }" x-show="visible" x-transition.opacity class="relative overflow-hidden bg-primary text-white" role="status" aria-label="School announcement">
+<div id="school-announcement" class="relative overflow-hidden bg-primary text-white" role="status" aria-label="School announcement">
     <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(226,196,90,.22),transparent_45%)]"></div>
     <div class="relative mx-auto flex max-w-7xl items-start gap-3 px-5 py-3 sm:items-center sm:px-6">
         <span class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gold text-primary sm:mt-0" aria-hidden="true">
@@ -11,14 +11,14 @@
             <p class="mt-0.5 text-sm leading-relaxed text-white/95 sm:mt-0">{{ site_settings.homepage_announcement }}</p>
             {% if request.user.is_staff %}<a href="{% url 'announcement-edit' %}" class="mt-1 inline-block text-xs font-bold text-gold-light underline sm:mt-0">Edit announcement</a>{% endif %}
         </div>
-        <button type="button" @click="visible = false" class="shrink-0 rounded-lg p-1.5 text-white/70 hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gold" aria-label="Dismiss announcement">
+        <button type="button" data-dismiss-announcement class="shrink-0 rounded-lg p-1.5 text-white/70 hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gold" aria-label="Dismiss announcement">
             <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
         </button>
     </div>
 </div>
 {% endif %}
 
-<nav x-data="{ open: false, schoolOpen: false, communityOpen: false }" class="sticky top-0 z-50 border-b border-stone-200/80 bg-white/95 shadow-sm backdrop-blur">
+<nav id="site-navigation" class="sticky top-0 z-50 border-b border-stone-200/80 bg-white/95 shadow-sm backdrop-blur">
     <div class="max-w-7xl mx-auto px-5 sm:px-6">
         <div class="flex h-16 items-center justify-between gap-4">
             <a href="{% url 'home' %}" class="group flex min-w-0 items-center gap-3 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2">
@@ -31,12 +31,12 @@
             <div class="hidden lg:flex items-center gap-1 text-sm font-medium">
                 <a href="{% url 'home' %}" class="nav-link">Home</a>
 
-                <div class="relative" @keydown.escape="schoolOpen = false" @click.outside="schoolOpen = false">
-                    <button type="button" @click="schoolOpen = !schoolOpen; communityOpen = false" :aria-expanded="schoolOpen.toString()" class="nav-link inline-flex items-center gap-1">
+                <div class="relative" data-nav-dropdown>
+                    <button type="button" data-dropdown-button aria-expanded="false" class="nav-link inline-flex items-center gap-1">
                         School
-                        <svg class="h-4 w-4 transition-transform duration-200" :class="schoolOpen && 'rotate-180'" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.17l3.71-3.94a.75.75 0 1 1 1.09 1.04l-4.25 4.5a.75.75 0 0 1-1.09 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd" /></svg>
+                        <svg data-dropdown-icon class="h-4 w-4 transition-transform duration-200" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.17l3.71-3.94a.75.75 0 1 1 1.09 1.04l-4.25 4.5a.75.75 0 0 1-1.09 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd" /></svg>
                     </button>
-                    <div x-cloak x-show="schoolOpen" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 -translate-y-1 scale-95" x-transition:enter-end="opacity-100 translate-y-0 scale-100" x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0 -translate-y-1" class="nav-dropdown">
+                    <div data-dropdown-panel class="nav-dropdown hidden">
                         <a href="{% url 'about-us' %}" class="nav-dropdown-link">About us</a>
                         <a href="{% url 'subject-list' %}" class="nav-dropdown-link">Subjects</a>
                         <a href="{% url 'activity-list' %}" class="nav-dropdown-link">Clubs and activities</a>
@@ -44,12 +44,12 @@
                     </div>
                 </div>
 
-                <div class="relative" @keydown.escape="communityOpen = false" @click.outside="communityOpen = false">
-                    <button type="button" @click="communityOpen = !communityOpen; schoolOpen = false" :aria-expanded="communityOpen.toString()" class="nav-link inline-flex items-center gap-1">
+                <div class="relative" data-nav-dropdown>
+                    <button type="button" data-dropdown-button aria-expanded="false" class="nav-link inline-flex items-center gap-1">
                         Community
-                        <svg class="h-4 w-4 transition-transform duration-200" :class="communityOpen && 'rotate-180'" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.17l3.71-3.94a.75.75 0 1 1 1.09 1.04l-4.25 4.5a.75.75 0 0 1-1.09 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd" /></svg>
+                        <svg data-dropdown-icon class="h-4 w-4 transition-transform duration-200" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.17l3.71-3.94a.75.75 0 1 1 1.09 1.04l-4.25 4.5a.75.75 0 0 1-1.09 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd" /></svg>
                     </button>
-                    <div x-cloak x-show="communityOpen" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 -translate-y-1 scale-95" x-transition:enter-end="opacity-100 translate-y-0 scale-100" x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0 -translate-y-1" class="nav-dropdown">
+                    <div data-dropdown-panel class="nav-dropdown hidden">
                         <a href="{% url 'event-list' %}" class="nav-dropdown-link">Events</a>
                         <a href="{% url 'post-list' %}" class="nav-dropdown-link">News</a>
                         <a href="{% url 'alumni-list' %}" class="nav-dropdown-link">Alumni corner</a>
@@ -71,15 +71,15 @@
                 <a href="{% url 'application-create' %}" class="nav-cta">Apply now</a>
             </div>
 
-            <button type="button" @click="open = !open" :aria-expanded="open.toString()" aria-controls="mobile-navigation" class="inline-flex h-10 w-10 items-center justify-center rounded-lg text-primary transition hover:bg-primary/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold lg:hidden">
+            <button id="mobile-navigation-toggle" type="button" aria-expanded="false" aria-controls="mobile-navigation" class="inline-flex h-10 w-10 items-center justify-center rounded-lg text-primary transition hover:bg-primary/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold lg:hidden">
                 <span class="sr-only">Toggle navigation</span>
-                <svg x-show="!open" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
-                <svg x-cloak x-show="open" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg>
+                <svg data-menu-open-icon class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
+                <svg data-menu-close-icon class="hidden h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg>
             </button>
         </div>
     </div>
 
-    <div id="mobile-navigation" x-cloak x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2" class="border-t border-stone-200 bg-white lg:hidden">
+    <div id="mobile-navigation" class="hidden border-t border-stone-200 bg-white lg:hidden">
         <div class="max-w-7xl mx-auto space-y-5 px-5 py-5 sm:px-6">
             <a href="{% url 'home' %}" class="nav-mobile-link">Home</a>
             <div>
