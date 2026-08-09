@@ -45,6 +45,35 @@ class ApplicationCreateViewTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Learner application form")
+        self.assertContains(response, '<option value="Other">Other</option>', html=True)
+        self.assertContains(response, "Select “Other” if the learner lives outside Lesotho.")
+
+    def test_application_accepts_other_as_the_home_district(self):
+        SiteSettings.objects.create(
+            school_name="Sacred Heart High School",
+            admissions_open=True,
+        )
+
+        response = self.client.post(
+            self.url,
+            {
+                "academic_year": str(date.today().year + 1),
+                "student_name": "Naledi",
+                "student_surname": "Dlamini",
+                "date_of_birth": "2012-05-10",
+                "nationality": "South Africa",
+                "parent_guardian_names": "Thandi Dlamini",
+                "parent_phone_number": "+27 11 555 0100",
+                "parent_guardian_email": "parent@example.com",
+                "home_address": "Johannesburg",
+                "previous_school": "Example Primary",
+                "student_candidate_number": "ZA-12345",
+                "district": "Other",
+            },
+        )
+
+        self.assertRedirects(response, reverse("application-success"))
+        self.assertEqual(Application.objects.get().district, "Other")
 
     def test_success_page_shows_generated_reference_number(self):
         SiteSettings.objects.create(

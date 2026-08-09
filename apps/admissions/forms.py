@@ -8,14 +8,14 @@ from apps.admissions.models import Application
 class ApplicationForm(forms.ModelForm):
 
     parent_guardian_email = forms.EmailField(
-        label="Parent or guardian email",
+        label="Parent/guardian email",
         help_text="We will send the application reference to this address.",
         widget=forms.EmailInput(
             attrs={
                 "class": "w-full",
                 "autocomplete": "email",
                 "inputmode": "email",
-                "placeholder": "guardian@example.com",
+                "placeholder": "parent.guardian@example.com",
             }
         ),
     )
@@ -76,7 +76,7 @@ class ApplicationForm(forms.ModelForm):
                 attrs={
                     "class": "w-full",
                     "autocomplete": "name",
-                    "placeholder": "Parent or guardian’s full name",
+                    "placeholder": "Parent/guardian’s full name",
                 }
             ),
             "parent_phone_number": forms.TextInput(

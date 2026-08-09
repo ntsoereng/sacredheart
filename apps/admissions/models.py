@@ -15,6 +15,7 @@ class Application(models.Model):
         ("Qacha's Nek", "Qacha's Nek"),
         ("Quthing", "Quthing"),
         ("Thaba-Tseka", "Thaba-Tseka"),
+        ("Other", "Other"),
     ]
     
     STATUS_CHOICES = [
@@ -44,17 +45,19 @@ class Application(models.Model):
     )
 
     parent_guardian_names = models.CharField(
-        max_length=255
+        max_length=255,
+        verbose_name="Parent/guardian name",
     )
 
     parent_phone_number = models.CharField(
-        max_length=30
+        max_length=30,
+        verbose_name="Parent/guardian phone number",
     )
 
     parent_guardian_email = models.EmailField(
         blank=True,
         max_length=254,
-        verbose_name="Parent or guardian email",
+        verbose_name="Parent/guardian email",
     )
 
     home_address = models.TextField()
