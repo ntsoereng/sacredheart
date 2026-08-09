@@ -3,6 +3,8 @@ from django.db.models import Q
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DetailView, ListView, TemplateView
 
+from apps.core.throttling import RateLimitMixin
+
 from .forms import AlumniStorySubmissionForm
 from .models import AlumniStory
 
@@ -40,7 +42,10 @@ class AlumniStoryDetailView(DetailView):
         )
 
 
-class AlumniStoryCreateView(CreateView):
+class AlumniStoryCreateView(RateLimitMixin, CreateView):
+    rate_limit_count = 5
+    rate_limit_window = 3600
+    rate_limit_scope = "alumni-submission"
     model = AlumniStory
     form_class = AlumniStorySubmissionForm
     template_name = "alumni/story_form.html"

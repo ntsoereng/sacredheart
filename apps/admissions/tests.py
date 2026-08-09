@@ -23,9 +23,9 @@ class ApplicationCreateViewTests(TestCase):
         response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Admissions are currently not open")
+        self.assertContains(response, "Applications are currently closed")
         self.assertContains(response, "Applications will reopen in September.")
-        self.assertNotContains(response, "Application Form")
+        self.assertNotContains(response, "Learner application form")
 
     def test_closed_admissions_cannot_create_an_application(self):
         SiteSettings.objects.create(school_name="Sacred Heart High School")
@@ -44,7 +44,7 @@ class ApplicationCreateViewTests(TestCase):
         response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Application Form")
+        self.assertContains(response, "Learner application form")
 
     def test_success_page_shows_generated_reference_number(self):
         SiteSettings.objects.create(

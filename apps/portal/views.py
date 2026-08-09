@@ -39,27 +39,56 @@ from apps.portal.forms import (
 from apps.portal.mixins import (
     AnyStaffPermissionRequiredMixin,
     StaffPermissionRequiredMixin,
-    StaffRequiredMixin,
 )
 
-class DashboardView(LoginRequiredMixin, StaffRequiredMixin, TemplateView):
+
+def _safe_csv_cell(value):
+    """Prevent user-controlled values from becoming spreadsheet formulas."""
+    if value is None:
+        return ""
+    text = str(value)
+    if text.startswith(("=", "+", "-", "@", "\t", "\r")):
+        return f"'{text}"
+    return text
+
+class DashboardView(LoginRequiredMixin, AnyStaffPermissionRequiredMixin, TemplateView):
     template_name = "portal/dashboard.html"
+    permission_required = (
+        "admissions.view_application",
+        "core.view_contactmessage",
+        "alumni.view_alumnistory",
+        "posts.view_post",
+        "events.view_event",
+        "academics.view_subject",
+        "staff.view_staffmember",
+        "core.view_extracurricularactivity",
+        "core.change_sitesettings",
+        "vacancies.view_vacancy",
+    )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        applications = Application.objects.all()
-        context.update({
-            "new_applications": applications.filter(status="new").count(),
-            "review_applications": applications.filter(status="review").count(),
-            "accepted_applications": applications.filter(status="accepted").count(),
-            "declined_applications": applications.filter(status="declined").count(),
-            "recent_applications": applications.select_related("reviewed_by")[:6],
-            "recent_messages": ContactMessage.objects.all()[:5],
-            "pending_alumni": AlumniStory.objects.filter(status="pending").count(),
-            "recent_alumni": AlumniStory.objects.select_related("reviewed_by")[:5],
-            "open_vacancies": Vacancy.objects.publicly_visible().count(),
-            "draft_vacancies": Vacancy.objects.filter(is_published=False).count(),
-        })
+        user = self.request.user
+        if user.has_perm("admissions.view_application"):
+            applications = Application.objects.all()
+            context.update({
+                "new_applications": applications.filter(status="new").count(),
+                "review_applications": applications.filter(status="review").count(),
+                "accepted_applications": applications.filter(status="accepted").count(),
+                "declined_applications": applications.filter(status="declined").count(),
+                "recent_applications": applications.select_related("reviewed_by")[:6],
+            })
+        if user.has_perm("core.view_contactmessage"):
+            context["recent_messages"] = ContactMessage.objects.all()[:5]
+        if user.has_perm("alumni.view_alumnistory"):
+            context["pending_alumni"] = AlumniStory.objects.filter(
+                status="pending"
+            ).count()
+        if user.has_perm("vacancies.view_vacancy"):
+            context["open_vacancies"] = Vacancy.objects.publicly_visible().count()
+            context["draft_vacancies"] = Vacancy.objects.filter(
+                is_published=False
+            ).count()
         return context
 
 
@@ -77,22 +106,33 @@ class ContentManagerView(LoginRequiredMixin, AnyStaffPermissionRequiredMixin, Te
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["posts"] = Post.objects.select_related("author")[:10]
-        context["events"] = Event.objects.select_related("created_by").order_by(
-            "-event_date"
-        )[:10]
-        context["published_posts"] = Post.objects.filter(is_published=True).count()
-        context["published_events"] = Event.objects.filter(is_published=True).count()
-        context["subjects"] = Subject.objects.all()[:10]
-        context["staff_members"] = StaffMember.objects.prefetch_related("subjects")[:10]
-        context["active_subjects"] = Subject.objects.filter(is_active=True).count()
-        context["active_staff"] = StaffMember.objects.filter(is_active=True).count()
-        context["activities"] = ExtracurricularActivity.objects.all()[:10]
-        context["published_activities"] = ExtracurricularActivity.objects.filter(
-            is_published=True
-        ).count()
-        context["vacancies"] = Vacancy.objects.all()[:10]
-        context["open_vacancies"] = Vacancy.objects.publicly_visible().count()
+        user = self.request.user
+        if user.has_perm("posts.view_post"):
+            context["posts"] = Post.objects.select_related("author")[:10]
+            context["published_posts"] = Post.objects.filter(is_published=True).count()
+        if user.has_perm("events.view_event"):
+            context["events"] = Event.objects.select_related("created_by").order_by(
+                "-event_date"
+            )[:10]
+            context["published_events"] = Event.objects.filter(
+                is_published=True
+            ).count()
+        if user.has_perm("academics.view_subject"):
+            context["subjects"] = Subject.objects.all()[:10]
+            context["active_subjects"] = Subject.objects.filter(is_active=True).count()
+        if user.has_perm("staff.view_staffmember"):
+            context["staff_members"] = StaffMember.objects.prefetch_related(
+                "subjects"
+            )[:10]
+            context["active_staff"] = StaffMember.objects.filter(is_active=True).count()
+        if user.has_perm("core.view_extracurricularactivity"):
+            context["activities"] = ExtracurricularActivity.objects.all()[:10]
+            context["published_activities"] = ExtracurricularActivity.objects.filter(
+                is_published=True
+            ).count()
+        if user.has_perm("vacancies.view_vacancy"):
+            context["vacancies"] = Vacancy.objects.all()[:10]
+            context["open_vacancies"] = Vacancy.objects.publicly_visible().count()
         return context
 
 
@@ -528,23 +568,26 @@ class ApplicationExportView(LoginRequiredMixin, StaffPermissionRequiredMixin, Vi
 
         for app in Application.objects.all():
 
-            writer.writerow([
-                app.reference_number,
-                app.get_status_display(),
-                app.academic_year,
-                app.student_name,
-                app.student_surname,
-                app.date_of_birth,
-                app.nationality,
-                app.parent_guardian_names,
-                app.parent_phone_number,
-                app.parent_guardian_email,
-                app.home_address,
-                app.previous_school,
-                app.student_candidate_number,
-                app.district,
-                app.submitted_at,
-            ])
+            writer.writerow(
+                _safe_csv_cell(value)
+                for value in (
+                    app.reference_number,
+                    app.get_status_display(),
+                    app.academic_year,
+                    app.student_name,
+                    app.student_surname,
+                    app.date_of_birth,
+                    app.nationality,
+                    app.parent_guardian_names,
+                    app.parent_phone_number,
+                    app.parent_guardian_email,
+                    app.home_address,
+                    app.previous_school,
+                    app.student_candidate_number,
+                    app.district,
+                    app.submitted_at,
+                )
+            )
 
         return response
     

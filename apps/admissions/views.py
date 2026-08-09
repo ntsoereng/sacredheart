@@ -6,6 +6,7 @@ from django.urls import reverse_lazy
 from django.views.generic import FormView, TemplateView
 
 from apps.core.models import SiteSettings
+from apps.core.throttling import RateLimitMixin
 
 from .forms import ApplicationForm
 from .emails import send_application_confirmation
@@ -14,7 +15,10 @@ from .emails import send_application_confirmation
 logger = logging.getLogger(__name__)
 
 
-class ApplicationCreateView(FormView):
+class ApplicationCreateView(RateLimitMixin, FormView):
+    rate_limit_count = 5
+    rate_limit_window = 3600
+    rate_limit_scope = "admissions-application"
 
     template_name = "admissions/application_form.html"
 

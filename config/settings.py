@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+from django.core.exceptions import ImproperlyConfigured
 from decouple import Csv, config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -25,6 +26,10 @@ SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DJANGO_DEBUG", default=False, cast=bool)
+ENVIRONMENT = config(
+    "DJANGO_ENVIRONMENT",
+    default="development" if DEBUG else "production",
+).lower()
 
 ALLOWED_HOSTS = config(
     "ALLOWED_HOSTS",
@@ -74,6 +79,26 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 USE_X_FORWARDED_HOST = True
+X_FRAME_OPTIONS = "DENY"
+CSRF_COOKIE_HTTPONLY = True
+SESSION_COOKIE_AGE = config("DJANGO_SESSION_COOKIE_AGE", default=8 * 60 * 60, cast=int)
+
+if ENVIRONMENT == "production":
+    insecure_settings = []
+    if DEBUG:
+        insecure_settings.append("DJANGO_DEBUG must be False")
+    if not SECURE_SSL_REDIRECT:
+        insecure_settings.append("DJANGO_SECURE_SSL_REDIRECT must be True")
+    if not SESSION_COOKIE_SECURE:
+        insecure_settings.append("DJANGO_SESSION_COOKIE_SECURE must be True")
+    if not CSRF_COOKIE_SECURE:
+        insecure_settings.append("DJANGO_CSRF_COOKIE_SECURE must be True")
+    if SECURE_HSTS_SECONDS <= 0:
+        insecure_settings.append("DJANGO_SECURE_HSTS_SECONDS must be greater than zero")
+    if insecure_settings:
+        raise ImproperlyConfigured(
+            "Unsafe production configuration: " + "; ".join(insecure_settings)
+        )
 
 
 # Application definition
@@ -181,6 +206,26 @@ DATABASES = {
         },
     }
 }
+
+
+# A filesystem cache is shared by Passenger workers and supports the anonymous
+# request throttles. Set a private, writable path outside the public web root.
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
+        "LOCATION": config(
+            "DJANGO_CACHE_LOCATION",
+            default=str(BASE_DIR / ".django-cache"),
+        ),
+        "TIMEOUT": 3600,
+        "OPTIONS": {"MAX_ENTRIES": 10000},
+    }
+}
+RATELIMIT_TRUSTED_PROXY_DEPTH = config(
+    "DJANGO_RATELIMIT_TRUSTED_PROXY_DEPTH",
+    default=0,
+    cast=int,
+)
 
 
 # Password validation

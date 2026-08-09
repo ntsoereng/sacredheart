@@ -1,5 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Permission
+from django.core.cache import cache
 from django.urls import reverse
 
 from apps.staff.models import StaffMember
@@ -7,6 +9,7 @@ from apps.staff.models import StaffMember
 
 class StaffPortalAccessTests(TestCase):
     def setUp(self):
+        cache.clear()
         self.staff_user = get_user_model().objects.create_user(
             username="staffmember",
             password="secure-password",
@@ -35,6 +38,9 @@ class StaffPortalAccessTests(TestCase):
         self.assertFalse("_auth_user_id" in self.client.session)
 
     def test_staff_users_can_sign_in_and_access_dashboard(self):
+        self.staff_user.user_permissions.add(
+            Permission.objects.get(codename="view_post")
+        )
         response = self.client.post(
             reverse("staff-login"),
             {"username": "staffmember", "password": "secure-password"},
@@ -70,3 +76,21 @@ class StaffPortalAccessTests(TestCase):
 
         self.assertContains(login_response, reverse("staff-register"))
         self.assertNotContains(home_response, reverse("staff-register"))
+
+    def test_staff_login_is_rate_limited(self):
+        for _ in range(10):
+            response = self.client.post(
+                reverse("staff-login"),
+                {"username": "missing", "password": "incorrect"},
+                REMOTE_ADDR="192.0.2.10",
+            )
+            self.assertNotEqual(response.status_code, 429)
+
+        response = self.client.post(
+            reverse("staff-login"),
+            {"username": "missing", "password": "incorrect"},
+            REMOTE_ADDR="192.0.2.10",
+        )
+
+        self.assertEqual(response.status_code, 429)
+        self.assertEqual(response["Retry-After"], "300")

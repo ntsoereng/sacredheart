@@ -2,6 +2,7 @@ from datetime import date
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
+from django.core.cache import cache
 from django.test import TestCase
 from django.urls import reverse
 
@@ -48,8 +49,60 @@ class StaffApplicationWorkflowTests(TestCase):
 
         self.assertEqual(response.status_code, 403)
 
+    def test_dashboard_requires_at_least_one_portal_permission(self):
+        restricted = get_user_model().objects.create_user(
+            username="dashboard-restricted",
+            password="test-password",
+            is_staff=True,
+        )
+        self.client.force_login(restricted)
+
+        self.assertEqual(self.client.get(reverse("dashboard")).status_code, 403)
+
+    def test_dashboard_does_not_disclose_applications_to_content_editor(self):
+        editor = get_user_model().objects.create_user(
+            username="content-editor",
+            password="test-password",
+            is_staff=True,
+        )
+        editor.user_permissions.add(Permission.objects.get(codename="view_post"))
+        self.client.force_login(editor)
+
+        response = self.client.get(reverse("dashboard"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, self.application.student_name)
+        self.assertNotIn("recent_applications", response.context)
+
+    def test_content_manager_only_queries_permitted_content_types(self):
+        editor = get_user_model().objects.create_user(
+            username="post-viewer",
+            password="test-password",
+            is_staff=True,
+        )
+        editor.user_permissions.add(Permission.objects.get(codename="view_post"))
+        self.client.force_login(editor)
+
+        response = self.client.get(reverse("content-manager"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("posts", response.context)
+        self.assertNotIn("events", response.context)
+        self.assertNotIn("staff_members", response.context)
+        self.assertNotIn("activities", response.context)
+
     def setUp(self):
+        cache.clear()
         self.client.force_login(self.staff_user)
+
+    def test_application_export_neutralizes_spreadsheet_formulas(self):
+        self.application.student_name = "=HYPERLINK(\"https://evil.example\")"
+        self.application.save(update_fields=["student_name"])
+
+        response = self.client.get(reverse("application-export"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"'=HYPERLINK", response.content)
 
     def test_staff_can_update_application_status(self):
         response = self.client.post(

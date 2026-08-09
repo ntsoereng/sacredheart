@@ -62,3 +62,4 @@ Thumbs.db
 # cPanel / Passenger runtime artifacts
 tmp/
 passenger.log
+.django-cache/

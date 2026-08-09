@@ -39,6 +39,7 @@ Important production values:
 
 ```text
 DJANGO_DEBUG=False
+DJANGO_ENVIRONMENT=production
 ALLOWED_HOSTS=school.example.org,www.school.example.org
 CSRF_TRUSTED_ORIGINS=https://school.example.org,https://www.school.example.org
 ```
@@ -68,6 +69,11 @@ python manage.py migrate
 python manage.py collectstatic --noinput
 python manage.py check --deploy
 ```
+
+The application refuses to start when `DJANGO_ENVIRONMENT=production` is paired
+with debug mode, insecure cookies, disabled HTTPS redirects, or disabled HSTS.
+This prevents an accidentally copied development configuration from silently
+going live.
 
 The compiled Tailwind stylesheet is already included in the repository; Node.js
 is not required on the server unless the CSS source is changed there.
@@ -124,6 +130,18 @@ forwarding `X-Forwarded-Proto: https`; temporarily set
 
 Never enable `DJANGO_DEBUG` in production. A production deployment check may
 warn about host or HTTPS values until the real domain variables are loaded.
+
+Configure Apache to reject request bodies larger than 10 MiB and apply an
+additional IP-based request limit to `/staff/login/`, `/staff/access-request/`,
+`/admissions/`, `/contact/`, and `/alumni/share/`. The application also throttles
+these endpoints, but the web-server limit rejects abusive traffic before Python
+allocates memory. Keep `DJANGO_RATELIMIT_TRUSTED_PROXY_DEPTH=0` unless a known
+reverse proxy sits directly in front of Passenger; set it to the exact number
+of trusted proxies so attackers cannot spoof `X-Forwarded-For`.
+
+Create a private cache directory outside `public_html`, writable only by the
+application account, and set `DJANGO_CACHE_LOCATION` to it. The shared cache
+makes rate limits consistent across Passenger worker processes.
 
 ## 6. Pulling future releases
 

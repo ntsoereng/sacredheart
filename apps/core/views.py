@@ -14,6 +14,7 @@ from apps.pages.models import Page
 from apps.staff.models import StaffMember
 from apps.vacancies.models import Vacancy
 from apps.core.models import ExtracurricularActivity, SiteSettings
+from apps.core.throttling import RateLimitMixin
 
 
 def favicon(request):
@@ -247,7 +248,10 @@ class SearchView(TemplateView):
     
     
     
-class ContactView(FormView):
+class ContactView(RateLimitMixin, FormView):
+    rate_limit_count = 10
+    rate_limit_window = 3600
+    rate_limit_scope = "contact-form"
 
     template_name = "core/contact.html"
 
