@@ -13,8 +13,10 @@
                 <div><dt class="text-xs font-bold uppercase tracking-wide text-gray-500">Full name</dt><dd class="mt-1 font-semibold">{{ application.student_name }} {{ application.student_surname }}</dd></div>
                 <div><dt class="text-xs font-bold uppercase tracking-wide text-gray-500">Date of birth</dt><dd class="mt-1 font-semibold">{{ application.date_of_birth|date:"d F Y" }}</dd></div>
                 <div><dt class="text-xs font-bold uppercase tracking-wide text-gray-500">Academic year</dt><dd class="mt-1 font-semibold">{{ application.academic_year }}</dd></div>
+                <div><dt class="text-xs font-bold uppercase tracking-wide text-gray-500">Nationality</dt><dd class="mt-1 font-semibold">{{ application.nationality }}</dd></div>
                 <div><dt class="text-xs font-bold uppercase tracking-wide text-gray-500">District</dt><dd class="mt-1 font-semibold">{{ application.district }}</dd></div>
-                <div class="sm:col-span-2"><dt class="text-xs font-bold uppercase tracking-wide text-gray-500">Previous school</dt><dd class="mt-1 font-semibold">{{ application.previous_school }}</dd></div>
+                <div><dt class="text-xs font-bold uppercase tracking-wide text-gray-500">Previous school</dt><dd class="mt-1 font-semibold">{{ application.previous_school }}</dd></div>
+                <div><dt class="text-xs font-bold uppercase tracking-wide text-gray-500">Student candidate number</dt><dd class="mt-1 font-semibold">{{ application.student_candidate_number }}</dd></div>
             </dl>
         </section>
 

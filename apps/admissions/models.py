@@ -38,6 +38,11 @@ class Application(models.Model):
 
     date_of_birth = models.DateField()
 
+    nationality = models.CharField(
+        max_length=100,
+        default="Lesotho",
+    )
+
     parent_guardian_names = models.CharField(
         max_length=255
     )
@@ -56,6 +61,11 @@ class Application(models.Model):
 
     previous_school = models.CharField(
         max_length=255
+    )
+
+    student_candidate_number = models.CharField(
+        max_length=100,
+        verbose_name="Student candidate number",
     )
 
     district = models.CharField(

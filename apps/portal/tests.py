@@ -25,10 +25,12 @@ class StaffApplicationWorkflowTests(TestCase):
             student_name="Lerato",
             student_surname="Mokoena",
             date_of_birth=date(2012, 5, 10),
+            nationality="Lesotho",
             parent_guardian_names="Thabo Mokoena",
             parent_phone_number="+266 5000 0000",
             home_address="Maseru",
             previous_school="Example Primary",
+            student_candidate_number="LS-12345",
             district="Maseru",
         )
 

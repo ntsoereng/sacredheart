@@ -25,6 +25,7 @@ class ApplicationAdmin(admin.ModelAdmin):
         "student_name",
         "student_surname",
         "academic_year",
+        "nationality",
         "district",
         "parent_guardian_email",
         "submitted_at",
@@ -40,11 +41,14 @@ class ApplicationAdmin(admin.ModelAdmin):
         "parent_guardian_names",
         "parent_guardian_email",
         "previous_school",
+        "student_candidate_number",
+        "nationality",
         "academic_year"
     )
 
     list_filter = (
         "district",
+        "nationality",
         "status",
         "submitted_at",
     )
