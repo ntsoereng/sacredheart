@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Permission
 from django.test import TestCase
 from django.urls import reverse
 
@@ -48,6 +49,10 @@ class AlumniStoryTests(TestCase):
             username="reviewer",
             password="password",
             is_staff=True,
+        )
+        staff.user_permissions.add(
+            Permission.objects.get(codename="view_alumnistory"),
+            Permission.objects.get(codename="change_alumnistory"),
         )
         self.client.force_login(staff)
         response = self.client.post(

@@ -1,6 +1,7 @@
 from datetime import date
 
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Permission
 from django.test import TestCase
 from django.urls import reverse
 
@@ -33,6 +34,19 @@ class StaffApplicationWorkflowTests(TestCase):
             student_candidate_number="LS-12345",
             district="Maseru",
         )
+        cls.staff_user.user_permissions.set(Permission.objects.all())
+
+    def test_staff_without_permission_cannot_view_applications(self):
+        restricted = get_user_model().objects.create_user(
+            username="restricted",
+            password="test-password",
+            is_staff=True,
+        )
+        self.client.force_login(restricted)
+
+        response = self.client.get(reverse("application-list"))
+
+        self.assertEqual(response.status_code, 403)
 
     def setUp(self):
         self.client.force_login(self.staff_user)

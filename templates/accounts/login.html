@@ -30,7 +30,7 @@
                 <input type="hidden" name="next" value="{{ next }}">
                 <button type="submit" class="btn-primary min-h-11 w-full cursor-pointer">Sign in securely</button>
             </form>
-            <a href="{% url 'home' %}" class="mt-6 inline-block text-sm text-link">← Return to website</a>
+            <div class="mt-6 flex items-center justify-between gap-4 text-sm"><a href="{% url 'home' %}" class="text-link">← Return to website</a><a href="{% url 'staff-register' %}" class="text-gray-500 hover:text-primary">New staff member?</a></div>
         </div>
     </div>
 </section>

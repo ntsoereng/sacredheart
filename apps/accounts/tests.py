@@ -2,6 +2,8 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 
+from apps.staff.models import StaffMember
+
 
 class StaffPortalAccessTests(TestCase):
     def setUp(self):
@@ -40,3 +42,31 @@ class StaffPortalAccessTests(TestCase):
 
         self.assertRedirects(response, reverse("dashboard"))
         self.assertEqual(self.client.get(reverse("dashboard")).status_code, 200)
+
+    def test_staff_registration_creates_an_unapproved_account_and_profile(self):
+        response = self.client.post(
+            reverse("staff-register"),
+            {
+                "username": "newteacher",
+                "email": "teacher@example.org",
+                "password1": "A-strong-test-password-482!",
+                "password2": "A-strong-test-password-482!",
+                "full_name": "Lebo Molefe",
+                "role": "Mathematics Teacher",
+                "short_bio": "I teach mathematics.",
+            },
+        )
+
+        self.assertRedirects(response, reverse("staff-registration-complete"))
+        user = get_user_model().objects.get(username="newteacher")
+        self.assertFalse(user.is_staff)
+        profile = StaffMember.objects.get(user=user)
+        self.assertEqual(profile.full_name, "Lebo Molefe")
+        self.assertFalse(profile.is_active)
+
+    def test_registration_link_is_only_present_on_staff_login_page(self):
+        login_response = self.client.get(reverse("staff-login"))
+        home_response = self.client.get(reverse("home"))
+
+        self.assertContains(login_response, reverse("staff-register"))
+        self.assertNotContains(home_response, reverse("staff-register"))

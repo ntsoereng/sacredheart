@@ -34,7 +34,11 @@ from apps.portal.forms import (
     SiteSettingsForm,
     StaffSubjectForm,
 )
-from apps.portal.mixins import StaffRequiredMixin
+from apps.portal.mixins import (
+    AnyStaffPermissionRequiredMixin,
+    StaffPermissionRequiredMixin,
+    StaffRequiredMixin,
+)
 
 class DashboardView(LoginRequiredMixin, StaffRequiredMixin, TemplateView):
     template_name = "portal/dashboard.html"
@@ -55,8 +59,16 @@ class DashboardView(LoginRequiredMixin, StaffRequiredMixin, TemplateView):
         return context
 
 
-class ContentManagerView(LoginRequiredMixin, StaffRequiredMixin, TemplateView):
+class ContentManagerView(LoginRequiredMixin, AnyStaffPermissionRequiredMixin, TemplateView):
     template_name = "portal/content_manager.html"
+    permission_required = (
+        "posts.view_post",
+        "events.view_event",
+        "academics.view_subject",
+        "staff.view_staffmember",
+        "core.view_extracurricularactivity",
+        "core.change_sitesettings",
+    )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -77,7 +89,7 @@ class ContentManagerView(LoginRequiredMixin, StaffRequiredMixin, TemplateView):
         return context
 
 
-class StaffContentFormMixin(LoginRequiredMixin, StaffRequiredMixin):
+class StaffContentFormMixin(LoginRequiredMixin, StaffPermissionRequiredMixin):
     template_name = "portal/content_form.html"
 
     def get_success_url(self):
@@ -100,6 +112,7 @@ class StaffContentFormMixin(LoginRequiredMixin, StaffRequiredMixin):
 
 
 class PostCreateView(StaffContentFormMixin, CreateView):
+    permission_required = "posts.add_post"
     model = Post
     form_class = StaffPostForm
     content_kind = "news post"
@@ -111,6 +124,7 @@ class PostCreateView(StaffContentFormMixin, CreateView):
 
 
 class PostUpdateView(StaffContentFormMixin, UpdateView):
+    permission_required = "posts.change_post"
     model = Post
     form_class = StaffPostForm
     content_kind = "news post"
@@ -118,6 +132,7 @@ class PostUpdateView(StaffContentFormMixin, UpdateView):
 
 
 class EventCreateView(StaffContentFormMixin, CreateView):
+    permission_required = "events.add_event"
     model = Event
     form_class = StaffEventForm
     content_kind = "event"
@@ -129,6 +144,7 @@ class EventCreateView(StaffContentFormMixin, CreateView):
 
 
 class EventUpdateView(StaffContentFormMixin, UpdateView):
+    permission_required = "events.change_event"
     model = Event
     form_class = StaffEventForm
     content_kind = "event"
@@ -136,6 +152,7 @@ class EventUpdateView(StaffContentFormMixin, UpdateView):
 
 
 class SubjectCreateView(StaffContentFormMixin, CreateView):
+    permission_required = "academics.add_subject"
     model = Subject
     form_class = StaffSubjectForm
     content_kind = "subject"
@@ -143,6 +160,7 @@ class SubjectCreateView(StaffContentFormMixin, CreateView):
 
 
 class SubjectUpdateView(StaffContentFormMixin, UpdateView):
+    permission_required = "academics.change_subject"
     model = Subject
     form_class = StaffSubjectForm
     content_kind = "subject"
@@ -150,6 +168,7 @@ class SubjectUpdateView(StaffContentFormMixin, UpdateView):
 
 
 class StaffMemberCreateView(StaffContentFormMixin, CreateView):
+    permission_required = "staff.add_staffmember"
     model = StaffMember
     form_class = StaffMemberForm
     content_kind = "staff member"
@@ -157,6 +176,7 @@ class StaffMemberCreateView(StaffContentFormMixin, CreateView):
 
 
 class StaffMemberUpdateView(StaffContentFormMixin, UpdateView):
+    permission_required = "staff.change_staffmember"
     model = StaffMember
     form_class = StaffMemberForm
     content_kind = "staff member"
@@ -164,6 +184,7 @@ class StaffMemberUpdateView(StaffContentFormMixin, UpdateView):
 
 
 class ActivityCreateView(StaffContentFormMixin, CreateView):
+    permission_required = "core.add_extracurricularactivity"
     model = ExtracurricularActivity
     form_class = StaffActivityForm
     content_kind = "activity"
@@ -171,13 +192,15 @@ class ActivityCreateView(StaffContentFormMixin, CreateView):
 
 
 class ActivityUpdateView(StaffContentFormMixin, UpdateView):
+    permission_required = "core.change_extracurricularactivity"
     model = ExtracurricularActivity
     form_class = StaffActivityForm
     content_kind = "activity"
     page_title = "Edit club or activity"
 
 
-class AnnouncementUpdateView(LoginRequiredMixin, StaffRequiredMixin, UpdateView):
+class AnnouncementUpdateView(LoginRequiredMixin, StaffPermissionRequiredMixin, UpdateView):
+    permission_required = "core.change_sitesettings"
     model = SiteSettings
     form_class = AnnouncementForm
     template_name = "portal/announcement_form.html"
@@ -193,7 +216,8 @@ class AnnouncementUpdateView(LoginRequiredMixin, StaffRequiredMixin, UpdateView)
         return super().form_valid(form)
 
 
-class SiteSettingsUpdateView(LoginRequiredMixin, StaffRequiredMixin, UpdateView):
+class SiteSettingsUpdateView(LoginRequiredMixin, StaffPermissionRequiredMixin, UpdateView):
+    permission_required = "core.change_sitesettings"
     model = SiteSettings
     form_class = SiteSettingsForm
     template_name = "portal/site_settings.html"
@@ -214,7 +238,8 @@ class SiteSettingsUpdateView(LoginRequiredMixin, StaffRequiredMixin, UpdateView)
         return super().form_valid(form)
     
     
-class ApplicationListView(LoginRequiredMixin, StaffRequiredMixin, ListView):
+class ApplicationListView(LoginRequiredMixin, StaffPermissionRequiredMixin, ListView):
+    permission_required = "admissions.view_application"
     model = Application
     template_name = "portal/applications.html"
     context_object_name = "applications"
@@ -307,7 +332,8 @@ class ApplicationListView(LoginRequiredMixin, StaffRequiredMixin, ListView):
         return context
     
 
-class ApplicationDetailView(LoginRequiredMixin, StaffRequiredMixin, DetailView):
+class ApplicationDetailView(LoginRequiredMixin, StaffPermissionRequiredMixin, DetailView):
+    permission_required = "admissions.view_application"
     model = Application
 
     template_name = (
@@ -331,6 +357,9 @@ class ApplicationDetailView(LoginRequiredMixin, StaffRequiredMixin, DetailView):
         return context
 
     def post(self, request, *args, **kwargs):
+        if not request.user.has_perm("admissions.change_application"):
+            from django.core.exceptions import PermissionDenied
+            raise PermissionDenied
         self.object = self.get_object()
         action = request.POST.get("action")
 
@@ -372,7 +401,8 @@ class ApplicationDetailView(LoginRequiredMixin, StaffRequiredMixin, DetailView):
         return redirect("application-detail", pk=self.object.pk)
 
 
-class AlumniReviewListView(LoginRequiredMixin, StaffRequiredMixin, ListView):
+class AlumniReviewListView(LoginRequiredMixin, StaffPermissionRequiredMixin, ListView):
+    permission_required = "alumni.view_alumnistory"
     model = AlumniStory
     template_name = "portal/alumni_list.html"
     context_object_name = "stories"
@@ -402,7 +432,8 @@ class AlumniReviewListView(LoginRequiredMixin, StaffRequiredMixin, ListView):
         return context
 
 
-class AlumniReviewDetailView(LoginRequiredMixin, StaffRequiredMixin, DetailView):
+class AlumniReviewDetailView(LoginRequiredMixin, StaffPermissionRequiredMixin, DetailView):
+    permission_required = "alumni.view_alumnistory"
     model = AlumniStory
     template_name = "portal/alumni_detail.html"
     context_object_name = "story"
@@ -416,6 +447,9 @@ class AlumniReviewDetailView(LoginRequiredMixin, StaffRequiredMixin, DetailView)
         return context
 
     def post(self, request, *args, **kwargs):
+        if not request.user.has_perm("alumni.change_alumnistory"):
+            from django.core.exceptions import PermissionDenied
+            raise PermissionDenied
         self.object = self.get_object()
         form = AlumniReviewForm(request.POST, instance=self.object)
         if form.is_valid():
@@ -430,7 +464,8 @@ class AlumniReviewDetailView(LoginRequiredMixin, StaffRequiredMixin, DetailView)
         return self.render_to_response(self.get_context_data(review_form=form))
 
     
-class ApplicationExportView(LoginRequiredMixin, StaffRequiredMixin, View):
+class ApplicationExportView(LoginRequiredMixin, StaffPermissionRequiredMixin, View):
+    permission_required = "admissions.view_application"
 
     def get(self, request):
 
@@ -487,7 +522,8 @@ class ApplicationExportView(LoginRequiredMixin, StaffRequiredMixin, View):
         return response
     
     
-class MessageListView(LoginRequiredMixin, StaffRequiredMixin, ListView):
+class MessageListView(LoginRequiredMixin, StaffPermissionRequiredMixin, ListView):
+    permission_required = "core.view_contactmessage"
 
     model = ContactMessage
 
@@ -499,7 +535,8 @@ class MessageListView(LoginRequiredMixin, StaffRequiredMixin, ListView):
     
     
     
-class MessageDetailView(LoginRequiredMixin, StaffRequiredMixin, DetailView):
+class MessageDetailView(LoginRequiredMixin, StaffPermissionRequiredMixin, DetailView):
+    permission_required = "core.view_contactmessage"
 
     model = ContactMessage
 

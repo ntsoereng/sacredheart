@@ -1,0 +1,4 @@
+{% extends "base.html" %}
+{% block title %}Staff request received{% endblock %}
+{% block robots %}noindex, nofollow, noarchive{% endblock %}
+{% block content %}<section class="soft-section py-20"><div class="mx-auto max-w-lg px-6"><div class="content-card rounded-2xl p-8 text-center"><h1 class="text-3xl font-bold">Request received</h1><p class="mt-4 leading-7 text-gray-600">Your profile has been saved. A school administrator must verify your request, enable staff status, and assign permissions before you can sign in.</p><a href="{% url 'staff-login' %}" class="btn-primary mt-7">Return to staff sign in</a></div></div></section>{% endblock %}

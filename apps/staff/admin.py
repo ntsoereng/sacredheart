@@ -8,6 +8,7 @@ class StaffMemberAdmin(admin.ModelAdmin):
     filter_horizontal = ("subjects",)
     list_display = (
         "full_name",
+        "user",
         "role",
         "is_principal",
         "display_order",
@@ -15,12 +16,13 @@ class StaffMemberAdmin(admin.ModelAdmin):
     )
     list_editable = ("display_order", "is_active")
     list_filter = ("is_principal", "is_active")
-    search_fields = ("full_name", "role", "short_bio")
+    search_fields = ("full_name", "role", "short_bio", "user__username", "user__email")
     readonly_fields = ("created_at", "updated_at")
     fieldsets = (
         ("Profile", {
             "fields": (
                 "full_name",
+                "user",
                 "role",
                 "profile_picture",
                 "short_bio",

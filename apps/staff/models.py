@@ -1,9 +1,18 @@
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 from apps.posts.content import sanitize_post_html
 
 
 class StaffMember(models.Model):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name="staff_profile",
+        help_text="Login account associated with this staff profile.",
+    )
     full_name = models.CharField(max_length=200)
     role = models.CharField(max_length=150, default="Teacher")
     profile_picture = models.ImageField(upload_to="staff/", blank=True, null=True)
