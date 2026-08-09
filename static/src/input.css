@@ -25,13 +25,24 @@
 }
 
 html {
+    max-width: 100%;
+    overflow-x: hidden;
     scroll-behavior: smooth;
 }
 
 body {
     background: #f7f3ed;
     -webkit-font-smoothing: antialiased;
+    max-width: 100%;
+    overflow-x: hidden;
     text-rendering: optimizeLegibility;
+}
+
+@supports (overflow: clip) {
+    html,
+    body {
+        overflow-x: clip;
+    }
 }
 
 h1,
@@ -74,10 +85,6 @@ a:focus-visible,
 button:focus-visible {
     outline: 3px solid var(--color-gold);
     outline-offset: 3px;
-}
-
-[x-cloak] {
-    display: none !important;
 }
 
 .nav-link {
