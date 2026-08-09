@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.urls import reverse
 
@@ -6,6 +7,27 @@ from apps.academics.models import Subject
 
 
 class StaffListViewTests(TestCase):
+    def test_only_one_staff_member_can_be_validated_as_principal(self):
+        StaffMember.objects.create(
+            full_name="Mpho Mokoena",
+            role="Principal",
+            short_bio="An experienced school leader.",
+            is_principal=True,
+            welcome_remarks="Welcome to our school community.",
+        )
+        second_principal = StaffMember(
+            full_name="Lebo Molefe",
+            role="Principal",
+            short_bio="Another school leader.",
+            is_principal=True,
+            welcome_remarks="Welcome.",
+        )
+
+        with self.assertRaises(ValidationError) as error:
+            second_principal.full_clean()
+
+        self.assertIn("is_principal", error.exception.message_dict)
+
     def test_principal_is_featured_before_active_staff_members(self):
         principal = StaffMember.objects.create(
             full_name="Mpho Mokoena",

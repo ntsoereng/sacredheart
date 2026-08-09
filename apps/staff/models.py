@@ -1,6 +1,5 @@
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Q
 from apps.posts.content import sanitize_post_html
 
 
@@ -29,18 +28,20 @@ class StaffMember(models.Model):
 
     class Meta:
         ordering = ("-is_principal", "display_order", "full_name")
-        constraints = [
-            models.UniqueConstraint(
-                condition=Q(is_principal=True),
-                fields=("is_principal",),
-                name="only_one_principal",
-            )
-        ]
 
     def clean(self):
         if self.is_principal and not self.welcome_remarks:
             raise ValidationError(
                 {"welcome_remarks": "Please add the principal's welcome remarks."}
+            )
+        if (
+            self.is_principal
+            and StaffMember.objects.filter(is_principal=True)
+            .exclude(pk=self.pk)
+            .exists()
+        ):
+            raise ValidationError(
+                {"is_principal": "Another staff member is already the principal."}
             )
 
     def save(self, *args, **kwargs):
