@@ -22,29 +22,33 @@
     </header>
 
     <div class="mx-auto grid min-w-0 max-w-7xl gap-6 px-4 py-7 sm:px-6 lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-8">
-        <aside class="min-w-0">
-            <nav class="grid min-w-0 grid-cols-2 gap-2 rounded-2xl border border-stone-200 bg-white p-2 shadow-sm sm:grid-cols-3 lg:block lg:space-y-1" aria-label="Staff portal">
-                <a href="{% url 'dashboard' %}" class="flex min-w-0 items-center justify-between rounded-xl px-3 py-3 text-sm font-semibold lg:px-4 {% if request.resolver_match.url_name == 'dashboard' %}bg-primary text-white{% else %}text-gray-700 hover:bg-stone-100{% endif %}">
+        <aside class="min-w-0 lg:sticky lg:top-24 lg:self-start">
+            <nav class="rounded-2xl border border-stone-200 bg-white p-2 shadow-sm" aria-label="Staff portal">
+                <a href="{% url 'dashboard' %}" {% if request.resolver_match.url_name == 'dashboard' %}aria-current="page"{% endif %} class="flex min-w-0 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold {% if request.resolver_match.url_name == 'dashboard' %}bg-primary text-white{% else %}text-gray-700 hover:bg-stone-100{% endif %}">
+                    <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
                     <span>Overview</span>
                 </a>
-                {% if perms.admissions.view_application %}<a href="{% url 'application-list' %}" class="flex min-w-0 flex-col items-start justify-center gap-1 rounded-xl px-3 py-3 text-sm font-semibold sm:flex-row sm:items-center sm:justify-between lg:px-4 {% if 'application' in request.resolver_match.url_name %}bg-primary text-white{% else %}text-gray-700 hover:bg-stone-100{% endif %}">
-                    <span>Applications</span>
-                    {% if portal_new_applications %}<span class="rounded-full bg-gold px-2 py-0.5 text-xs text-primary">{{ portal_new_applications }} new</span>{% endif %}
-                </a>{% endif %}
-                {% if perms.core.view_contactmessage %}<a href="{% url 'message-list' %}" class="flex min-w-0 flex-col items-start justify-center gap-1 rounded-xl px-3 py-3 text-sm font-semibold sm:flex-row sm:items-center sm:justify-between lg:px-4 {% if 'message' in request.resolver_match.url_name %}bg-primary text-white{% else %}text-gray-700 hover:bg-stone-100{% endif %}">
-                    <span>Messages</span>
-                    {% if portal_unread_messages %}<span class="rounded-full bg-red-100 px-2 py-0.5 text-xs text-red-700">{{ portal_unread_messages }}</span>{% endif %}
-                </a>{% endif %}
-                {% if perms.alumni.view_alumnistory %}<a href="{% url 'alumni-review-list' %}" class="flex min-w-0 flex-col items-start justify-center gap-1 rounded-xl px-3 py-3 text-sm font-semibold sm:flex-row sm:items-center sm:justify-between lg:px-4 {% if 'alumni-review' in request.resolver_match.url_name %}bg-primary text-white{% else %}text-gray-700 hover:bg-stone-100{% endif %}">
-                    <span>Alumni stories</span>
-                    {% if portal_pending_alumni %}<span class="rounded-full bg-gold px-2 py-0.5 text-xs text-primary">{{ portal_pending_alumni }} new</span>{% endif %}
-                </a>{% endif %}
-                {% if perms.posts.view_post or perms.events.view_event or perms.academics.view_subject or perms.staff.view_staffmember or perms.core.view_extracurricularactivity or perms.core.change_sitesettings or perms.vacancies.view_vacancy %}<a href="{% url 'content-manager' %}" class="flex min-w-0 items-center justify-between rounded-xl px-3 py-3 text-sm font-semibold lg:px-4 {% if 'create' in request.resolver_match.url_name or 'edit' in request.resolver_match.url_name or request.resolver_match.url_name == 'content-manager' %}bg-primary text-white{% else %}text-gray-700 hover:bg-stone-100{% endif %}">
-                    <span>Website content</span>
-                </a>{% endif %}
-                {% if perms.core.change_sitesettings %}<a href="{% url 'site-settings' %}" class="flex min-w-0 items-center justify-between rounded-xl px-3 py-3 text-sm font-semibold lg:px-4 {% if request.resolver_match.url_name == 'site-settings' %}bg-primary text-white{% else %}text-gray-700 hover:bg-stone-100{% endif %}">
-                    <span>Site settings</span>
-                </a>{% endif %}
+
+                {% if perms.admissions.view_application or perms.core.view_contactmessage or perms.alumni.view_alumnistory %}
+                <div class="mt-3 border-t border-stone-100 pt-3">
+                    <p class="px-3 pb-1.5 text-[0.65rem] font-bold uppercase tracking-[0.16em] text-gray-400">Daily work</p>
+                    <div class="space-y-1">
+                        {% if perms.admissions.view_application %}<a href="{% url 'application-list' %}" {% if 'application' in request.resolver_match.url_name %}aria-current="page"{% endif %} class="flex min-w-0 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold {% if 'application' in request.resolver_match.url_name %}bg-primary/10 text-primary{% else %}text-gray-700 hover:bg-stone-100{% endif %}"><svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M7 3h10a2 2 0 0 1 2 2v16H5V5a2 2 0 0 1 2-2Z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg><span class="min-w-0 flex-1">Applications</span>{% if portal_new_applications %}<span class="rounded-full bg-gold px-2 py-0.5 text-xs font-bold text-primary" aria-label="{{ portal_new_applications }} new applications">{{ portal_new_applications }}</span>{% endif %}</a>{% endif %}
+                        {% if perms.core.view_contactmessage %}<a href="{% url 'message-list' %}" {% if 'message' in request.resolver_match.url_name %}aria-current="page"{% endif %} class="flex min-w-0 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold {% if 'message' in request.resolver_match.url_name %}bg-primary/10 text-primary{% else %}text-gray-700 hover:bg-stone-100{% endif %}"><svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 5h16v14H4z"/><path d="m4 7 8 6 8-6"/></svg><span class="min-w-0 flex-1">Inbox</span>{% if portal_unread_messages %}<span class="rounded-full bg-red-100 px-2 py-0.5 text-xs font-bold text-red-700" aria-label="{{ portal_unread_messages }} unread messages">{{ portal_unread_messages }}</span>{% endif %}</a>{% endif %}
+                        {% if perms.alumni.view_alumnistory %}<a href="{% url 'alumni-review-list' %}" {% if 'alumni-review' in request.resolver_match.url_name %}aria-current="page"{% endif %} class="flex min-w-0 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold {% if 'alumni-review' in request.resolver_match.url_name %}bg-primary/10 text-primary{% else %}text-gray-700 hover:bg-stone-100{% endif %}"><svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="8" r="3"/><path d="M6 20a6 6 0 0 1 12 0"/></svg><span class="min-w-0 flex-1">Alumni review</span>{% if portal_pending_alumni %}<span class="rounded-full bg-gold/30 px-2 py-0.5 text-xs font-bold text-primary" aria-label="{{ portal_pending_alumni }} alumni stories pending review">{{ portal_pending_alumni }}</span>{% endif %}</a>{% endif %}
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if perms.posts.view_post or perms.events.view_event or perms.academics.view_subject or perms.staff.view_staffmember or perms.core.view_extracurricularactivity or perms.core.change_sitesettings or perms.vacancies.view_vacancy %}
+                <div class="mt-3 border-t border-stone-100 pt-3">
+                    <p class="px-3 pb-1.5 text-[0.65rem] font-bold uppercase tracking-[0.16em] text-gray-400">Website</p>
+                    <div class="space-y-1">
+                        <a href="{% url 'content-manager' %}" {% if request.resolver_match.url_name == 'content-manager' or 'create' in request.resolver_match.url_name or 'edit' in request.resolver_match.url_name %}aria-current="page"{% endif %} class="flex min-w-0 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold {% if request.resolver_match.url_name == 'content-manager' or 'create' in request.resolver_match.url_name or 'edit' in request.resolver_match.url_name %}bg-primary/10 text-primary{% else %}text-gray-700 hover:bg-stone-100{% endif %}"><svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="M4 9h16M9 9v11"/></svg><span>Manage content</span></a>
+                        {% if perms.core.change_sitesettings %}<a href="{% url 'site-settings' %}" {% if request.resolver_match.url_name == 'site-settings' %}aria-current="page"{% endif %} class="flex min-w-0 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold {% if request.resolver_match.url_name == 'site-settings' %}bg-primary/10 text-primary{% else %}text-gray-700 hover:bg-stone-100{% endif %}"><svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1A1.7 1.7 0 0 0 9 4.6 1.7 1.7 0 0 0 10 3V2.8h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1Z"/></svg><span>Settings</span></a>{% endif %}
+                    </div>
+                </div>
+                {% endif %}
             </nav>
         </aside>
 

@@ -80,6 +80,15 @@ class DashboardView(LoginRequiredMixin, AnyStaffPermissionRequiredMixin, Templat
             })
         if user.has_perm("core.view_contactmessage"):
             context["recent_messages"] = ContactMessage.objects.all()[:5]
+        if user.has_perm("events.view_event"):
+            upcoming_events = Event.objects.filter(
+                event_date__gte=timezone.localdate()
+            ).order_by("event_date")
+            context["upcoming_events"] = upcoming_events[:5]
+            context["upcoming_event_count"] = upcoming_events.count()
+            context["draft_event_count"] = Event.objects.filter(
+                is_published=False
+            ).count()
         if user.has_perm("alumni.view_alumnistory"):
             context["pending_alumni"] = AlumniStory.objects.filter(
                 status="pending"
@@ -89,6 +98,10 @@ class DashboardView(LoginRequiredMixin, AnyStaffPermissionRequiredMixin, Templat
             context["draft_vacancies"] = Vacancy.objects.filter(
                 is_published=False
             ).count()
+            context["priority_vacancies"] = Vacancy.objects.filter(
+                status="open",
+                application_deadline__gte=timezone.localdate(),
+            )[:5]
         return context
 
 
