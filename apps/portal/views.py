@@ -84,8 +84,15 @@ class DashboardView(LoginRequiredMixin, AnyStaffPermissionRequiredMixin, Templat
             upcoming_events = Event.objects.filter(
                 event_date__gte=timezone.localdate()
             ).order_by("event_date")
-            context["upcoming_events"] = upcoming_events[:5]
-            context["upcoming_event_count"] = upcoming_events.count()
+            upcoming_event_count = upcoming_events.count()
+            context["has_upcoming_events"] = upcoming_event_count > 0
+            context["dashboard_events"] = (
+                upcoming_events[:5]
+                if upcoming_event_count
+                else Event.objects.order_by("-event_date")[:5]
+            )
+            context["upcoming_event_count"] = upcoming_event_count
+            context["total_event_count"] = Event.objects.count()
             context["draft_event_count"] = Event.objects.filter(
                 is_published=False
             ).count()

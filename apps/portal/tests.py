@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
@@ -139,6 +139,21 @@ class StaffApplicationWorkflowTests(TestCase):
 
         self.assertContains(response, "Lerato Mokoena")
         self.assertEqual(response.context["new_applications"], 1)
+
+    def test_dashboard_shows_recent_events_when_no_upcoming_events_exist(self):
+        past_event = Event.objects.create(
+            title="Founders Day",
+            description="A celebration of the school community.",
+            event_date=date.today() - timedelta(days=2),
+            location="School campus",
+            is_published=True,
+        )
+
+        response = self.client.get(reverse("dashboard"))
+
+        self.assertContains(response, "Recent events")
+        self.assertContains(response, past_event.title)
+        self.assertContains(response, "Past")
 
     def test_non_staff_user_is_forbidden(self):
         user = get_user_model().objects.create_user(
