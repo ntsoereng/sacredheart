@@ -54,7 +54,23 @@ class StaffListViewTests(TestCase):
         self.assertEqual(response.context["principal"], principal)
         self.assertQuerySetEqual(response.context["staff_members"], [teacher])
         self.assertContains(response, "Welcome to our school community.")
+        self.assertContains(response, "Read more")
+        self.assertContains(response, "Read less")
         self.assertNotContains(response, "Inactive Teacher")
+
+    def test_principal_welcome_renders_sanitized_html_entities(self):
+        StaffMember.objects.create(
+            full_name="Mpho Mokoena",
+            role="Principal",
+            short_bio="An experienced school leader.",
+            is_principal=True,
+            welcome_remarks="<p>Welcome&nbsp;to our school.</p>",
+        )
+
+        response = self.client.get(reverse("staff-list"))
+
+        self.assertContains(response, "Welcome&nbsp;to our school.", html=True)
+        self.assertNotContains(response, "&amp;nbsp;")
 
     def test_staff_detail_shows_linked_active_subject(self):
         subject = Subject.objects.create(
