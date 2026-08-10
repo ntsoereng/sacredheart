@@ -372,6 +372,29 @@ input[type="radio"] {
     text-underline-offset: 0.2rem;
 }
 
+.bio-disclosure > summary::-webkit-details-marker {
+    display: none;
+}
+
+.bio-disclosure > summary::marker {
+    content: "";
+}
+
+.bio-disclosure .bio-less {
+    display: none;
+}
+
+.bio-disclosure[open] .bio-preview,
+.bio-disclosure[open] .bio-more {
+    display: none;
+}
+
+.bio-disclosure[open] .bio-less {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
 input:focus,
 textarea:focus,
 select:focus {
