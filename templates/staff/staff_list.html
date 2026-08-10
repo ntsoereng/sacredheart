@@ -29,10 +29,9 @@
                 <p class="text-gold font-semibold uppercase tracking-[0.18em] text-sm">A welcome from the principal</p>
                 <h2 class="text-3xl font-bold mt-3">{{ principal.full_name }}</h2>
                 <p class="mt-1 font-semibold text-primary">{{ principal.role }}</p>
-                <p class="mt-5 text-gray-600 leading-relaxed">{{ principal.short_bio|striptags }}</p>
-                <details class="group mt-6">
+                {% if principal.short_bio|striptags|wordcount > 35 %}<details class="group mt-5">
                     <summary class="cursor-pointer list-none rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2">
-                        <span class="block text-gray-700 leading-relaxed group-open:hidden">{{ principal.welcome_remarks|striptags|truncatewords:55|safe }}</span>
+                        <span class="block text-gray-600 leading-relaxed group-open:hidden">{{ principal.short_bio|striptags|truncatewords:35|safe }}</span>
                         <span class="mt-3 inline-flex items-center gap-2 font-bold text-primary group-open:hidden">
                             Read more <span aria-hidden="true">↓</span>
                         </span>
@@ -40,8 +39,9 @@
                             Read less <span aria-hidden="true">↑</span>
                         </span>
                     </summary>
-                    <div class="rich-content mt-4 text-gray-700 leading-relaxed">{{ principal.welcome_remarks|safe }}</div>
-                </details>
+                    <div class="rich-content mt-4 text-gray-600 leading-relaxed">{{ principal.short_bio|safe }}</div>
+                </details>{% else %}<div class="rich-content mt-5 text-gray-600 leading-relaxed">{{ principal.short_bio|safe }}</div>{% endif %}
+                <div class="rich-content mt-6 text-gray-700 leading-relaxed">{{ principal.welcome_remarks|safe }}</div>
                 {% if principal.subjects.all %}<div class="mt-6 flex flex-wrap gap-2">{% for subject in principal.subjects.all %}{% if subject.is_active %}<a href="{% url 'subject-detail' subject.slug %}" class="rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">{{ subject.name }}</a>{% endif %}{% endfor %}</div>{% endif %}
                 <p class="mt-6 border-l-4 border-gold pl-4 italic text-gray-600">“{{ principal.motto|default:"Leading with purpose, care, and excellence." }}”</p>
                 <a href="{% url 'staff-detail' principal.pk %}" class="mt-6 inline-block text-link">View profile →</a>
@@ -70,7 +70,18 @@
                     <div class="p-7">
                         <h3 class="text-xl font-bold">{{ staff_member.full_name }}</h3>
                         <p class="mt-1 font-semibold text-primary">{{ staff_member.role }}</p>
-                        <p class="mt-4 text-gray-600 leading-relaxed">{{ staff_member.short_bio|striptags|truncatewords:35 }}</p>
+                        {% if staff_member.short_bio|striptags|wordcount > 35 %}<details class="group mt-4">
+                            <summary class="cursor-pointer list-none rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2">
+                                <span class="block text-gray-600 leading-relaxed group-open:hidden">{{ staff_member.short_bio|striptags|truncatewords:35|safe }}</span>
+                                <span class="mt-3 inline-flex items-center gap-2 font-bold text-primary group-open:hidden">
+                                    Read more <span aria-hidden="true">↓</span>
+                                </span>
+                                <span class="hidden font-bold text-primary group-open:inline-flex group-open:items-center group-open:gap-2">
+                                    Read less <span aria-hidden="true">↑</span>
+                                </span>
+                            </summary>
+                            <div class="rich-content mt-4 text-gray-600 leading-relaxed">{{ staff_member.short_bio|safe }}</div>
+                        </details>{% else %}<div class="rich-content mt-4 text-gray-600 leading-relaxed">{{ staff_member.short_bio|safe }}</div>{% endif %}
                         {% if staff_member.subjects.all %}<div class="mt-5 flex flex-wrap gap-2">{% for subject in staff_member.subjects.all %}{% if subject.is_active %}<a href="{% url 'subject-detail' subject.slug %}" class="rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">{{ subject.name }}</a>{% endif %}{% endfor %}</div>{% endif %}
                         {% if staff_member.motto %}<p class="mt-5 border-l-2 border-gold pl-3 text-sm italic text-gray-600">“{{ staff_member.motto }}”</p>{% endif %}
                         {% if staff_member.started_at_shhs %}<p class="mt-5 text-sm font-medium text-gray-500">At SHHS since {{ staff_member.started_at_shhs|date:"Y" }}</p>{% endif %}
