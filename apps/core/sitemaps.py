@@ -18,6 +18,7 @@ class StaticViewSitemap(Sitemap):
     def items(self):
         return [
             "home",
+            "application-create",
             "about-us",
             "post-list",
             "event-list",
@@ -36,7 +37,11 @@ class StaticViewSitemap(Sitemap):
         return reverse(item)
 
     def priority(self, item):
-        return 1.0 if item == "home" else 0.7
+        if item == "home":
+            return 1.0
+        if item == "application-create":
+            return 0.9
+        return 0.7
 
 
 class PostSitemap(Sitemap):

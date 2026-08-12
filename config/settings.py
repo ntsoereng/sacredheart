@@ -129,6 +129,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.middleware.csp.ContentSecurityPolicyMiddleware',
+    'apps.core.middleware.ScraperBlockingMiddleware',
     'apps.core.middleware.PermissionsPolicyMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -139,6 +140,20 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
 ]
+
+BLOCKED_SCRAPER_USER_AGENTS = (
+    "Amazonbot",
+    "anthropic-ai",
+    "Applebot-Extended",
+    "Bytespider",
+    "CCBot",
+    "ClaudeBot",
+    "Claude-SearchBot",
+    "cohere-ai",
+    "GPTBot",
+    "meta-externalagent",
+    "PerplexityBot",
+)
 
 ROOT_URLCONF = 'config.urls'
 

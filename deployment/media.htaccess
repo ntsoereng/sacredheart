@@ -2,11 +2,18 @@
 # Uploaded media is data and must never be executed by Apache.
 Options -Indexes
 
+# The retired prospectus must not remain reachable through an old direct URL.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^admissions/prospectuses(?:/|$) - [F,L,NC]
+</IfModule>
+
 <FilesMatch "\.(?:cgi|fcgi|html?|phtml|phar|php[0-9]?|pl|py|rb|sh|shtml)$">
     Require all denied
 </FilesMatch>
 
 <IfModule mod_headers.c>
     Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Robots-Tag "noindex, nofollow, noarchive"
     Header always set Content-Security-Policy "default-src 'none'; img-src 'self'; media-src 'self'"
 </IfModule>

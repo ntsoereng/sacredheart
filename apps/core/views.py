@@ -26,7 +26,24 @@ def favicon(request):
 
 def robots_txt(request):
     sitemap_url = request.build_absolute_uri("/sitemap.xml")
-    content = (
+    ai_crawlers = (
+        "Amazonbot",
+        "anthropic-ai",
+        "Applebot-Extended",
+        "Bytespider",
+        "CCBot",
+        "ClaudeBot",
+        "Claude-SearchBot",
+        "cohere-ai",
+        "Google-Extended",
+        "GPTBot",
+        "meta-externalagent",
+        "PerplexityBot",
+    )
+    ai_rules = "".join(
+        f"User-agent: {crawler}\nDisallow: /\n\n" for crawler in ai_crawlers
+    )
+    content = ai_rules + (
         "User-agent: *\n"
         "Allow: /\n"
         "Disallow: /admin/\n"
@@ -35,7 +52,7 @@ def robots_txt(request):
         "Disallow: /search/\n\n"
         f"Sitemap: {sitemap_url}\n"
     )
-    return HttpResponse(content, content_type="text/plain")
+    return HttpResponse(content, content_type="text/plain; charset=utf-8")
 
 
 class HomeView(TemplateView):

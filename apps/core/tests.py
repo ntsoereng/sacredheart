@@ -50,6 +50,16 @@ class BrowserSecurityHeaderTests(TestCase):
         self.assertNotIn(", ", policy)
         self.assertNotIn("publickey-credentials", policy)
 
+    def test_identified_ai_scraper_is_rejected(self):
+        response = self.client.get(reverse("home"), HTTP_USER_AGENT="GPTBot/1.0")
+
+        self.assertEqual(response.status_code, 403)
+
+    def test_search_crawler_remains_allowed(self):
+        response = self.client.get(reverse("home"), HTTP_USER_AGENT="Googlebot/2.1")
+
+        self.assertEqual(response.status_code, 200)
+
 
 class AboutViewTests(TestCase):
 
@@ -91,9 +101,13 @@ class SeoTests(TestCase):
     def test_robots_points_to_sitemap_and_blocks_private_areas(self):
         response = self.client.get(reverse("robots-txt"), HTTP_HOST="testserver")
 
-        self.assertEqual(response["Content-Type"], "text/plain")
+        self.assertTrue(response["Content-Type"].startswith("text/plain"))
         self.assertContains(response, "Disallow: /admin/")
         self.assertContains(response, "Disallow: /dashboard/")
+        self.assertContains(response, "User-agent: GPTBot")
+        self.assertContains(response, "User-agent: ClaudeBot")
+        self.assertContains(response, "User-agent: Google-Extended")
+        self.assertContains(response, "User-agent: CCBot")
         self.assertContains(response, "Sitemap: http://testserver/sitemap.xml")
 
     def test_sitemap_is_available(self):
@@ -102,6 +116,7 @@ class SeoTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response["Content-Type"], "application/xml")
         self.assertContains(response, "http://testserver/")
+        self.assertContains(response, "http://testserver/admissions/")
 
     def test_configured_social_profiles_appear_in_footer_and_schema(self):
         SiteSettings.objects.create(

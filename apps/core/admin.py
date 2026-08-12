@@ -60,7 +60,6 @@ class SiteSettingsAdmin(admin.ModelAdmin):
                 "admissions_open",
                 "admissions_message",
                 "admissions_list",
-                "prospectus",
             ),
         }),
         ("Announcement bar", {

@@ -50,13 +50,34 @@ class ApplicationCreateViewTests(TestCase):
         self.assertContains(response, '<option value="Other">Other</option>', html=True)
         self.assertContains(response, "Select “Other” if the learner lives outside Lesotho.")
 
+    def test_admissions_page_has_search_metadata(self):
+        SiteSettings.objects.create(school_name="Sacred Heart High School")
+
+        response = self.client.get(self.url, HTTP_HOST="testserver")
+
+        self.assertContains(
+            response,
+            "<title>Admissions | Apply to Sacred Heart High School</title>",
+            html=True,
+        )
+        self.assertContains(
+            response,
+            '<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">',
+            html=True,
+        )
+        self.assertContains(
+            response,
+            '<link rel="canonical" href="http://testserver/admissions/">',
+            html=True,
+        )
+
     def test_admissions_page_shows_document_placeholders(self):
         SiteSettings.objects.create(school_name="Sacred Heart High School")
 
         response = self.client.get(self.url)
 
         self.assertContains(response, "Admission list will be posted here soon.")
-        self.assertContains(response, "Prospectus coming soon")
+        self.assertNotContains(response, "Prospectus")
 
     def test_admissions_page_links_uploaded_documents(self):
         SiteSettings.objects.create(
@@ -68,9 +89,9 @@ class ApplicationCreateViewTests(TestCase):
         response = self.client.get(self.url)
 
         self.assertContains(response, "/media/admissions/lists/approved-list.pdf")
-        self.assertContains(response, "/media/admissions/prospectuses/prospectus.pdf")
         self.assertContains(response, "View admissions list")
-        self.assertContains(response, "Browse prospectus")
+        self.assertNotContains(response, "/media/admissions/prospectuses/prospectus.pdf")
+        self.assertNotContains(response, "Browse prospectus")
 
     def test_application_accepts_other_as_the_home_district(self):
         SiteSettings.objects.create(
