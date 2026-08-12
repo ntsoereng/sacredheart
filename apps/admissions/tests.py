@@ -45,6 +45,8 @@ class ApplicationCreateViewTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Learner application form")
+        self.assertNotContains(response, "Student candidate number")
+        self.assertNotContains(response, 'name="student_candidate_number"')
         self.assertContains(response, '<option value="Other">Other</option>', html=True)
         self.assertContains(response, "Select “Other” if the learner lives outside Lesotho.")
 
@@ -67,7 +69,6 @@ class ApplicationCreateViewTests(TestCase):
                 "parent_guardian_email": "parent@example.com",
                 "home_address": "Johannesburg",
                 "previous_school": "Example Primary",
-                "student_candidate_number": "ZA-12345",
                 "district": "Other",
             },
         )
@@ -94,7 +95,6 @@ class ApplicationCreateViewTests(TestCase):
                 "parent_guardian_email": "guardian@example.com",
                 "home_address": "Maseru",
                 "previous_school": "Example Primary",
-                "student_candidate_number": "LS-12345",
                 "district": "Maseru",
             },
             follow=True,
@@ -129,7 +129,6 @@ class ApplicationCreateViewTests(TestCase):
                 "parent_guardian_email": "guardian@example.com",
                 "home_address": "Private home address",
                 "previous_school": "Example Primary",
-                "student_candidate_number": "ZA-98765",
                 "district": "Maseru",
             },
             follow=True,

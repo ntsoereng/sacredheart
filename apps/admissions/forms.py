@@ -33,7 +33,6 @@ class ApplicationForm(forms.ModelForm):
             "parent_guardian_email",
             "home_address",
             "previous_school",
-            "student_candidate_number",
             "district",
         )
 
@@ -99,12 +98,6 @@ class ApplicationForm(forms.ModelForm):
                 attrs={
                     "class": "w-full",
                     "placeholder": "Name of previous school",
-                }
-            ),
-            "student_candidate_number": forms.TextInput(
-                attrs={
-                    "class": "w-full",
-                    "placeholder": "Candidate number from previous school",
                 }
             ),
             "district": forms.Select(
