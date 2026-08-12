@@ -282,6 +282,8 @@ class SiteSettingsForm(forms.ModelForm):
             "admissions_email",
             "admissions_open",
             "admissions_message",
+            "admissions_list",
+            "prospectus",
         )
         widgets = {
             "address": forms.Textarea(attrs={"rows": 3}),

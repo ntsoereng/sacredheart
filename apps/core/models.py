@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import FileExtensionValidator
 from django.utils.text import slugify
 from apps.posts.content import sanitize_post_html
 
@@ -144,6 +145,20 @@ class SiteSettings(models.Model):
     admissions_message = models.TextField(
         blank=True,
         help_text="Message shown when admissions are closed."
+    )
+
+    admissions_list = models.FileField(
+        upload_to="admissions/lists/",
+        blank=True,
+        validators=[FileExtensionValidator(allowed_extensions=["pdf"])],
+        help_text="Upload the approved admissions list as a PDF when it is ready.",
+    )
+
+    prospectus = models.FileField(
+        upload_to="admissions/prospectuses/",
+        blank=True,
+        validators=[FileExtensionValidator(allowed_extensions=["pdf"])],
+        help_text="Upload the current school prospectus as a PDF.",
     )
 
     def __str__(self):

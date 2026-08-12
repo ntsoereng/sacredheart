@@ -50,6 +50,28 @@ class ApplicationCreateViewTests(TestCase):
         self.assertContains(response, '<option value="Other">Other</option>', html=True)
         self.assertContains(response, "Select “Other” if the learner lives outside Lesotho.")
 
+    def test_admissions_page_shows_document_placeholders(self):
+        SiteSettings.objects.create(school_name="Sacred Heart High School")
+
+        response = self.client.get(self.url)
+
+        self.assertContains(response, "Admission list will be posted here soon.")
+        self.assertContains(response, "Prospectus coming soon")
+
+    def test_admissions_page_links_uploaded_documents(self):
+        SiteSettings.objects.create(
+            school_name="Sacred Heart High School",
+            admissions_list="admissions/lists/approved-list.pdf",
+            prospectus="admissions/prospectuses/prospectus.pdf",
+        )
+
+        response = self.client.get(self.url)
+
+        self.assertContains(response, "/media/admissions/lists/approved-list.pdf")
+        self.assertContains(response, "/media/admissions/prospectuses/prospectus.pdf")
+        self.assertContains(response, "View admissions list")
+        self.assertContains(response, "Browse prospectus")
+
     def test_application_accepts_other_as_the_home_district(self):
         SiteSettings.objects.create(
             school_name="Sacred Heart High School",
