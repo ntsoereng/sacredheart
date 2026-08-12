@@ -12,6 +12,7 @@ class SafeMediaStorage(FileSystemStorage):
         ".jpeg",
         ".jpg",
         ".png",
+        ".pdf",
         ".webp",
     }
 

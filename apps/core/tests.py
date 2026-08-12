@@ -8,6 +8,15 @@ from apps.pages.models import Page
 from apps.posts.models import Post
 
 from .models import ExtracurricularActivity, SiteSettings
+from .storage import SafeMediaStorage
+
+
+class SafeMediaStorageTests(TestCase):
+    def test_pdf_uploads_keep_the_pdf_extension(self):
+        stored_name = SafeMediaStorage().get_valid_name("School Prospectus.PDF")
+
+        self.assertTrue(stored_name.endswith(".pdf"))
+        self.assertNotIn("School Prospectus", stored_name)
 
 
 class BrowserSecurityHeaderTests(TestCase):
