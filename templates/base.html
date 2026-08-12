@@ -104,12 +104,28 @@
 
             const mobileToggle = document.getElementById("mobile-navigation-toggle");
             const mobileMenu = document.getElementById("mobile-navigation");
+            const setMobileMenu = (open) => {
+                mobileMenu?.classList.toggle("hidden", !open);
+                mobileToggle?.setAttribute("aria-expanded", String(open));
+                mobileToggle?.setAttribute("aria-label", open ? "Close main menu" : "Open main menu");
+                mobileToggle?.querySelector(".sr-only") && (mobileToggle.querySelector(".sr-only").textContent = open ? "Close main menu" : "Open main menu");
+                mobileToggle?.querySelector("[data-menu-open-icon]")?.classList.toggle("hidden", open);
+                mobileToggle?.querySelector("[data-menu-close-icon]")?.classList.toggle("hidden", !open);
+                document.body.classList.toggle("overflow-hidden", open);
+            };
             mobileToggle?.addEventListener("click", () => {
                 const opening = mobileMenu.classList.contains("hidden");
-                mobileMenu.classList.toggle("hidden", !opening);
-                mobileToggle.setAttribute("aria-expanded", String(opening));
-                mobileToggle.querySelector("[data-menu-open-icon]")?.classList.toggle("hidden", opening);
-                mobileToggle.querySelector("[data-menu-close-icon]")?.classList.toggle("hidden", !opening);
+                setMobileMenu(opening);
+            });
+            mobileMenu?.querySelectorAll("a").forEach((link) => link.addEventListener("click", () => setMobileMenu(false)));
+            document.addEventListener("keydown", (event) => {
+                if (event.key === "Escape" && mobileToggle?.getAttribute("aria-expanded") === "true") {
+                    setMobileMenu(false);
+                    mobileToggle.focus();
+                }
+            });
+            window.matchMedia("(min-width: 1024px)").addEventListener("change", (event) => {
+                if (event.matches) setMobileMenu(false);
             });
 
             document.querySelector("[data-dismiss-announcement]")?.addEventListener("click", () => {

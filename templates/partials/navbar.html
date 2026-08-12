@@ -20,12 +20,12 @@
 
 <nav id="site-navigation" class="sticky top-0 z-50 border-b border-stone-200/80 bg-white/95 shadow-sm backdrop-blur">
     <div class="max-w-7xl mx-auto px-5 sm:px-6">
-        <div class="flex h-16 items-center justify-between gap-4">
+        <div class="flex h-16 items-center justify-between gap-3">
             <a href="{% url 'home' %}" class="group flex min-w-0 items-center gap-3 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2">
                 {% if site_settings.logo %}
                     <img src="{{ site_settings.logo.url }}" alt="{{ site_settings.school_name }}" class="h-10 w-auto rounded-md transition-transform duration-200 group-hover:scale-105">
                 {% endif %}
-                <span class="truncate text-base font-bold tracking-tight text-primary sm:text-lg">{{ site_settings.school_name }}</span>
+                <span class="line-clamp-2 max-w-48 text-sm font-bold leading-tight tracking-tight text-primary sm:max-w-none sm:text-lg">{{ site_settings.school_name }}</span>
             </a>
 
             <div class="hidden lg:flex items-center gap-1 text-sm font-medium">
@@ -71,17 +71,29 @@
                 <a href="{% url 'application-create' %}" class="nav-cta">Apply now</a>
             </div>
 
-            <button id="mobile-navigation-toggle" type="button" aria-expanded="false" aria-controls="mobile-navigation" class="inline-flex h-10 w-10 items-center justify-center rounded-lg text-primary transition hover:bg-primary/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold lg:hidden">
-                <span class="sr-only">Toggle navigation</span>
+            <div class="flex shrink-0 items-center gap-1 lg:hidden">
+                <a href="{% url 'application-create' %}" class="inline-flex min-h-10 items-center rounded-lg bg-primary px-3 text-xs font-bold text-white">Apply</a>
+            <button id="mobile-navigation-toggle" type="button" aria-expanded="false" aria-controls="mobile-navigation" class="inline-flex h-11 w-11 items-center justify-center rounded-lg text-primary transition hover:bg-primary/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold">
+                <span class="sr-only">Open main menu</span>
                 <svg data-menu-open-icon class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
                 <svg data-menu-close-icon class="hidden h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg>
             </button>
+            </div>
         </div>
     </div>
 
-    <div id="mobile-navigation" class="hidden border-t border-stone-200 bg-white lg:hidden">
-        <div class="max-w-7xl mx-auto space-y-5 px-5 py-5 sm:px-6">
-            <a href="{% url 'home' %}" class="nav-mobile-link">Home</a>
+    <div id="mobile-navigation" class="hidden max-h-[calc(100dvh-4rem)] overflow-y-auto border-t border-stone-200 bg-white shadow-xl lg:hidden">
+        <div class="mx-auto max-w-7xl space-y-5 px-5 pb-8 pt-4 sm:px-6">
+            <form action="{% url 'search' %}" method="get" class="relative">
+                <label for="mobile-site-search" class="sr-only">Search the site</label>
+                <input id="mobile-site-search" type="search" name="q" value="{{ request.GET.q }}" placeholder="Search the school website" class="nav-search min-h-12 w-full rounded-xl bg-stone-100 pl-4 pr-11">
+                <button type="submit" class="absolute right-1 top-1 inline-flex h-10 w-10 items-center justify-center rounded-lg text-primary" aria-label="Search"><svg class="h-5 w-5" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="8.5" cy="8.5" r="4.75"/><path d="m12 12 4 4"/></svg></button>
+            </form>
+            <div class="grid grid-cols-3 gap-2">
+                <a href="{% url 'home' %}" class="nav-mobile-link text-center">Home</a>
+                <a href="{% url 'contact' %}" class="nav-mobile-link text-center">Contact</a>
+                <a href="{% url 'event-list' %}" class="nav-mobile-link text-center">Calendar</a>
+            </div>
             <div>
                 <p class="nav-mobile-label">School</p>
                 <div class="mt-2 grid grid-cols-2 gap-2">
@@ -102,8 +114,8 @@
                 </div>
             </div>
             <div class="grid grid-cols-2 gap-2 border-t border-stone-100 pt-4">
-                <a href="{% url 'contact' %}" class="nav-mobile-link">Contact</a>
-                <a href="{% url 'application-create' %}" class="nav-mobile-cta">Apply now</a>
+                <a href="{% url 'application-create' %}" class="nav-mobile-cta min-h-12 items-center">Admissions</a>
+                <a href="{% url 'donations' %}" class="nav-mobile-link flex min-h-12 items-center justify-center border border-stone-200">Support the school</a>
                 {% if request.user.is_staff %}<a href="{% url 'announcement-edit' %}" class="nav-mobile-link">Edit announcement</a>{% endif %}
             </div>
         </div>

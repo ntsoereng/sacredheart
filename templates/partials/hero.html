@@ -1,26 +1,26 @@
 <section class="relative isolate overflow-hidden bg-[#f3ece2]">
     <div class="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_12%_18%,rgba(201,162,39,.2),transparent_30%),radial-gradient(circle_at_92%_82%,rgba(109,31,47,.13),transparent_32%)]"></div>
-    <div class="mx-auto grid max-w-7xl items-center gap-12 px-6 py-12 sm:py-14 lg:min-h-[42rem] lg:grid-cols-[1.02fr_.98fr] lg:py-20">
+    <div class="mx-auto grid max-w-7xl items-center gap-8 px-5 py-9 sm:px-6 sm:py-14 lg:min-h-[42rem] lg:grid-cols-[1.02fr_.98fr] lg:gap-12 lg:py-20">
         <div class="max-w-2xl">
             <div class="inline-flex items-center gap-3 rounded-full border border-primary/10 bg-white/75 px-4 py-2 text-sm font-bold text-primary shadow-sm backdrop-blur">
                 <span class="flex h-6 w-6 items-center justify-center rounded-full bg-gold text-xs" aria-hidden="true">✦</span>
                 {{ site_settings.tagline|default:"Learning, character and service" }}
             </div>
-            <h1 class="mt-7 text-5xl font-bold leading-[1.04] text-primary sm:text-6xl lg:text-7xl">
+            <h1 class="mt-5 text-4xl font-bold leading-[1.06] text-primary sm:mt-7 sm:text-6xl lg:text-7xl">
                 {{ site_settings.hero_title|default:"A place to learn, belong, and grow." }}
             </h1>
-            <p class="mt-6 max-w-xl text-lg leading-8 text-gray-700 md:text-xl">
+            <p class="mt-4 max-w-xl text-base leading-7 text-gray-700 sm:mt-6 md:text-xl md:leading-8">
                 {{ site_settings.hero_subtitle|default:"A supportive school community where learners develop knowledge, character, and confidence for the future." }}
             </p>
-            <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+            <div class="mt-6 grid grid-cols-2 gap-3 sm:mt-8 sm:flex">
                 {% if site_settings.admissions_open %}
-                <a href="{% url 'application-create' %}" class="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 font-bold text-white shadow-lg shadow-primary/15 hover:-translate-y-0.5 hover:bg-primary-dark">Start an application <span aria-hidden="true">→</span></a>
+                <a href="{% url 'application-create' %}" class="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-center text-sm font-bold text-white shadow-lg shadow-primary/15 hover:-translate-y-0.5 hover:bg-primary-dark sm:px-6 sm:text-base">Start application <span aria-hidden="true">→</span></a>
                 {% else %}
-                <a href="{% url 'application-create' %}" class="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 font-bold text-white shadow-lg shadow-primary/15 hover:-translate-y-0.5 hover:bg-primary-dark">Admissions information <span aria-hidden="true">→</span></a>
+                <a href="{% url 'application-create' %}" class="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-center text-sm font-bold text-white shadow-lg shadow-primary/15 hover:-translate-y-0.5 hover:bg-primary-dark sm:px-6 sm:text-base">Admissions <span aria-hidden="true">→</span></a>
                 {% endif %}
-                <a href="{% url 'about-us' %}" class="inline-flex min-h-12 items-center justify-center rounded-xl border border-primary/20 bg-white/80 px-6 py-3 font-bold text-primary hover:border-primary hover:bg-white">Discover our school</a>
+                <a href="{% url 'about-us' %}" class="inline-flex min-h-12 items-center justify-center rounded-xl border border-primary/20 bg-white/80 px-4 py-3 text-center text-sm font-bold text-primary hover:border-primary hover:bg-white sm:px-6 sm:text-base">About the school</a>
             </div>
-            <div class="mt-9 grid max-w-xl gap-3 text-sm font-semibold text-gray-600 sm:grid-cols-3">
+            <div class="mt-7 hidden max-w-xl gap-3 text-sm font-semibold text-gray-600 sm:grid sm:grid-cols-3">
                 <span class="flex items-center gap-2"><span class="text-gold">✓</span> Purposeful learning</span>
                 <span class="flex items-center gap-2"><span class="text-gold">✓</span> Faith and character</span>
                 <span class="flex items-center gap-2"><span class="text-gold">✓</span> Supportive community</span>
@@ -31,11 +31,11 @@
             <div class="absolute -left-6 -top-6 h-28 w-28 rounded-3xl border border-gold/40 bg-gold/20"></div>
             <div class="absolute -bottom-5 -right-5 h-32 w-32 rounded-full bg-primary/10"></div>
             {% if site_settings.hero_image %}
-            <img src="{{ site_settings.hero_image.url }}" alt="Students at {{ site_settings.school_name }}" class="relative aspect-[4/5] max-h-[38rem] w-full rounded-[2rem] object-cover shadow-2xl shadow-primary/20 sm:aspect-[5/4] lg:aspect-[4/5]" fetchpriority="high" decoding="async">
+            <img src="{{ site_settings.hero_image.url }}" alt="Students at {{ site_settings.school_name }}" class="relative aspect-[16/10] max-h-[38rem] w-full rounded-3xl object-cover shadow-2xl shadow-primary/20 sm:aspect-[5/4] lg:aspect-[4/5] lg:rounded-[2rem]" fetchpriority="high" decoding="async">
             {% else %}
             <div class="relative flex aspect-[4/5] max-h-[38rem] items-center justify-center overflow-hidden rounded-[2rem] bg-primary text-white shadow-2xl shadow-primary/20 sm:aspect-[5/4] lg:aspect-[4/5]"><div class="text-center"><span class="font-serif text-8xl text-gold">SH</span><p class="mt-4 font-bold">Sacred Heart High School</p></div></div>
             {% endif %}
-            <div class="absolute bottom-5 left-5 right-5 rounded-2xl border border-white/60 bg-white/90 p-4 shadow-xl backdrop-blur sm:left-auto sm:max-w-xs">
+            <div class="absolute bottom-3 left-3 right-3 rounded-xl border border-white/60 bg-white/90 p-3 shadow-xl backdrop-blur sm:bottom-5 sm:left-auto sm:right-5 sm:max-w-xs sm:rounded-2xl sm:p-4">
                 <p class="text-xs font-bold uppercase tracking-[0.16em] text-gold">Every learner matters</p>
                 <p class="mt-1 font-serif text-lg font-bold text-primary">Growing knowledge, confidence and character.</p>
             </div>
