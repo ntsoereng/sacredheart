@@ -111,7 +111,6 @@
                 mobileToggle?.querySelector(".sr-only") && (mobileToggle.querySelector(".sr-only").textContent = open ? "Close main menu" : "Open main menu");
                 mobileToggle?.querySelector("[data-menu-open-icon]")?.classList.toggle("hidden", open);
                 mobileToggle?.querySelector("[data-menu-close-icon]")?.classList.toggle("hidden", !open);
-                document.body.classList.toggle("overflow-hidden", open);
             };
             mobileToggle?.addEventListener("click", () => {
                 const opening = mobileMenu.classList.contains("hidden");
