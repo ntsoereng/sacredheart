@@ -21,7 +21,9 @@
 
     <div class="content-card rounded-3xl p-6 md:p-10 lg:p-12">
         <div class="border-b border-stone-200 pb-7"><p class="text-sm font-bold uppercase tracking-[0.18em] text-gold">Online application</p><h2 class="mt-2 text-3xl font-bold">Learner application form</h2><p class="mt-2 text-gray-600"><span class="text-red-600">*</span> indicates required information.</p></div>
-        <form method="post" class="mt-8" novalidate>{% csrf_token %}
+        <form method="post" class="mt-8" id="application-submission-form" novalidate>{% csrf_token %}
+            {{ form.submission_token }}
+            <div class="sr-only" aria-hidden="true"><label for="{{ form.website.id_for_label }}">Leave this field blank</label>{{ form.website }}</div>
             {% if form.non_field_errors %}<div class="mb-7 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">{{ form.non_field_errors }}</div>{% endif %}
 
             <fieldset><legend class="flex items-center gap-3 text-xl font-bold"><span class="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-sm text-white">1</span>Student information</legend><p class="ml-11 mt-1 text-sm text-gray-500">Tell us about the learner applying to Sacred Heart.</p><div class="mt-6 grid gap-6 md:grid-cols-2">
@@ -47,7 +49,7 @@
             {% if form.errors %}<div class="mt-8 flex gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800"><svg class="mt-0.5 h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5m0 3h.01"/></svg><p><strong>Please review the highlighted fields.</strong><br>Nothing has been submitted yet.</p></div>{% endif %}
 
             <div class="mt-8 rounded-2xl border border-stone-200 bg-stone-50 p-5"><div class="flex gap-3"><svg class="mt-0.5 h-5 w-5 shrink-0 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><div><p class="font-bold text-gray-800">Your information is treated with care</p><p class="mt-1 text-sm leading-6 text-gray-600">By submitting, you confirm that the information is accurate and that you are authorised to provide it. Read our <a href="{% url 'privacy-policy' %}" target="_blank" rel="noopener" class="font-bold text-primary underline">Privacy Policy</a> and <a href="{% url 'terms-of-use' %}" target="_blank" rel="noopener" class="font-bold text-primary underline">Terms of Use</a>.</p></div></div></div>
-            <div class="mt-7 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"><p class="max-w-md text-xs leading-5 text-gray-500">After submission, keep the reference number shown on the confirmation page.</p><button type="submit" class="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-primary px-7 py-3 font-bold text-white shadow-lg shadow-primary/10 hover:bg-primary-dark">Submit application <span aria-hidden="true">→</span></button></div>
+            <div class="mt-7 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"><p class="max-w-md text-xs leading-5 text-gray-500">After submission, keep the reference number shown on the confirmation page.</p><button type="submit" id="application-submit-button" class="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-primary px-7 py-3 font-bold text-white shadow-lg shadow-primary/10 hover:bg-primary-dark disabled:cursor-wait disabled:opacity-70"><svg id="application-submit-spinner" class="hidden h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle class="opacity-30" cx="12" cy="12" r="9" stroke="currentColor" stroke-width="3"/><path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg><span id="application-submit-label">Submit application</span><span id="application-submit-arrow" aria-hidden="true">→</span></button></div>
         </form>
     </div>
 </div></div></section>
@@ -59,4 +61,21 @@
 <section class="bg-white py-14 md:py-20"><div class="mx-auto max-w-4xl px-6">
     <article id="admissions-list" class="scroll-mt-24 rounded-3xl border border-stone-200 bg-stone-50 p-7 shadow-sm md:p-10"><p class="text-sm font-bold uppercase tracking-[0.18em] text-gold">Application outcomes</p><h2 class="mt-2 text-3xl font-bold text-gray-900">Admissions list</h2><p class="mt-4 leading-7 text-gray-600">The approved admissions list will be published here after the review process is complete.</p>{% if site_settings.admissions_list %}<div class="mt-7 flex flex-wrap gap-3"><a href="{{ site_settings.admissions_list.url }}" target="_blank" rel="noopener" class="btn-primary">View admissions list</a><a href="{{ site_settings.admissions_list.url }}" download class="inline-flex min-h-12 items-center rounded-xl border border-primary px-5 py-3 font-bold text-primary hover:bg-primary/5">Download PDF</a></div>{% else %}<div class="mt-7 rounded-2xl border border-amber-200 bg-amber-50 p-5 text-amber-900"><p class="font-bold">Admission list will be posted here soon.</p><p class="mt-1 text-sm">Please check this page again for the official update.</p></div>{% endif %}</article>
 </div></section>
+<script nonce="{{ csp_nonce }}">
+    (() => {
+        const form = document.getElementById("application-submission-form");
+        const button = document.getElementById("application-submit-button");
+        if (!form || !button) return;
+
+        form.addEventListener("submit", () => {
+            if (!form.checkValidity() || button.disabled) return;
+            button.disabled = true;
+            button.setAttribute("aria-disabled", "true");
+            document.getElementById("application-submit-spinner")?.classList.remove("hidden");
+            document.getElementById("application-submit-arrow")?.classList.add("hidden");
+            const label = document.getElementById("application-submit-label");
+            if (label) label.textContent = "Submitting application…";
+        });
+    })();
+</script>
 {% endblock %}

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Application update | Sacred Heart High School{% endblock %}
+{% block robots %}noindex, nofollow, noarchive{% endblock %}
+{% block content %}
+<section class="soft-section py-14 md:py-20">
+    <div class="mx-auto max-w-2xl px-5 sm:px-6">
+        <div class="overflow-hidden rounded-3xl border border-stone-200 bg-white text-center shadow-lg">
+            <div class="bg-primary px-6 py-8 text-white">
+                <span class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gold text-primary" aria-hidden="true"><svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="12" r="9"/><path d="M12 8v5m0 3h.01"/></svg></span>
+                <p class="mt-4 text-xs font-bold uppercase tracking-wider text-gold-light">Admissions update</p>
+                <h1 class="mt-2 text-3xl font-bold">{{ error_title }}</h1>
+            </div>
+            <div class="px-6 py-8 sm:px-10">
+                <p class="text-lg leading-8 text-gray-600">{{ error_message }}</p>
+                <div class="mt-7 flex flex-wrap justify-center gap-3">
+                    <a href="{% url 'application-create' %}" class="btn-primary">Open a fresh form</a>
+                    <a href="{% url 'contact' %}" class="inline-flex min-h-12 items-center rounded-xl border border-primary px-5 py-3 font-bold text-primary hover:bg-primary/5">Contact the school</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

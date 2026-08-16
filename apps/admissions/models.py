@@ -1,5 +1,15 @@
-from django.db import models
+import re
+import secrets
+import unicodedata
+import uuid
+
 from django.conf import settings
+from django.db import models
+
+
+def normalize_identity_value(value):
+    value = unicodedata.normalize("NFKC", str(value or ""))
+    return re.sub(r"\s+", " ", value).strip().casefold()
 
 
 class Application(models.Model):
@@ -113,8 +123,40 @@ class Application(models.Model):
         blank=True
     )
 
+    normalized_academic_year = models.CharField(
+        max_length=32,
+        blank=True,
+        null=True,
+        editable=False,
+    )
+
+    normalized_student_name = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        editable=False,
+    )
+
+    normalized_student_surname = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        editable=False,
+    )
+
     class Meta:
         ordering = ["-submitted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=(
+                    "normalized_academic_year",
+                    "normalized_student_name",
+                    "normalized_student_surname",
+                    "date_of_birth",
+                ),
+                name="unique_learner_application_per_year",
+            )
+        ]
 
     def __str__(self):
         return (
@@ -124,20 +166,37 @@ class Application(models.Model):
         )
     
     def save(self, *args, **kwargs):
-
-        creating = self.pk is None
-
+        self.normalized_academic_year = normalize_identity_value(self.academic_year)
+        self.normalized_student_name = normalize_identity_value(self.student_name)
+        self.normalized_student_surname = normalize_identity_value(
+            self.student_surname
+        )
+        if not self.reference_number:
+            self.reference_number = (
+                f"SHHS-{self.academic_year}-{secrets.token_hex(5).upper()}"
+            )
         super().save(*args, **kwargs)
 
-        if creating and not self.reference_number:
 
-            self.reference_number = (
-                f"SHHS-{self.academic_year}-{self.pk:05d}"
-            )
+class AdmissionRateLimitBucket(models.Model):
+    identifier_hash = models.CharField(max_length=64, unique=True)
+    window_started_at = models.DateTimeField()
+    attempts = models.PositiveIntegerField(default=0)
+    updated_at = models.DateTimeField(auto_now=True)
 
-            super().save(
-                update_fields=["reference_number"]
-            )
+    class Meta:
+        verbose_name = "Admissions rate-limit bucket"
+        verbose_name_plural = "Admissions rate-limit buckets"
+
+
+class ApplicationSubmissionToken(models.Model):
+    token_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    consumed_at = models.DateTimeField(blank=True, null=True)
+
+    @property
+    def is_consumed(self):
+        return self.consumed_at is not None
 
 
 class ApplicationNote(models.Model):
