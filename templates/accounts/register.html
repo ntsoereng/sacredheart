@@ -5,16 +5,16 @@
 <section class="soft-section py-12 md:py-20"><div class="mx-auto max-w-3xl px-6"><div class="content-card rounded-2xl p-7 md:p-10">
     <p class="text-sm font-semibold uppercase tracking-[0.18em] text-gold">Staff portal</p><h1 class="mt-2 text-3xl font-bold">Request a staff account</h1>
     <p class="mt-3 text-gray-600">Create your login and staff profile. An administrator must approve the account and assign access before you can sign in.</p>
-    <form method="post" enctype="multipart/form-data" class="mt-8 space-y-8" novalidate>{% csrf_token %}
+    <form method="post" enctype="multipart/form-data" class="mt-8 space-y-8" novalidate data-protected-form>{% csrf_token %}{% include "partials/public_form_security_fields.html" %}
         {% if form.non_field_errors %}<div class="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">{{ form.non_field_errors }}</div>{% endif %}
         <fieldset><legend class="text-xl font-bold">Login details</legend><div class="mt-5 grid gap-5 md:grid-cols-2">
             {% for field in form %}{% if field.name == 'username' or field.name == 'email' or field.name == 'password1' or field.name == 'password2' %}<div><label for="{{ field.id_for_label }}" class="mb-2 block font-semibold">{{ field.label }} <span class="text-red-600">*</span></label>{{ field }}{% if field.help_text %}<div class="mt-1 text-xs leading-5 text-gray-500">{{ field.help_text|safe }}</div>{% endif %}{% for error in field.errors %}<p class="mt-1 text-sm text-red-700">{{ error }}</p>{% endfor %}</div>{% endif %}{% endfor %}
         </div></fieldset>
         <fieldset class="border-t border-stone-200 pt-8"><legend class="text-xl font-bold">Staff profile</legend><div class="mt-5 grid gap-5 md:grid-cols-2">
-            {% for field in form %}{% if field.name != 'username' and field.name != 'email' and field.name != 'password1' and field.name != 'password2' %}<div class="{% if field.name == 'short_bio' or field.name == 'subjects' %}md:col-span-2{% endif %}"><label for="{{ field.id_for_label }}" class="mb-2 block font-semibold">{{ field.label }}{% if field.field.required %} <span class="text-red-600">*</span>{% endif %}</label>{{ field }}{% for error in field.errors %}<p class="mt-1 text-sm text-red-700">{{ error }}</p>{% endfor %}</div>{% endif %}{% endfor %}
+            {% for field in form %}{% if field.name != 'username' and field.name != 'email' and field.name != 'password1' and field.name != 'password2' and field.name != 'website' and field.name != 'submission_token' %}<div class="{% if field.name == 'short_bio' or field.name == 'subjects' %}md:col-span-2{% endif %}"><label for="{{ field.id_for_label }}" class="mb-2 block font-semibold">{{ field.label }}{% if field.field.required %} <span class="text-red-600">*</span>{% endif %}</label>{{ field }}{% for error in field.errors %}<p class="mt-1 text-sm text-red-700">{{ error }}</p>{% endfor %}</div>{% endif %}{% endfor %}
         </div></fieldset>
         <div class="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">Submitting this form does not grant staff access. The superuser will verify your details and choose your permissions.</div>
-        <button type="submit" class="btn-primary min-h-11 w-full">Submit access request</button>
+        <button type="submit" class="btn-primary min-h-11 w-full disabled:cursor-wait disabled:opacity-70" data-submit-button data-submitting-label="Submitting request…"><svg data-submit-spinner class="hidden h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle class="opacity-30" cx="12" cy="12" r="9" stroke="currentColor" stroke-width="3"/><path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg><span data-submit-label>Submit access request</span></button>
     </form>
 </div></div></section>
 {% endblock %}

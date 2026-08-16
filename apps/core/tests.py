@@ -10,8 +10,15 @@ from apps.events.models import Event
 from apps.pages.models import Page
 from apps.posts.models import Post
 
-from .models import ExtracurricularActivity, SiteSettings
+from .models import (
+    ContactMessage,
+    ExtracurricularActivity,
+    PublicFormRateLimitBucket,
+    PublicFormSubmissionToken,
+    SiteSettings,
+)
 from .storage import SafeMediaStorage
+from .views import ContactView
 
 
 class SafeMediaStorageTests(TestCase):
@@ -62,6 +69,152 @@ class BrowserSecurityHeaderTests(TestCase):
         response = self.client.get(reverse("home"), HTTP_USER_AGENT="Googlebot/2.1")
 
         self.assertEqual(response.status_code, 200)
+
+
+class PublicFormProtectionTests(TestCase):
+    protected_form_names = (
+        "contact",
+        "alumni-create",
+        "alumni-opportunity-create",
+        "alumni-mentorship-request",
+        "staff-login",
+        "staff-register",
+    )
+
+    def submission_token(self, url_name="contact"):
+        response = self.client.get(reverse(url_name))
+        return response.context["form"]["submission_token"].value()
+
+    def contact_data(self, token, **overrides):
+        data = {
+            "name": "Mpho Mokoena",
+            "email": "guardian@example.com",
+            "subject": "School enquiry",
+            "message": "Please send more information.",
+            "submission_token": token,
+        }
+        data.update(overrides)
+        return data
+
+    def test_every_public_collection_form_renders_security_fields(self):
+        for url_name in self.protected_form_names:
+            with self.subTest(url_name=url_name):
+                response = self.client.get(reverse(url_name))
+                self.assertEqual(response.status_code, 200)
+                self.assertContains(response, "data-protected-form")
+                self.assertContains(response, 'name="submission_token"')
+                self.assertContains(response, 'name="website"')
+                self.assertContains(response, 'tabindex="-1"')
+                self.assertContains(response, 'autocomplete="off"')
+                self.assertContains(response, 'aria-hidden="true"')
+
+    def test_every_public_collection_endpoint_rejects_honeypot_posts(self):
+        for url_name in self.protected_form_names:
+            with self.subTest(url_name=url_name):
+                response = self.client.post(
+                    reverse(url_name),
+                    {"website": "automated value"},
+                    REMOTE_ADDR="192.0.2.60",
+                )
+                self.assertEqual(response.status_code, 400)
+                self.assertNotContains(response, "honeypot", status_code=400)
+
+    def test_contact_honeypot_is_rejected_without_storing_a_message(self):
+        token = self.submission_token()
+        response = self.client.post(
+            reverse("contact"),
+            self.contact_data(token, website="automated value"),
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertNotContains(response, "honeypot", status_code=400)
+        self.assertFalse(ContactMessage.objects.exists())
+
+    def test_invalid_or_reused_token_is_rejected(self):
+        invalid_response = self.client.post(
+            reverse("contact"),
+            self.contact_data("invalid-token"),
+        )
+        self.assertEqual(invalid_response.status_code, 409)
+
+        token = self.submission_token()
+        first_response = self.client.post(
+            reverse("contact"),
+            self.contact_data(token),
+        )
+        second_response = self.client.post(
+            reverse("contact"),
+            self.contact_data(token),
+        )
+
+        self.assertRedirects(first_response, reverse("contact"))
+        self.assertEqual(second_response.status_code, 409)
+        self.assertEqual(ContactMessage.objects.count(), 1)
+
+    def test_validation_failure_does_not_consume_the_token(self):
+        token = self.submission_token()
+        invalid_response = self.client.post(
+            reverse("contact"),
+            self.contact_data(token, message=""),
+        )
+        self.assertEqual(invalid_response.status_code, 200)
+
+        valid_response = self.client.post(
+            reverse("contact"),
+            self.contact_data(token),
+        )
+        self.assertRedirects(valid_response, reverse("contact"))
+        self.assertEqual(ContactMessage.objects.count(), 1)
+        self.assertEqual(
+            PublicFormSubmissionToken.objects.filter(
+                consumed_at__isnull=False
+            ).count(),
+            1,
+        )
+
+    def test_invalid_attempts_are_database_rate_limited(self):
+        token = self.submission_token()
+        with patch.object(ContactView, "rate_limit_count", 2):
+            for _attempt in range(2):
+                response = self.client.post(
+                    reverse("contact"),
+                    {"submission_token": token},
+                    REMOTE_ADDR="192.0.2.40",
+                )
+                self.assertEqual(response.status_code, 200)
+
+            response = self.client.post(
+                reverse("contact"),
+                {"submission_token": token},
+                REMOTE_ADDR="192.0.2.40",
+            )
+
+        self.assertEqual(response.status_code, 429)
+        self.assertEqual(response["Retry-After"], "3600")
+        self.assertTrue(PublicFormRateLimitBucket.objects.exists())
+
+    def test_normalized_email_is_rate_limited_across_ip_addresses(self):
+        token = self.submission_token()
+        with patch.object(ContactView, "rate_limit_count", 1):
+            first_response = self.client.post(
+                reverse("contact"),
+                {
+                    "email": " Guardian@Example.COM ",
+                    "submission_token": token,
+                },
+                REMOTE_ADDR="192.0.2.51",
+            )
+            second_response = self.client.post(
+                reverse("contact"),
+                {
+                    "email": "guardian@example.com",
+                    "submission_token": token,
+                },
+                REMOTE_ADDR="192.0.2.52",
+            )
+
+        self.assertEqual(first_response.status_code, 200)
+        self.assertEqual(second_response.status_code, 429)
 
 
 class AboutViewTests(TestCase):

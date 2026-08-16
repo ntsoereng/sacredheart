@@ -3,7 +3,35 @@ from django import forms
 from .models import ContactMessage
 
 
-class ContactForm(forms.ModelForm):
+class PublicFormProtectionFieldsMixin:
+    """Add fields used by the server-side public-form protection layer."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["website"] = forms.CharField(
+            required=False,
+            widget=forms.TextInput(
+                attrs={
+                    "tabindex": "-1",
+                    "autocomplete": "off",
+                    "aria-hidden": "true",
+                }
+            ),
+        )
+        self.fields["submission_token"] = forms.CharField(
+            widget=forms.HiddenInput()
+        )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if cleaned_data.get("website"):
+            raise forms.ValidationError(
+                "We could not process this form. Please return and try again."
+            )
+        return cleaned_data
+
+
+class ContactForm(PublicFormProtectionFieldsMixin, forms.ModelForm):
 
     class Meta:
 

@@ -1,7 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
-from django.core.cache import cache
 from django.urls import reverse
 
 from apps.staff.models import StaffMember
@@ -9,7 +8,6 @@ from apps.staff.models import StaffMember
 
 class StaffPortalAccessTests(TestCase):
     def setUp(self):
-        cache.clear()
         self.staff_user = get_user_model().objects.create_user(
             username="staffmember",
             password="secure-password",
@@ -19,6 +17,10 @@ class StaffPortalAccessTests(TestCase):
             username="parent",
             password="secure-password",
         )
+
+    def submission_token(self, url_name):
+        response = self.client.get(reverse(url_name))
+        return response.context["form"]["submission_token"].value()
 
     def test_dashboard_redirects_anonymous_users_to_staff_login(self):
         response = self.client.get(reverse("dashboard"))
@@ -31,7 +33,11 @@ class StaffPortalAccessTests(TestCase):
     def test_regular_users_cannot_sign_in_to_staff_portal(self):
         response = self.client.post(
             reverse("staff-login"),
-            {"username": "parent", "password": "secure-password"},
+            {
+                "username": "parent",
+                "password": "secure-password",
+                "submission_token": self.submission_token("staff-login"),
+            },
         )
 
         self.assertContains(response, "does not have access")
@@ -43,7 +49,11 @@ class StaffPortalAccessTests(TestCase):
         )
         response = self.client.post(
             reverse("staff-login"),
-            {"username": "staffmember", "password": "secure-password"},
+            {
+                "username": "staffmember",
+                "password": "secure-password",
+                "submission_token": self.submission_token("staff-login"),
+            },
         )
 
         self.assertRedirects(response, reverse("dashboard"))
@@ -60,6 +70,7 @@ class StaffPortalAccessTests(TestCase):
                 "full_name": "Lebo Molefe",
                 "role": "Mathematics Teacher",
                 "short_bio": "I teach mathematics.",
+                "submission_token": self.submission_token("staff-register"),
             },
         )
 
@@ -78,17 +89,26 @@ class StaffPortalAccessTests(TestCase):
         self.assertNotContains(home_response, reverse("staff-register"))
 
     def test_staff_login_is_rate_limited(self):
+        token = self.submission_token("staff-login")
         for _ in range(10):
             response = self.client.post(
                 reverse("staff-login"),
-                {"username": "missing", "password": "incorrect"},
+                {
+                    "username": "missing",
+                    "password": "incorrect",
+                    "submission_token": token,
+                },
                 REMOTE_ADDR="192.0.2.10",
             )
             self.assertNotEqual(response.status_code, 429)
 
         response = self.client.post(
             reverse("staff-login"),
-            {"username": "missing", "password": "incorrect"},
+            {
+                "username": "missing",
+                "password": "incorrect",
+                "submission_token": token,
+            },
             REMOTE_ADDR="192.0.2.10",
         )
 

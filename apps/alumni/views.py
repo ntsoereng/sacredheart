@@ -4,7 +4,7 @@ from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views.generic import CreateView, DetailView, ListView, TemplateView
 
-from apps.core.throttling import RateLimitMixin
+from apps.core.throttling import PublicFormProtectionMixin
 
 from .forms import (
     AlumniOpportunitySubmissionForm,
@@ -66,7 +66,7 @@ class AlumniStoryDetailView(DetailView):
         )
 
 
-class AlumniStoryCreateView(RateLimitMixin, CreateView):
+class AlumniStoryCreateView(PublicFormProtectionMixin, CreateView):
     rate_limit_count = 5
     rate_limit_window = 3600
     rate_limit_scope = "alumni-submission"
@@ -77,8 +77,12 @@ class AlumniStoryCreateView(RateLimitMixin, CreateView):
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        self.request.session["alumni_submission_name"] = self.object.full_name
-        messages.success(self.request, "Your alumni directory profile has been submitted.")
+        if response.status_code < 400:
+            self.request.session["alumni_submission_name"] = self.object.full_name
+            messages.success(
+                self.request,
+                "Your alumni directory profile has been submitted.",
+            )
         return response
 
 
@@ -91,7 +95,7 @@ class AlumniStorySuccessView(TemplateView):
         return context
 
 
-class AlumniOpportunityCreateView(RateLimitMixin, CreateView):
+class AlumniOpportunityCreateView(PublicFormProtectionMixin, CreateView):
     rate_limit_count = 5
     rate_limit_window = 3600
     rate_limit_scope = "alumni-opportunity-submission"
@@ -101,8 +105,10 @@ class AlumniOpportunityCreateView(RateLimitMixin, CreateView):
     success_url = reverse_lazy("alumni-opportunity-success")
 
     def form_valid(self, form):
-        messages.success(self.request, "The opportunity has been sent for review.")
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        if response.status_code < 400:
+            messages.success(self.request, "The opportunity has been sent for review.")
+        return response
 
 
 class AlumniOpportunityListView(ListView):
@@ -130,7 +136,7 @@ class AlumniOpportunityListView(ListView):
         return context
 
 
-class MentorshipRequestCreateView(RateLimitMixin, CreateView):
+class MentorshipRequestCreateView(PublicFormProtectionMixin, CreateView):
     rate_limit_count = 5
     rate_limit_window = 3600
     rate_limit_scope = "alumni-mentorship-request"
@@ -147,8 +153,13 @@ class MentorshipRequestCreateView(RateLimitMixin, CreateView):
         return initial
 
     def form_valid(self, form):
-        messages.success(self.request, "Your mentorship request has been sent privately to the school.")
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        if response.status_code < 400:
+            messages.success(
+                self.request,
+                "Your mentorship request has been sent privately to the school.",
+            )
+        return response
 
 
 class AlumniActionSuccessView(TemplateView):

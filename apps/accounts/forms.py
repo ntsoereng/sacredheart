@@ -5,10 +5,11 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 
 from apps.academics.models import Subject
+from apps.core.forms import PublicFormProtectionFieldsMixin
 from apps.staff.models import StaffMember
 
 
-class StaffAuthenticationForm(AuthenticationForm):
+class StaffAuthenticationForm(PublicFormProtectionFieldsMixin, AuthenticationForm):
     """Authenticate only accounts that are permitted to use the staff portal."""
 
     def confirm_login_allowed(self, user):
@@ -20,7 +21,7 @@ class StaffAuthenticationForm(AuthenticationForm):
             )
 
 
-class StaffRegistrationForm(UserCreationForm):
+class StaffRegistrationForm(PublicFormProtectionFieldsMixin, UserCreationForm):
     email = forms.EmailField(widget=forms.EmailInput(attrs={"autocomplete": "email"}))
     full_name = forms.CharField(max_length=200)
     role = forms.CharField(max_length=150, initial="Teacher")

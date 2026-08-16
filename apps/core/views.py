@@ -14,7 +14,7 @@ from apps.pages.models import Page
 from apps.staff.models import StaffMember
 from apps.vacancies.models import Vacancy
 from apps.core.models import ExtracurricularActivity, SiteSettings
-from apps.core.throttling import RateLimitMixin
+from apps.core.throttling import PublicFormProtectionMixin
 
 
 def favicon(request):
@@ -273,7 +273,7 @@ class SearchView(TemplateView):
     
     
     
-class ContactView(RateLimitMixin, FormView):
+class ContactView(PublicFormProtectionMixin, FormView):
     rate_limit_count = 10
     rate_limit_window = 3600
     rate_limit_scope = "contact-form"
@@ -286,8 +286,7 @@ class ContactView(RateLimitMixin, FormView):
         "contact"
     )
 
-    def form_valid(self, form):
-
+    def protected_form_valid(self, form):
         form.save()
 
         messages.success(
@@ -295,7 +294,7 @@ class ContactView(RateLimitMixin, FormView):
             "Thank you. Your message has been received. We will get back to you shortly."
         )
 
-        return super().form_valid(form)  
+        return super().protected_form_valid(form)
     
     
 def test_404(request):

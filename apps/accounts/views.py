@@ -2,12 +2,12 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import reverse_lazy
 from django.views.generic import FormView
 
-from apps.core.throttling import RateLimitMixin
+from apps.core.throttling import PublicFormProtectionMixin
 
 from .forms import StaffAuthenticationForm, StaffRegistrationForm
 
 
-class StaffLoginView(RateLimitMixin, LoginView):
+class StaffLoginView(PublicFormProtectionMixin, LoginView):
     rate_limit_count = 10
     rate_limit_window = 300
     rate_limit_scope = "staff-login"
@@ -23,7 +23,7 @@ class StaffLogoutView(LogoutView):
     next_page = reverse_lazy("home")
 
 
-class StaffRegistrationView(RateLimitMixin, FormView):
+class StaffRegistrationView(PublicFormProtectionMixin, FormView):
     rate_limit_count = 5
     rate_limit_window = 3600
     rate_limit_scope = "staff-access-request"
@@ -31,6 +31,6 @@ class StaffRegistrationView(RateLimitMixin, FormView):
     form_class = StaffRegistrationForm
     success_url = reverse_lazy("staff-registration-complete")
 
-    def form_valid(self, form):
+    def protected_form_valid(self, form):
         form.save()
-        return super().form_valid(form)
+        return super().protected_form_valid(form)

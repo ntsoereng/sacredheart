@@ -30,6 +30,10 @@ class AlumniStoryTests(TestCase):
             consent_to_publish=True,
         )
 
+    def submission_token(self, url_name):
+        response = self.client.get(reverse(url_name))
+        return response.context["form"]["submission_token"].value()
+
     def test_only_approved_story_is_public(self):
         response = self.client.get(reverse("alumni-list"))
         self.assertContains(response, self.approved.full_name)
@@ -63,6 +67,9 @@ class AlumniStoryTests(TestCase):
                 "focus_area": "career",
                 "goals": "I want to understand engineering careers.",
                 "consent_to_contact": True,
+                "submission_token": self.submission_token(
+                    "alumni-mentorship-request"
+                ),
             },
         )
         self.assertRedirects(response, reverse("alumni-mentorship-success"))
@@ -82,6 +89,9 @@ class AlumniStoryTests(TestCase):
                 "summary": "Support for eligible secondary school graduates.",
                 "application_url": "https://example.com/apply",
                 "deadline": "2030-12-31",
+                "submission_token": self.submission_token(
+                    "alumni-opportunity-create"
+                ),
             },
         )
         self.assertRedirects(response, reverse("alumni-opportunity-success"))
@@ -98,6 +108,9 @@ class AlumniStoryTests(TestCase):
                 "opportunity_type": "training",
                 "title": "Skills workshop",
                 "summary": "A useful workshop.",
+                "submission_token": self.submission_token(
+                    "alumni-opportunity-create"
+                ),
             },
         )
         self.assertContains(response, "does not match the selected verified profile")

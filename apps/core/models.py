@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 from django.core.validators import FileExtensionValidator
 from django.utils.text import slugify
@@ -203,6 +205,31 @@ class ContactMessage(models.Model):
 
     def __str__(self):
         return self.subject
+
+
+class PublicFormRateLimitBucket(models.Model):
+    identifier_hash = models.CharField(max_length=64, unique=True)
+    window_started_at = models.DateTimeField()
+    attempts = models.PositiveIntegerField(default=0)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Public form rate-limit bucket"
+        verbose_name_plural = "Public form rate-limit buckets"
+
+
+class PublicFormSubmissionToken(models.Model):
+    token_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    scope = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_now_add=True)
+    consumed_at = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        indexes = [models.Index(fields=("scope", "created_at"))]
+
+    @property
+    def is_consumed(self):
+        return self.consumed_at is not None
 
 
 class ExtracurricularActivity(models.Model):

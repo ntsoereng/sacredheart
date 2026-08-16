@@ -44,7 +44,7 @@
     {% endif %}
 
     <link rel="stylesheet"
-          href="{% static 'css/output.css' %}?v=20260816.5">
+          href="{% static 'css/output.css' %}?v=20260816.6">
 
 </head>
 
@@ -140,6 +140,26 @@
                         window.setTimeout(() => { label.textContent = "Copy reference"; }, 2000);
                     } catch (error) {
                         button.querySelector("[data-copy-label]").textContent = "Copy failed";
+                    }
+                });
+            });
+
+            document.querySelectorAll("[data-protected-form]").forEach((form) => {
+                const button = form.querySelector("[data-submit-button]");
+                if (!button) return;
+                form.addEventListener("submit", (event) => {
+                    if (button.disabled) {
+                        event.preventDefault();
+                        return;
+                    }
+                    if (!form.checkValidity()) return;
+                    button.disabled = true;
+                    button.setAttribute("aria-disabled", "true");
+                    button.querySelector("[data-submit-spinner]")?.classList.remove("hidden");
+                    button.querySelector("[data-submit-arrow]")?.classList.add("hidden");
+                    const label = button.querySelector("[data-submit-label]");
+                    if (label) {
+                        label.textContent = button.dataset.submittingLabel || "Submitting…";
                     }
                 });
             });

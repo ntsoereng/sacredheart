@@ -2,10 +2,12 @@ from datetime import date
 
 from django import forms
 
+from apps.core.forms import PublicFormProtectionFieldsMixin
+
 from .models import AlumniOpportunity, AlumniStory, MentorshipRequest
 
 
-class AlumniStorySubmissionForm(forms.ModelForm):
+class AlumniStorySubmissionForm(PublicFormProtectionFieldsMixin, forms.ModelForm):
     class Meta:
         model = AlumniStory
         fields = (
@@ -97,7 +99,7 @@ class AlumniReviewForm(forms.ModelForm):
         }
 
 
-class AlumniOpportunitySubmissionForm(forms.ModelForm):
+class AlumniOpportunitySubmissionForm(PublicFormProtectionFieldsMixin, forms.ModelForm):
     verification_email = forms.EmailField(
         label="Email used for your alumni profile",
         help_text="This is checked privately and is not published.",
@@ -139,7 +141,7 @@ class AlumniOpportunitySubmissionForm(forms.ModelForm):
         return cleaned_data
 
 
-class MentorshipRequestForm(forms.ModelForm):
+class MentorshipRequestForm(PublicFormProtectionFieldsMixin, forms.ModelForm):
     class Meta:
         model = MentorshipRequest
         fields = (
