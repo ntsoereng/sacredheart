@@ -16,8 +16,12 @@ from django.views.generic import (
 )
 
 from apps.admissions.models import Application
-from apps.alumni.forms import AlumniReviewForm
-from apps.alumni.models import AlumniStory
+from apps.alumni.forms import (
+    AlumniOpportunityReviewForm,
+    AlumniReviewForm,
+    MentorshipRequestReviewForm,
+)
+from apps.alumni.models import AlumniOpportunity, AlumniStory, MentorshipRequest
 from apps.core.models import ContactMessage, ExtracurricularActivity, SiteSettings
 from apps.events.models import Event
 from apps.posts.models import Post
@@ -57,6 +61,8 @@ class DashboardView(LoginRequiredMixin, AnyStaffPermissionRequiredMixin, Templat
         "admissions.view_application",
         "core.view_contactmessage",
         "alumni.view_alumnistory",
+        "alumni.view_alumniopportunity",
+        "alumni.view_mentorshiprequest",
         "posts.view_post",
         "events.view_event",
         "academics.view_subject",
@@ -548,6 +554,94 @@ class AlumniReviewDetailView(LoginRequiredMixin, StaffPermissionRequiredMixin, D
                 f"Alumni submission updated to {story.get_status_display()}.",
             )
             return redirect("alumni-review-detail", pk=story.pk)
+        return self.render_to_response(self.get_context_data(review_form=form))
+
+
+class AlumniOpportunityReviewListView(LoginRequiredMixin, StaffPermissionRequiredMixin, ListView):
+    permission_required = "alumni.view_alumniopportunity"
+    model = AlumniOpportunity
+    template_name = "portal/alumni_opportunity_list.html"
+    context_object_name = "opportunities"
+    paginate_by = 25
+
+    def get_queryset(self):
+        queryset = AlumniOpportunity.objects.select_related("alumni", "reviewed_by")
+        status = self.request.GET.get("status", "").strip()
+        if status:
+            queryset = queryset.filter(status=status)
+        return queryset
+
+
+class AlumniOpportunityReviewDetailView(LoginRequiredMixin, StaffPermissionRequiredMixin, DetailView):
+    permission_required = "alumni.view_alumniopportunity"
+    model = AlumniOpportunity
+    template_name = "portal/alumni_opportunity_detail.html"
+    context_object_name = "opportunity"
+
+    def get_queryset(self):
+        return super().get_queryset().select_related("alumni", "reviewed_by")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.setdefault("review_form", AlumniOpportunityReviewForm(instance=self.object))
+        return context
+
+    def post(self, request, *args, **kwargs):
+        if not request.user.has_perm("alumni.change_alumniopportunity"):
+            from django.core.exceptions import PermissionDenied
+            raise PermissionDenied
+        self.object = self.get_object()
+        form = AlumniOpportunityReviewForm(request.POST, instance=self.object)
+        if form.is_valid():
+            opportunity = form.save(commit=False)
+            opportunity.mark_reviewed(request.user)
+            opportunity.save()
+            messages.success(request, "The alumni opportunity review was saved.")
+            return redirect("alumni-opportunity-review-detail", pk=opportunity.pk)
+        return self.render_to_response(self.get_context_data(review_form=form))
+
+
+class MentorshipRequestListView(LoginRequiredMixin, StaffPermissionRequiredMixin, ListView):
+    permission_required = "alumni.view_mentorshiprequest"
+    model = MentorshipRequest
+    template_name = "portal/mentorship_request_list.html"
+    context_object_name = "mentorship_requests"
+    paginate_by = 25
+
+    def get_queryset(self):
+        queryset = MentorshipRequest.objects.select_related("mentor")
+        state = self.request.GET.get("state", "").strip()
+        if state == "open":
+            queryset = queryset.filter(is_handled=False)
+        elif state == "handled":
+            queryset = queryset.filter(is_handled=True)
+        return queryset
+
+
+class MentorshipRequestDetailView(LoginRequiredMixin, StaffPermissionRequiredMixin, DetailView):
+    permission_required = "alumni.view_mentorshiprequest"
+    model = MentorshipRequest
+    template_name = "portal/mentorship_request_detail.html"
+    context_object_name = "mentorship_request"
+
+    def get_queryset(self):
+        return super().get_queryset().select_related("mentor")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.setdefault("review_form", MentorshipRequestReviewForm(instance=self.object))
+        return context
+
+    def post(self, request, *args, **kwargs):
+        if not request.user.has_perm("alumni.change_mentorshiprequest"):
+            from django.core.exceptions import PermissionDenied
+            raise PermissionDenied
+        self.object = self.get_object()
+        form = MentorshipRequestReviewForm(request.POST, instance=self.object)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "The mentorship request was updated.")
+            return redirect("mentorship-request-detail", pk=self.object.pk)
         return self.render_to_response(self.get_context_data(review_form=form))
 
     

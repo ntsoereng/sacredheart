@@ -1,0 +1,4 @@
+{% extends "base.html" %}
+{% block title %}Submission Received | Alumni Network{% endblock %}
+{% block robots %}noindex, follow{% endblock %}
+{% block content %}<section class="soft-section py-20"><div class="mx-auto max-w-2xl px-6"><div class="content-card rounded-3xl p-8 text-center md:p-12"><div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gold text-3xl font-bold text-primary">✓</div><h1 class="mt-6 text-3xl font-bold">Thank you — we have received it</h1><p class="mt-5 leading-7 text-gray-600">The school team will review your submission and follow up privately if needed.</p><a href="{% url 'alumni-list' %}" class="btn-primary mt-8 inline-flex">Return to the Alumni Network</a></div></div></section>{% endblock %}

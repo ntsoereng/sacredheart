@@ -1,6 +1,6 @@
 from apps.core.models import ContactMessage
 from apps.admissions.models import Application
-from apps.alumni.models import AlumniStory
+from apps.alumni.models import AlumniOpportunity, AlumniStory, MentorshipRequest
 
 
 def portal_stats(request):
@@ -26,5 +26,13 @@ def portal_stats(request):
     if user.has_perm("alumni.view_alumnistory"):
         context["portal_pending_alumni"] = AlumniStory.objects.filter(
             status="pending"
+        ).count()
+    if user.has_perm("alumni.view_alumniopportunity"):
+        context["portal_pending_alumni_opportunities"] = AlumniOpportunity.objects.filter(
+            status="pending"
+        ).count()
+    if user.has_perm("alumni.view_mentorshiprequest"):
+        context["portal_open_mentorship_requests"] = MentorshipRequest.objects.filter(
+            is_handled=False
         ).count()
     return context

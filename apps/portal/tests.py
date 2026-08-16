@@ -247,6 +247,7 @@ class StaffApplicationWorkflowTests(TestCase):
                 "tagline": "Faith and excellence",
                 "admissions_email": "admissions@example.org",
                 "admissions_open": "on",
+                "admissions_closing_date": "2026-09-18",
             },
         )
 
@@ -254,6 +255,7 @@ class StaffApplicationWorkflowTests(TestCase):
         settings.refresh_from_db()
         self.assertEqual(settings.school_name, "Sacred Heart High School")
         self.assertTrue(settings.admissions_open)
+        self.assertEqual(settings.admissions_closing_date, date(2026, 9, 18))
 
     def test_site_settings_page_creates_missing_singleton(self):
         response = self.client.get(reverse("site-settings"))

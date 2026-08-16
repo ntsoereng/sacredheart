@@ -281,6 +281,7 @@ class SiteSettingsForm(forms.ModelForm):
             "about_values",
             "admissions_email",
             "admissions_open",
+            "admissions_closing_date",
             "admissions_message",
             "admissions_list",
         )
@@ -292,6 +293,7 @@ class SiteSettingsForm(forms.ModelForm):
             "about_vision": forms.Textarea(attrs={"rows": 4}),
             "about_values": forms.Textarea(attrs={"rows": 5}),
             "admissions_message": forms.Textarea(attrs={"rows": 3}),
+            "admissions_closing_date": forms.DateInput(attrs={"type": "date"}),
             "facebook_url": forms.URLInput(attrs={"placeholder": "https://facebook.com/your-page"}),
             "instagram_url": forms.URLInput(attrs={"placeholder": "https://instagram.com/your-handle"}),
             "youtube_url": forms.URLInput(attrs={"placeholder": "https://youtube.com/@your-channel"}),

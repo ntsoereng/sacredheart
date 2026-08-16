@@ -142,6 +142,12 @@ class SiteSettings(models.Model):
         help_text="Controls whether online applications are being accepted."
     )
 
+    admissions_closing_date = models.DateField(
+        blank=True,
+        null=True,
+        help_text="Displayed on the public application form while admissions are open.",
+    )
+
     admissions_message = models.TextField(
         blank=True,
         help_text="Message shown when admissions are closed."

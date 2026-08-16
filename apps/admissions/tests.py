@@ -50,6 +50,30 @@ class ApplicationCreateViewTests(TestCase):
         self.assertContains(response, '<option value="Other">Other</option>', html=True)
         self.assertContains(response, "Select “Other” if the learner lives outside Lesotho.")
 
+    def test_open_admissions_displays_the_configured_closing_date(self):
+        SiteSettings.objects.create(
+            school_name="Sacred Heart High School",
+            admissions_open=True,
+            admissions_closing_date=date(2026, 9, 18),
+        )
+
+        response = self.client.get(self.url)
+
+        self.assertContains(response, "Applications close")
+        self.assertContains(response, "Friday, 18 September 2026")
+        self.assertContains(response, 'datetime="2026-09-18"')
+
+    def test_closing_date_is_not_shown_when_admissions_are_closed(self):
+        SiteSettings.objects.create(
+            school_name="Sacred Heart High School",
+            admissions_open=False,
+            admissions_closing_date=date(2026, 9, 18),
+        )
+
+        response = self.client.get(self.url)
+
+        self.assertNotContains(response, "Friday, 18 September 2026")
+
     def test_admissions_page_has_search_metadata(self):
         SiteSettings.objects.create(school_name="Sacred Heart High School")
 

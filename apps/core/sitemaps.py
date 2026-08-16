@@ -26,6 +26,7 @@ class StaticViewSitemap(Sitemap):
             "activity-list",
             "staff-list",
             "alumni-list",
+            "alumni-opportunity-list",
             "vacancy-list",
             "contact",
             "donations",

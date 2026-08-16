@@ -2,7 +2,7 @@ from datetime import date
 
 from django import forms
 
-from .models import AlumniStory
+from .models import AlumniOpportunity, AlumniStory, MentorshipRequest
 
 
 class AlumniStorySubmissionForm(forms.ModelForm):
@@ -15,10 +15,16 @@ class AlumniStorySubmissionForm(forms.ModelForm):
             "phone",
             "current_location",
             "occupation",
+            "industry",
             "profile_photo",
             "life_story",
             "school_memories",
             "message_to_students",
+            "mentorship_available",
+            "mentor_career_guidance",
+            "mentor_university_applications",
+            "mentor_subject_choices",
+            "mentor_entrepreneurship",
             "consent_to_publish",
         )
         widgets = {
@@ -29,6 +35,19 @@ class AlumniStorySubmissionForm(forms.ModelForm):
             "school_memories": forms.Textarea(attrs={"rows": 5}),
             "message_to_students": forms.Textarea(attrs={"rows": 4}),
         }
+        labels = {
+            "mentorship_available": "I would like to volunteer as a mentor",
+            "mentor_career_guidance": "Career guidance",
+            "mentor_university_applications": "University applications",
+            "mentor_subject_choices": "Subject and career choices",
+            "mentor_entrepreneurship": "Entrepreneurship advice",
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["consent_to_publish"].help_text = (
+            "I consent to my directory profile and photo being published on this website."
+        )
 
     def clean_graduation_year(self):
         year = self.cleaned_data["graduation_year"]
@@ -40,9 +59,26 @@ class AlumniStorySubmissionForm(forms.ModelForm):
         consent = self.cleaned_data["consent_to_publish"]
         if not consent:
             raise forms.ValidationError(
-                "Consent is required before an alumni story can be submitted."
+                "Consent is required before an alumni profile can be submitted."
             )
         return consent
+
+    def clean(self):
+        cleaned_data = super().clean()
+        area_fields = (
+            "mentor_career_guidance",
+            "mentor_university_applications",
+            "mentor_subject_choices",
+            "mentor_entrepreneurship",
+        )
+        if cleaned_data.get("mentorship_available") and not any(
+            cleaned_data.get(field) for field in area_fields
+        ):
+            self.add_error(
+                "mentorship_available",
+                "Choose at least one mentorship area.",
+            )
+        return cleaned_data
 
 
 class AlumniReviewForm(forms.ModelForm):
@@ -58,4 +94,118 @@ class AlumniReviewForm(forms.ModelForm):
                     "placeholder": "Private review notes or follow-up actions…",
                 }
             ),
+        }
+
+
+class AlumniOpportunitySubmissionForm(forms.ModelForm):
+    verification_email = forms.EmailField(
+        label="Email used for your alumni profile",
+        help_text="This is checked privately and is not published.",
+    )
+
+    class Meta:
+        model = AlumniOpportunity
+        fields = (
+            "alumni",
+            "verification_email",
+            "opportunity_type",
+            "title",
+            "provider",
+            "summary",
+            "application_url",
+            "deadline",
+        )
+        labels = {"alumni": "Your verified alumni profile"}
+        widgets = {
+            "summary": forms.Textarea(attrs={"rows": 6}),
+            "deadline": forms.DateInput(attrs={"type": "date"}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["alumni"].queryset = AlumniStory.objects.filter(
+            status="approved", consent_to_publish=True
+        ).order_by("full_name")
+
+    def clean(self):
+        cleaned_data = super().clean()
+        alumni = cleaned_data.get("alumni")
+        email = cleaned_data.get("verification_email")
+        if alumni and email and alumni.email.casefold() != email.casefold():
+            self.add_error(
+                "verification_email",
+                "That email does not match the selected verified profile.",
+            )
+        return cleaned_data
+
+
+class MentorshipRequestForm(forms.ModelForm):
+    class Meta:
+        model = MentorshipRequest
+        fields = (
+            "mentor",
+            "full_name",
+            "email",
+            "phone",
+            "audience",
+            "focus_area",
+            "goals",
+            "consent_to_contact",
+        )
+        labels = {
+            "mentor": "Preferred mentor (optional)",
+            "consent_to_contact": "I consent to the school contacting me about this request.",
+        }
+        widgets = {"goals": forms.Textarea(attrs={"rows": 6})}
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["mentor"].queryset = AlumniStory.objects.filter(
+            status="approved",
+            consent_to_publish=True,
+            mentorship_available=True,
+        ).order_by("full_name")
+
+    def clean_consent_to_contact(self):
+        consent = self.cleaned_data["consent_to_contact"]
+        if not consent:
+            raise forms.ValidationError("Consent is required to send a mentorship request.")
+        return consent
+
+    def clean(self):
+        cleaned_data = super().clean()
+        mentor = cleaned_data.get("mentor")
+        focus_area = cleaned_data.get("focus_area")
+        focus_fields = {
+            "career": "mentor_career_guidance",
+            "university": "mentor_university_applications",
+            "subjects": "mentor_subject_choices",
+            "entrepreneurship": "mentor_entrepreneurship",
+        }
+        mentor_field = focus_fields.get(focus_area)
+        if mentor and mentor_field and not getattr(mentor, mentor_field):
+            self.add_error(
+                "mentor",
+                "This alumnus is not currently listed for the selected focus area. You can leave the mentor blank and the school will find a suitable match.",
+            )
+        return cleaned_data
+
+
+class AlumniOpportunityReviewForm(forms.ModelForm):
+    class Meta:
+        model = AlumniOpportunity
+        fields = ("status", "staff_notes")
+        widgets = {
+            "status": forms.Select(attrs={"class": "w-full rounded-xl border-stone-300"}),
+            "staff_notes": forms.Textarea(attrs={"rows": 5, "class": "w-full rounded-xl border-stone-300"}),
+        }
+
+
+class MentorshipRequestReviewForm(forms.ModelForm):
+    class Meta:
+        model = MentorshipRequest
+        fields = ("is_handled", "staff_notes")
+        labels = {"is_handled": "Request has been handled"}
+        widgets = {
+            "staff_notes": forms.Textarea(attrs={"rows": 5, "class": "w-full rounded-xl border-stone-300"}),
         }

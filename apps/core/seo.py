@@ -35,11 +35,22 @@ def event_schema(request, event):
         "@type": "Event",
         "name": event.title,
         "description": strip_tags(event.description),
-        "startDate": event.event_date.isoformat(),
+        "startDate": (
+            f"{event.event_date.isoformat()}T{event.start_time.isoformat()}"
+            if event.start_time
+            else event.event_date.isoformat()
+        ),
         "url": request.build_absolute_uri(),
         "eventStatus": "https://schema.org/EventScheduled",
         "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
     }
+    if event.end_date or event.end_time:
+        end_date = event.end_date or event.event_date
+        data["endDate"] = (
+            f"{end_date.isoformat()}T{event.end_time.isoformat()}"
+            if event.end_time
+            else end_date.isoformat()
+        )
     if event.location:
         data["location"] = {"@type": "Place", "name": event.location}
     if event.image:

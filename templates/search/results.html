@@ -90,7 +90,7 @@ Search
 
         {% if alumni_stories %}
         <div class="mb-12">
-            <h2 class="mb-6 text-2xl font-bold">Alumni stories</h2>
+            <h2 class="mb-6 text-2xl font-bold">Alumni directory</h2>
             <div class="space-y-4">
                 {% for story in alumni_stories %}
                 <a href="{% url 'alumni-detail' story.slug %}" class="content-card block rounded-xl p-6">

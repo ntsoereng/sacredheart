@@ -1,10 +1,78 @@
 {% extends "base.html" %}
-{% block title %}Alumni Corner | Sacred Heart{% endblock %}
-{% block meta_description %}Meet Sacred Heart High School alumni, celebrate their journeys, and discover the memories connecting our school community across generations.{% endblock %}
-{% block og_title %}Sacred Heart High School Alumni Corner{% endblock %}
-{% block og_description %}Celebrate the stories, achievements, and memories of former Sacred Heart students.{% endblock %}
-{% block robots %}{% if request.GET.q %}noindex, follow{% else %}index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1{% endif %}{% endblock %}
+{% block title %}Alumni Network | Sacred Heart{% endblock %}
+{% block meta_description %}Find verified Sacred Heart alumni, request mentorship, and discover scholarships, competitions, and training opportunities shared by our alumni network.{% endblock %}
+{% block og_title %}Sacred Heart Alumni Network{% endblock %}
+{% block og_description %}A directory that connects alumni, learners, recent graduates, mentors, and opportunities.{% endblock %}
+{% block twitter_title %}Sacred Heart Alumni Network{% endblock %}
+{% block twitter_description %}Find alumni, mentors, scholarships, competitions, and training opportunities.{% endblock %}
 {% block content %}
-<section class="page-hero py-16 text-white"><div class="mx-auto max-w-5xl px-6 text-center"><p class="text-sm font-bold uppercase tracking-[0.2em] text-gold-light">Our community, beyond school</p><h1 class="mt-4 text-4xl font-bold md:text-5xl">Alumni Corner</h1><p class="mx-auto mt-5 max-w-2xl text-lg leading-8 text-white/80">Meet former Sacred Heart students, celebrate their journeys, and share the memories that keep our community connected.</p><a href="{% url 'alumni-create' %}" class="mt-8 inline-flex rounded-xl bg-gold px-6 py-3 font-bold text-primary hover:bg-gold-light">Share your story</a></div></section>
-<section class="soft-section py-14 md:py-18"><div class="mx-auto max-w-7xl px-6"><form method="get" class="mx-auto mb-10 flex max-w-xl gap-3"><label class="grow"><span class="sr-only">Search alumni</span><input class="w-full" type="search" name="q" value="{{ request.GET.q }}" placeholder="Search by name, class year or profession"></label><button class="btn-primary" type="submit">Search</button></form><div class="grid gap-7 md:grid-cols-2 lg:grid-cols-3">{% for story in stories %}<article class="content-card overflow-hidden rounded-2xl">{% if story.profile_photo %}<img src="{{ story.profile_photo.url }}" alt="{{ story.full_name }}" class="h-64 w-full object-cover">{% else %}<div class="flex h-64 items-center justify-center bg-primary/10 text-7xl font-bold text-primary/30">{{ story.full_name|slice:":1" }}</div>{% endif %}<div class="p-6"><p class="text-xs font-bold uppercase tracking-[0.16em] text-gold">Class of {{ story.graduation_year }}</p><h2 class="mt-2 text-2xl font-bold">{{ story.full_name }}</h2>{% if story.occupation %}<p class="mt-1 text-sm font-semibold text-primary">{{ story.occupation }}</p>{% endif %}<p class="mt-4 text-sm leading-6 text-gray-600">{{ story.life_story|truncatewords:28 }}</p><a href="{% url 'alumni-detail' story.slug %}" class="mt-5 inline-block text-link">Read their story →</a></div></article>{% empty %}<div class="content-card col-span-full rounded-2xl p-12 text-center"><h2 class="text-xl font-bold">Stories are coming soon</h2><p class="mt-2 text-gray-600">Be the first to share your Sacred Heart journey.</p><a href="{% url 'alumni-create' %}" class="btn-primary mt-6 inline-flex">Share your story</a></div>{% endfor %}</div>{% include "partials/pagination.html" %}</div></section>
+<section class="page-hero py-16 text-white">
+  <div class="mx-auto max-w-6xl px-6 text-center">
+    <p class="text-sm font-bold uppercase tracking-[0.2em] text-gold-light">Once Sacred Heart, always Sacred Heart</p>
+    <h1 class="mt-4 text-4xl font-bold md:text-6xl">The Alumni Network</h1>
+    <p class="mx-auto mt-5 max-w-3xl text-lg leading-8 text-white/80">Find former learners across professions and generations, connect with a mentor, and explore opportunities shared by verified alumni.</p>
+    <div class="mt-8 flex flex-wrap justify-center gap-3">
+      <a href="{% url 'alumni-create' %}" class="inline-flex rounded-xl bg-gold px-6 py-3 font-bold text-primary hover:bg-gold-light">Join the directory</a>
+      <a href="{% url 'alumni-mentorship-request' %}" class="inline-flex rounded-xl border border-white/30 px-6 py-3 font-bold text-white hover:border-gold hover:bg-white/5">Request a mentor</a>
+    </div>
+  </div>
+</section>
+
+<section class="border-b border-stone-200 bg-white py-12">
+  <div class="mx-auto grid max-w-6xl gap-5 px-6 md:grid-cols-3">
+    <div class="rounded-2xl bg-primary/5 p-6"><p class="text-xs font-bold uppercase tracking-[0.16em] text-gold">Find your community</p><h2 class="mt-2 text-2xl font-bold">Alumni directory</h2><p class="mt-3 leading-7 text-gray-600">Search by name, class year, profession, industry, or location.</p></div>
+    <div class="rounded-2xl bg-primary p-6 text-white"><p class="text-xs font-bold uppercase tracking-[0.16em] text-gold-light">Give guidance</p><h2 class="mt-2 text-2xl font-bold">Mentorship</h2><p class="mt-3 leading-7 text-white/75">{{ mentor_count }} verified alumn{{ mentor_count|pluralize:"us,i" }} currently open to school-facilitated requests.</p></div>
+    <div class="rounded-2xl bg-gold/15 p-6"><p class="text-xs font-bold uppercase tracking-[0.16em] text-primary">Open doors</p><h2 class="mt-2 text-2xl font-bold">Shared opportunities</h2><p class="mt-3 leading-7 text-gray-600">Scholarships, competitions, and training recommended by alumni.</p></div>
+  </div>
+</section>
+
+<section id="directory" class="soft-section py-14 md:py-18">
+  <div class="mx-auto max-w-7xl px-6">
+    <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between"><div><p class="text-sm font-bold uppercase tracking-[0.16em] text-gold">Verified profiles</p><h2 class="mt-2 text-3xl font-bold md:text-4xl">Alumni directory</h2></div><a href="{% url 'alumni-create' %}" class="text-link">Join the directory →</a></div>
+    <form method="get" class="content-card mt-8 grid gap-3 rounded-2xl p-4 md:grid-cols-[1fr_auto_auto]">
+      <label><span class="sr-only">Search alumni</span><input class="min-h-12 w-full" type="search" name="q" value="{{ request.GET.q }}" placeholder="Name, year, profession, industry or location"></label>
+      <label class="flex min-h-12 items-center gap-3 rounded-xl border border-stone-200 bg-white px-4 text-sm font-semibold"><input type="checkbox" name="mentors" value="yes" {% if request.GET.mentors == 'yes' %}checked{% endif %}> Available mentors</label>
+      <button class="btn-primary min-h-12" type="submit">Search directory</button>
+    </form>
+    <div class="mt-9 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {% for story in stories %}
+      <article class="content-card flex flex-col overflow-hidden rounded-2xl">
+        {% if story.profile_photo %}<img src="{{ story.profile_photo.url }}" alt="{{ story.full_name }}" class="h-56 w-full object-cover object-top">{% else %}<div class="flex h-56 items-center justify-center bg-primary/10 text-7xl font-bold text-primary/25">{{ story.full_name|slice:":1" }}</div>{% endif %}
+        <div class="flex flex-1 flex-col p-6">
+          <div class="flex flex-wrap items-center justify-between gap-2"><p class="text-xs font-bold uppercase tracking-[0.16em] text-gold">Class of {{ story.graduation_year }}</p><span class="rounded-full bg-green-50 px-2.5 py-1 text-xs font-bold text-green-800">✓ Verified</span></div>
+          <h3 class="mt-3 text-2xl font-bold">{{ story.full_name }}</h3>
+          {% if story.occupation %}<p class="mt-1 font-semibold text-primary">{{ story.occupation }}</p>{% endif %}
+          {% if story.industry or story.current_location %}<p class="mt-2 text-sm text-gray-500">{% if story.industry %}{{ story.industry }}{% endif %}{% if story.industry and story.current_location %} · {% endif %}{% if story.current_location %}{{ story.current_location }}{% endif %}</p>{% endif %}
+          {% if story.mentorship_available %}<div class="mt-4"><span class="inline-flex rounded-full bg-gold/15 px-3 py-1 text-xs font-bold text-primary">Available to mentor</span></div>{% endif %}
+          <a href="{% url 'alumni-detail' story.slug %}" class="mt-6 inline-block text-link">View profile →</a>
+        </div>
+      </article>
+      {% empty %}
+      <div class="content-card col-span-full rounded-2xl p-12 text-center"><h3 class="text-xl font-bold">No profiles match this search</h3><p class="mt-2 text-gray-600">Try a broader search or help grow the network.</p><a href="{% url 'alumni-create' %}" class="btn-primary mt-6 inline-flex">Join the directory</a></div>
+      {% endfor %}
+    </div>
+    {% include "partials/pagination.html" %}
+  </div>
+</section>
+
+<section id="mentorship" class="bg-primary py-16 text-white">
+  <div class="mx-auto grid max-w-6xl gap-10 px-6 lg:grid-cols-[1fr_1.15fr] lg:items-center">
+    <div><p class="text-sm font-bold uppercase tracking-[0.18em] text-gold-light">Alumni mentorship programme</p><h2 class="mt-3 text-3xl font-bold md:text-4xl">Experience passed forward</h2><p class="mt-5 leading-8 text-white/75">Current learners and recent graduates can ask the school to connect them with an established alumnus. The school coordinates introductions so private contact details are never published.</p><a href="{% url 'alumni-mentorship-request' %}" class="mt-7 inline-flex rounded-xl bg-gold px-6 py-3 font-bold text-primary">Request mentorship</a></div>
+    <div class="grid gap-3 sm:grid-cols-2">
+      <div class="rounded-2xl border border-white/15 bg-white/5 p-5"><h3 class="font-bold text-gold-light">Career guidance</h3><p class="mt-2 text-sm leading-6 text-white/70">Understand roles, industries, skills, and career pathways.</p></div>
+      <div class="rounded-2xl border border-white/15 bg-white/5 p-5"><h3 class="font-bold text-gold-light">University applications</h3><p class="mt-2 text-sm leading-6 text-white/70">Get perspective on courses, applications, and student life.</p></div>
+      <div class="rounded-2xl border border-white/15 bg-white/5 p-5"><h3 class="font-bold text-gold-light">Subject and career choices</h3><p class="mt-2 text-sm leading-6 text-white/70">Connect today’s subjects to tomorrow’s possibilities.</p></div>
+      <div class="rounded-2xl border border-white/15 bg-white/5 p-5"><h3 class="font-bold text-gold-light">Entrepreneurship advice</h3><p class="mt-2 text-sm leading-6 text-white/70">Learn from alumni who have built ventures and initiatives.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="opportunities" class="py-16 md:py-20">
+  <div class="mx-auto max-w-7xl px-6">
+    <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between"><div><p class="text-sm font-bold uppercase tracking-[0.16em] text-gold">Shared by verified alumni</p><h2 class="mt-2 text-3xl font-bold md:text-4xl">Opportunities</h2><p class="mt-3 max-w-2xl text-gray-600">Useful openings for learners and recent graduates, reviewed by the school before publication.</p></div><div class="flex flex-wrap gap-3"><a href="{% url 'alumni-opportunity-list' %}" class="rounded-xl border border-primary px-5 py-3 font-bold text-primary">View all</a><a href="{% url 'alumni-opportunity-create' %}" class="btn-primary inline-flex self-start">Share an opportunity</a></div></div>
+    <div class="mt-9 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+      {% for opportunity in opportunities %}<article class="content-card rounded-2xl p-6"><div class="flex flex-wrap items-center justify-between gap-2"><span class="rounded-full bg-gold/15 px-3 py-1 text-xs font-bold uppercase text-primary">{{ opportunity.get_opportunity_type_display }}</span>{% if opportunity.deadline %}<span class="text-xs font-semibold text-gray-500">Closes {{ opportunity.deadline|date:"d M Y" }}</span>{% endif %}</div><h3 class="mt-4 text-xl font-bold">{{ opportunity.title }}</h3>{% if opportunity.provider %}<p class="mt-1 text-sm font-semibold text-primary">{{ opportunity.provider }}</p>{% endif %}<p class="mt-4 text-sm leading-6 text-gray-600">{{ opportunity.summary|truncatewords:35 }}</p><p class="mt-4 text-xs text-gray-500">Shared by {{ opportunity.alumni.full_name }}, Class of {{ opportunity.alumni.graduation_year }}</p>{% if opportunity.application_url %}<a href="{{ opportunity.application_url }}" target="_blank" rel="noopener noreferrer" class="mt-5 inline-block text-link">View opportunity ↗</a>{% endif %}</article>{% empty %}<div class="content-card col-span-full rounded-2xl p-10 text-center"><h3 class="text-xl font-bold">No current opportunities</h3><p class="mt-2 text-gray-600">Verified alumni can help us add scholarships, competitions, and training.</p></div>{% endfor %}
+    </div>
+  </div>
+</section>
 {% endblock %}

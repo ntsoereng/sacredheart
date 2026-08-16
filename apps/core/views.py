@@ -245,6 +245,7 @@ class SearchView(TemplateView):
             .filter(
                 Q(full_name__icontains=query)
                 | Q(occupation__icontains=query)
+                | Q(industry__icontains=query)
                 | Q(current_location__icontains=query)
                 | Q(life_story__icontains=query)
                 | Q(school_memories__icontains=query)

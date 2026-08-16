@@ -58,6 +58,7 @@ class SiteSettingsAdmin(admin.ModelAdmin):
             "fields": (
                 "admissions_email",
                 "admissions_open",
+                "admissions_closing_date",
                 "admissions_message",
                 "admissions_list",
             ),
