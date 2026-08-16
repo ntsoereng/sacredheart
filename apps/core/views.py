@@ -69,24 +69,31 @@ class HomeView(TemplateView):
             [:3]
         )
         
-        context["upcoming_events"] = (
-            Event.objects
-            .filter(
-                is_published=True,
-                event_date__gte=timezone.localdate(),
-            )
-            [:3]    
+        today = timezone.localdate()
+        current_or_future = Q(end_date__gte=today) | Q(
+            end_date__isnull=True,
+            event_date__gte=today,
         )
-        
-        context["featured_event"] = (
+
+        featured_event = (
             Event.objects.filter(
                 is_published=True,
                 featured=True,
-                event_date__gte=timezone.localdate(),
             )
-            .order_by("event_date")
+            .filter(current_or_future)
+            .order_by("event_date", "start_time")
             .first()
         )
+        context["featured_event"] = featured_event
+
+        upcoming_events = Event.objects.filter(
+            is_published=True,
+        ).filter(current_or_future)
+        if featured_event:
+            upcoming_events = upcoming_events.exclude(pk=featured_event.pk)
+        context["upcoming_events"] = upcoming_events.order_by(
+            "event_date", "start_time", "title"
+        )[:3]
 
         context["principal"] = (
             StaffMember.objects.filter(

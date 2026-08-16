@@ -1,9 +1,12 @@
 import re
+from datetime import date
+from unittest.mock import patch
 
 from django.test import TestCase
 from django.urls import reverse
 
 from apps.academics.models import Subject
+from apps.events.models import Event
 from apps.pages.models import Page
 from apps.posts.models import Post
 
@@ -130,6 +133,47 @@ class SeoTests(TestCase):
         self.assertContains(response, "Follow the school")
         self.assertContains(response, "https://facebook.com/sacredheart")
         self.assertContains(response, '"sameAs"', html=False)
+
+
+class HomeEventVisibilityTests(TestCase):
+    @patch("apps.core.views.timezone.localdate", return_value=date(2026, 8, 16))
+    def test_ongoing_featured_event_is_prominent_and_not_duplicated(self, _localdate):
+        featured = Event.objects.create(
+            title="Featured admissions programme",
+            description="An important programme for prospective families.",
+            event_date=date(2026, 8, 14),
+            end_date=date(2026, 8, 18),
+            category=Event.Category.ADMISSIONS,
+            featured=True,
+        )
+        upcoming = Event.objects.create(
+            title="Upcoming sports fixture",
+            description="A school sports fixture.",
+            event_date=date(2026, 8, 20),
+            category=Event.Category.SPORT,
+        )
+
+        response = self.client.get(reverse("home"))
+
+        self.assertEqual(response.context["featured_event"], featured)
+        self.assertContains(response, "Featured event")
+        self.assertContains(response, featured.title, count=1)
+        self.assertEqual(list(response.context["upcoming_events"]), [upcoming])
+
+    @patch("apps.core.views.timezone.localdate", return_value=date(2026, 8, 16))
+    def test_unpublished_featured_event_is_not_visible(self, _localdate):
+        hidden = Event.objects.create(
+            title="Private featured event",
+            description="Not ready for publication.",
+            event_date=date(2026, 8, 20),
+            featured=True,
+            is_published=False,
+        )
+
+        response = self.client.get(reverse("home"))
+
+        self.assertIsNone(response.context["featured_event"])
+        self.assertNotContains(response, hidden.title)
 
 
 class ExtracurricularActivityTests(TestCase):

@@ -58,6 +58,10 @@ class StaffEventForm(forms.ModelForm):
             "title",
             "description",
             "event_date",
+            "end_date",
+            "start_time",
+            "end_time",
+            "category",
             "location",
             "image",
             "is_published",
@@ -67,6 +71,9 @@ class StaffEventForm(forms.ModelForm):
             "title": forms.TextInput(attrs={"placeholder": "Event title"}),
             "description": forms.HiddenInput(),
             "event_date": forms.DateInput(attrs={"type": "date"}),
+            "end_date": forms.DateInput(attrs={"type": "date"}),
+            "start_time": forms.TimeInput(attrs={"type": "time", "step": 300}),
+            "end_time": forms.TimeInput(attrs={"type": "time", "step": 300}),
             "location": forms.TextInput(attrs={"placeholder": "Venue or location"}),
         }
 

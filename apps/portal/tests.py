@@ -190,6 +190,9 @@ class StaffApplicationWorkflowTests(TestCase):
                 "title": "Open Day",
                 "description": "Meet our school community.",
                 "event_date": "2027-04-10",
+                "start_time": "09:30",
+                "end_time": "13:00",
+                "category": Event.Category.ADMISSIONS,
                 "location": "School campus",
                 "is_published": "on",
             },
@@ -198,6 +201,9 @@ class StaffApplicationWorkflowTests(TestCase):
         self.assertRedirects(response, reverse("content-manager"))
         event = Event.objects.get(title="Open Day")
         self.assertEqual(event.created_by, self.staff_user)
+        self.assertEqual(event.start_time.strftime("%H:%M"), "09:30")
+        self.assertEqual(event.end_time.strftime("%H:%M"), "13:00")
+        self.assertEqual(event.category, Event.Category.ADMISSIONS)
 
     def test_staff_can_create_activity_with_safe_rich_text(self):
         response = self.client.post(
