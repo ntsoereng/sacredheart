@@ -143,6 +143,64 @@ Create a private cache directory outside `public_html`, writable only by the
 application account, and set `DJANGO_CACHE_LOCATION` to it. The shared cache
 makes rate limits consistent across Passenger worker processes.
 
+### Minimise server-identifying response headers
+
+Django removes optional application/runtime-identifying headers. LiteSpeed,
+Apache, and Passenger can add their own headers after Django has returned the
+response, so they must also be configured at the hosting layer.
+
+Copy the safe per-directory rules into the domain's document root, merging
+them with any cPanel-generated Passenger rules already present:
+
+```bash
+cp deployment/application.htaccess /home/USERNAME/public_html/.htaccess.security
+```
+
+Do not replace the live `.htaccess` file with that command. Open both files and
+copy the directives from `.htaccess.security` into the live `.htaccess`, then
+remove `.htaccess.security`. This preserves cPanel's application mapping. The
+rules suppress server-generated signatures, directory listings, and common
+`X-Powered-By`-style headers when `mod_headers` is available.
+
+The production domain currently responds through LiteSpeed. The supplied
+header rule asks LiteSpeed to remove its `Server` field at the domain level.
+If the hosting configuration overrides per-directory header rules, ask the
+hosting administrator to open LiteSpeed WebAdmin and select **Configuration →
+Server → General → Server Signature → Hide Full Header**. They should also
+enable **Hide Error Page Signature**, then restart LiteSpeed gracefully.
+
+If the host switches back to Apache, its `Server` header is controlled by the
+server-wide `ServerTokens` directive. In WHM, ask the hosting administrator to
+set:
+
+```apache
+ServerTokens Prod
+ServerSignature Off
+PassengerShowVersionInHeader off
+PassengerFriendlyErrorPages off
+```
+
+`ServerTokens Prod` removes Apache version, operating-system, and module
+details, although standard Apache still identifies the product as `Apache`.
+If the hosting provider permits a server-wide `mod_headers` rule, they can use
+`Header always unset Server` to remove the field entirely. Passenger's version
+setting hides its version but may still identify the product, so the
+`.htaccess` `X-Powered-By` removal remains useful on either web server.
+
+After restarting Passenger and gracefully restarting LiteSpeed when its global
+setting changed, verify both a Django page and a web-server-generated 404
+because headers can differ by response source:
+
+```bash
+curl -sSIk https://school.example.org/
+curl -sSIk https://school.example.org/a-file-that-does-not-exist
+```
+
+Confirm that `X-Powered-By` is absent and, where the host supports full header
+hiding, that `Server` is absent. Header minimisation reduces passive
+fingerprinting but does not replace patching, access controls, rate limits, or
+the other security measures in this guide.
+
 ## 6. Pulling future releases
 
 Do not make application-code changes through cPanel's File Manager because they

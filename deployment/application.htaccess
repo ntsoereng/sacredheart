@@ -1,0 +1,14 @@
+# Install these rules in the public document root used by the cPanel domain.
+# They are intentionally limited to directives commonly allowed in .htaccess.
+
+ServerSignature Off
+Options -Indexes
+
+<IfModule mod_headers.c>
+    Header always unset Server
+    Header always unset X-Powered-By
+    Header always unset X-AspNet-Version
+    Header always unset X-AspNetMvc-Version
+    Header always unset X-Generator
+    Header always unset X-Runtime
+</IfModule>

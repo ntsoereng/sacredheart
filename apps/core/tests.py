@@ -2,6 +2,7 @@ import re
 from datetime import date
 from unittest.mock import patch
 
+from django.http import HttpResponse
 from django.test import TestCase
 from django.urls import reverse
 
@@ -17,6 +18,7 @@ from .models import (
     PublicFormSubmissionToken,
     SiteSettings,
 )
+from .middleware import ResponseHeaderSanitizationMiddleware
 from .storage import SafeMediaStorage
 from .views import ContactView
 
@@ -69,6 +71,19 @@ class BrowserSecurityHeaderTests(TestCase):
         response = self.client.get(reverse("home"), HTTP_USER_AGENT="Googlebot/2.1")
 
         self.assertEqual(response.status_code, 200)
+
+    def test_application_runtime_identifying_headers_are_removed(self):
+        upstream_response = HttpResponse("ok")
+        upstream_response["X-Powered-By"] = "Example Runtime 1.2.3"
+        upstream_response["X-Generator"] = "Example Framework"
+        middleware = ResponseHeaderSanitizationMiddleware(
+            lambda _request: upstream_response
+        )
+
+        response = middleware(object())
+
+        self.assertNotIn("X-Powered-By", response)
+        self.assertNotIn("X-Generator", response)
 
 
 class PublicFormProtectionTests(TestCase):

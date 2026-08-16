@@ -128,6 +128,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'apps.core.middleware.ResponseHeaderSanitizationMiddleware',
     'django.middleware.csp.ContentSecurityPolicyMiddleware',
     'apps.core.middleware.ScraperBlockingMiddleware',
     'apps.core.middleware.PermissionsPolicyMiddleware',

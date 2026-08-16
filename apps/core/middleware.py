@@ -28,3 +28,25 @@ class PermissionsPolicyMiddleware:
         response = self.get_response(request)
         response.setdefault("Permissions-Policy", settings.PERMISSIONS_POLICY)
         return response
+
+
+class ResponseHeaderSanitizationMiddleware:
+    """Remove optional response headers that disclose application technology."""
+
+    identifying_headers = (
+        "X-Powered-By",
+        "X-AspNet-Version",
+        "X-AspNetMvc-Version",
+        "X-Generator",
+        "X-Runtime",
+    )
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+        for header_name in self.identifying_headers:
+            if header_name in response:
+                del response[header_name]
+        return response
