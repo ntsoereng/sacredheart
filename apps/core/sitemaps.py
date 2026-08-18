@@ -12,37 +12,37 @@ from apps.vacancies.models import Vacancy
 
 
 class StaticViewSitemap(Sitemap):
-    priority = 0.7
-    changefreq = "weekly"
+    """Only canonical, indexable public landing pages belong here."""
+
+    public_views = {
+        "home": ("daily", 1.0),
+        "application-create": ("weekly", 0.9),
+        "about-us": ("monthly", 0.8),
+        "post-list": ("daily", 0.8),
+        "event-list": ("daily", 0.8),
+        "subject-list": ("monthly", 0.8),
+        "activity-list": ("monthly", 0.7),
+        "staff-list": ("monthly", 0.7),
+        "alumni-list": ("weekly", 0.8),
+        "alumni-opportunity-list": ("weekly", 0.7),
+        "vacancy-list": ("daily", 0.8),
+        "contact": ("monthly", 0.6),
+        "donations": ("monthly", 0.6),
+        "privacy-policy": ("yearly", 0.3),
+        "terms-of-use": ("yearly", 0.3),
+    }
 
     def items(self):
-        return [
-            "home",
-            "application-create",
-            "about-us",
-            "post-list",
-            "event-list",
-            "subject-list",
-            "activity-list",
-            "staff-list",
-            "alumni-list",
-            "alumni-opportunity-list",
-            "vacancy-list",
-            "contact",
-            "donations",
-            "privacy-policy",
-            "terms-of-use",
-        ]
+        return tuple(self.public_views)
 
     def location(self, item):
         return reverse(item)
 
     def priority(self, item):
-        if item == "home":
-            return 1.0
-        if item == "application-create":
-            return 0.9
-        return 0.7
+        return self.public_views[item][1]
+
+    def changefreq(self, item):
+        return self.public_views[item][0]
 
 
 class PostSitemap(Sitemap):
@@ -103,7 +103,7 @@ class PageSitemap(Sitemap):
 
 class AlumniSitemap(Sitemap):
     changefreq = "monthly"
-    priority = 0.6
+    priority = 0.7
 
     def items(self):
         return AlumniStory.objects.filter(status="approved", consent_to_publish=True)

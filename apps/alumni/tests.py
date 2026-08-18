@@ -50,32 +50,28 @@ class AlumniStoryTests(TestCase):
         self.assertNotContains(response, self.approved.email)
         self.assertNotContains(response, self.approved.phone)
 
-    def test_directory_can_filter_available_mentors(self):
-        response = self.client.get(reverse("alumni-list"), {"mentors": "yes"})
-        self.assertContains(response, self.approved.full_name)
-        self.assertNotContains(response, self.pending.full_name)
-
-    def test_mentorship_request_is_stored_privately(self):
-        response = self.client.post(
-            reverse("alumni-mentorship-request"),
-            {
-                "mentor": self.approved.pk,
-                "full_name": "Current Learner",
-                "email": "learner@example.com",
-                "phone": "+266 5000 1111",
-                "audience": "learner",
-                "focus_area": "career",
-                "goals": "I want to understand engineering careers.",
-                "consent_to_contact": True,
-                "submission_token": self.submission_token(
-                    "alumni-mentorship-request"
-                ),
-            },
+    def test_mentorship_feature_is_not_public(self):
+        public_responses = (
+            self.client.get(reverse("home")),
+            self.client.get(reverse("alumni-list")),
+            self.client.get(reverse("alumni-create")),
+            self.client.get(reverse("alumni-detail", args=[self.approved.slug])),
+            self.client.get(reverse("privacy-policy")),
+            self.client.get(reverse("terms-of-use")),
         )
-        self.assertRedirects(response, reverse("alumni-mentorship-success"))
-        request = MentorshipRequest.objects.get()
-        self.assertEqual(request.mentor, self.approved)
-        self.assertEqual(request.email, "learner@example.com")
+
+        for response in public_responses:
+            with self.subTest(path=response.request["PATH_INFO"]):
+                self.assertEqual(response.status_code, 200)
+                self.assertNotIn("mentor", response.content.decode().lower())
+        self.assertEqual(
+            self.client.get("/alumni/mentorship/request/").status_code,
+            404,
+        )
+        self.assertEqual(
+            self.client.get("/alumni/mentorship/thank-you/").status_code,
+            404,
+        )
 
     def test_verified_alumnus_can_submit_opportunity(self):
         response = self.client.post(

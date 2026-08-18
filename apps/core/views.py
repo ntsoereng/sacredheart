@@ -46,10 +46,7 @@ def robots_txt(request):
     content = ai_rules + (
         "User-agent: *\n"
         "Allow: /\n"
-        "Disallow: /admin/\n"
-        "Disallow: /dashboard/\n"
-        "Disallow: /accounts/\n"
-        "Disallow: /search/\n\n"
+        "\n"
         f"Sitemap: {sitemap_url}\n"
     )
     return HttpResponse(content, content_type="text/plain; charset=utf-8")

@@ -8,7 +8,6 @@ from .views import (
     AlumniStoryDetailView,
     AlumniStoryListView,
     AlumniStorySuccessView,
-    MentorshipRequestCreateView,
 )
 
 
@@ -19,7 +18,5 @@ urlpatterns = [
     path("alumni/opportunities/share/", AlumniOpportunityCreateView.as_view(), name="alumni-opportunity-create"),
     path("alumni/opportunities/thank-you/", AlumniActionSuccessView.as_view(), name="alumni-opportunity-success"),
     path("alumni/opportunities/", AlumniOpportunityListView.as_view(), name="alumni-opportunity-list"),
-    path("alumni/mentorship/request/", MentorshipRequestCreateView.as_view(), name="alumni-mentorship-request"),
-    path("alumni/mentorship/thank-you/", AlumniActionSuccessView.as_view(), name="alumni-mentorship-success"),
     path("alumni/<slug:slug>/", AlumniStoryDetailView.as_view(), name="alumni-detail"),
 ]

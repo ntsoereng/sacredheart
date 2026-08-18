@@ -9,9 +9,8 @@ from apps.core.throttling import PublicFormProtectionMixin
 from .forms import (
     AlumniOpportunitySubmissionForm,
     AlumniStorySubmissionForm,
-    MentorshipRequestForm,
 )
-from .models import AlumniOpportunity, AlumniStory, MentorshipRequest
+from .models import AlumniOpportunity, AlumniStory
 
 
 class AlumniStoryListView(ListView):
@@ -34,8 +33,6 @@ class AlumniStoryListView(ListView):
                 | Q(current_location__icontains=query)
                 | Q(graduation_year__icontains=query)
             )
-        if self.request.GET.get("mentors") == "yes":
-            queryset = queryset.filter(mentorship_available=True)
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -46,11 +43,6 @@ class AlumniStoryListView(ListView):
             alumni__status="approved",
             alumni__consent_to_publish=True,
         ).select_related("alumni")[:6]
-        context["mentor_count"] = AlumniStory.objects.filter(
-            status="approved",
-            consent_to_publish=True,
-            mentorship_available=True,
-        ).count()
         return context
 
 
@@ -134,32 +126,6 @@ class AlumniOpportunityListView(ListView):
         context = super().get_context_data(**kwargs)
         context["opportunity_types"] = AlumniOpportunity.TYPE_CHOICES
         return context
-
-
-class MentorshipRequestCreateView(PublicFormProtectionMixin, CreateView):
-    rate_limit_count = 5
-    rate_limit_window = 3600
-    rate_limit_scope = "alumni-mentorship-request"
-    model = MentorshipRequest
-    form_class = MentorshipRequestForm
-    template_name = "alumni/mentorship_form.html"
-    success_url = reverse_lazy("alumni-mentorship-success")
-
-    def get_initial(self):
-        initial = super().get_initial()
-        mentor_id = self.request.GET.get("mentor", "").strip()
-        if mentor_id.isdigit():
-            initial["mentor"] = mentor_id
-        return initial
-
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        if response.status_code < 400:
-            messages.success(
-                self.request,
-                "Your mentorship request has been sent privately to the school.",
-            )
-        return response
 
 
 class AlumniActionSuccessView(TemplateView):

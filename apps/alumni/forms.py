@@ -22,11 +22,6 @@ class AlumniStorySubmissionForm(PublicFormProtectionFieldsMixin, forms.ModelForm
             "life_story",
             "school_memories",
             "message_to_students",
-            "mentorship_available",
-            "mentor_career_guidance",
-            "mentor_university_applications",
-            "mentor_subject_choices",
-            "mentor_entrepreneurship",
             "consent_to_publish",
         )
         widgets = {
@@ -36,13 +31,6 @@ class AlumniStorySubmissionForm(PublicFormProtectionFieldsMixin, forms.ModelForm
             "life_story": forms.Textarea(attrs={"rows": 7}),
             "school_memories": forms.Textarea(attrs={"rows": 5}),
             "message_to_students": forms.Textarea(attrs={"rows": 4}),
-        }
-        labels = {
-            "mentorship_available": "I would like to volunteer as a mentor",
-            "mentor_career_guidance": "Career guidance",
-            "mentor_university_applications": "University applications",
-            "mentor_subject_choices": "Subject and career choices",
-            "mentor_entrepreneurship": "Entrepreneurship advice",
         }
 
     def __init__(self, *args, **kwargs):
@@ -64,24 +52,6 @@ class AlumniStorySubmissionForm(PublicFormProtectionFieldsMixin, forms.ModelForm
                 "Consent is required before an alumni profile can be submitted."
             )
         return consent
-
-    def clean(self):
-        cleaned_data = super().clean()
-        area_fields = (
-            "mentor_career_guidance",
-            "mentor_university_applications",
-            "mentor_subject_choices",
-            "mentor_entrepreneurship",
-        )
-        if cleaned_data.get("mentorship_available") and not any(
-            cleaned_data.get(field) for field in area_fields
-        ):
-            self.add_error(
-                "mentorship_available",
-                "Choose at least one mentorship area.",
-            )
-        return cleaned_data
-
 
 class AlumniReviewForm(forms.ModelForm):
     class Meta:
@@ -137,58 +107,6 @@ class AlumniOpportunitySubmissionForm(PublicFormProtectionFieldsMixin, forms.Mod
             self.add_error(
                 "verification_email",
                 "That email does not match the selected verified profile.",
-            )
-        return cleaned_data
-
-
-class MentorshipRequestForm(PublicFormProtectionFieldsMixin, forms.ModelForm):
-    class Meta:
-        model = MentorshipRequest
-        fields = (
-            "mentor",
-            "full_name",
-            "email",
-            "phone",
-            "audience",
-            "focus_area",
-            "goals",
-            "consent_to_contact",
-        )
-        labels = {
-            "mentor": "Preferred mentor (optional)",
-            "consent_to_contact": "I consent to the school contacting me about this request.",
-        }
-        widgets = {"goals": forms.Textarea(attrs={"rows": 6})}
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["mentor"].queryset = AlumniStory.objects.filter(
-            status="approved",
-            consent_to_publish=True,
-            mentorship_available=True,
-        ).order_by("full_name")
-
-    def clean_consent_to_contact(self):
-        consent = self.cleaned_data["consent_to_contact"]
-        if not consent:
-            raise forms.ValidationError("Consent is required to send a mentorship request.")
-        return consent
-
-    def clean(self):
-        cleaned_data = super().clean()
-        mentor = cleaned_data.get("mentor")
-        focus_area = cleaned_data.get("focus_area")
-        focus_fields = {
-            "career": "mentor_career_guidance",
-            "university": "mentor_university_applications",
-            "subjects": "mentor_subject_choices",
-            "entrepreneurship": "mentor_entrepreneurship",
-        }
-        mentor_field = focus_fields.get(focus_area)
-        if mentor and mentor_field and not getattr(mentor, mentor_field):
-            self.add_error(
-                "mentor",
-                "This alumnus is not currently listed for the selected focus area. You can leave the mentor blank and the school will find a suitable match.",
             )
         return cleaned_data
 

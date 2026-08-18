@@ -448,6 +448,11 @@ input[readonly] {
     cursor: not-allowed;
 }
 
+.alumni-search-input {
+    padding-left: 3rem;
+    padding-right: 1rem;
+}
+
 @media (prefers-reduced-motion: reduce) {
     html {
         scroll-behavior: auto;

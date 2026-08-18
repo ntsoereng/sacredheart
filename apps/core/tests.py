@@ -91,7 +91,6 @@ class PublicFormProtectionTests(TestCase):
         "contact",
         "alumni-create",
         "alumni-opportunity-create",
-        "alumni-mentorship-request",
         "staff-login",
         "staff-register",
     )
@@ -269,12 +268,16 @@ class SeoTests(TestCase):
         )
         self.assertContains(response, '"@type": "HighSchool"', html=False)
 
-    def test_robots_points_to_sitemap_and_blocks_private_areas(self):
+    def test_robots_points_to_sitemap_without_revealing_private_routes(self):
         response = self.client.get(reverse("robots-txt"), HTTP_HOST="testserver")
 
         self.assertTrue(response["Content-Type"].startswith("text/plain"))
-        self.assertContains(response, "Disallow: /admin/")
-        self.assertContains(response, "Disallow: /dashboard/")
+        robots = response.content.decode()
+        self.assertNotIn("/admin/", robots)
+        self.assertNotIn("/dashboard/", robots)
+        self.assertNotIn("/accounts/", robots)
+        self.assertNotIn("/search/", robots)
+        self.assertIn("User-agent: *\nAllow: /", robots)
         self.assertContains(response, "User-agent: GPTBot")
         self.assertContains(response, "User-agent: ClaudeBot")
         self.assertContains(response, "User-agent: Google-Extended")
@@ -288,6 +291,20 @@ class SeoTests(TestCase):
         self.assertEqual(response["Content-Type"], "application/xml")
         self.assertContains(response, "http://testserver/")
         self.assertContains(response, "http://testserver/admissions/")
+        self.assertContains(response, "http://testserver/alumni/")
+
+        sitemap = response.content.decode()
+        for private_path in (
+            "/admin/",
+            "/dashboard/",
+            "/accounts/",
+            "/search/",
+            "/share/",
+            "/thank-you/",
+            "/success/",
+        ):
+            with self.subTest(private_path=private_path):
+                self.assertNotIn(private_path, sitemap)
 
     def test_configured_social_profiles_appear_in_footer_and_schema(self):
         SiteSettings.objects.create(
