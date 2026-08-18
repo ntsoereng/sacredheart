@@ -204,7 +204,7 @@ class AlumniStoryTests(TestCase):
         self.assertEqual(correction_form.status_code, 200)
         self.assertContains(correction_form, "Email verified")
         self.assertNotContains(correction_form, self.approved.email)
-        self.assertEqual(correction_form["Referrer-Policy"], "no-referrer")
+        self.assertEqual(correction_form["Referrer-Policy"], "same-origin")
         self.assertEqual(
             correction_form["X-Robots-Tag"],
             "noindex, nofollow, noarchive",
