@@ -23,7 +23,7 @@
         {{ form.email }}
         {% for error in form.email.errors %}<p class="mt-1.5 text-sm font-semibold text-red-700">{{ error }}</p>{% endfor %}
         <div class="mt-7 flex flex-col gap-4 border-t border-stone-200 pt-6 sm:flex-row sm:items-center sm:justify-between">
-          <p class="max-w-sm text-xs leading-5 text-gray-500">The address is checked privately and is never displayed or included in the public profile.</p>
+          <p class="max-w-sm text-xs leading-5 text-gray-500">The address is checked privately and is never displayed or included in the public profile. <a href="{% url 'privacy-policy' %}#email-verification" target="_blank" rel="noopener" class="font-bold text-primary underline">How verification protects your privacy</a>.</p>
           <button type="submit" data-submit-button data-submitting-label="Checking securely…" class="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 font-bold text-white hover:bg-primary-dark disabled:cursor-wait disabled:opacity-70"><svg data-submit-spinner class="hidden h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle class="opacity-30" cx="12" cy="12" r="9" stroke="currentColor" stroke-width="3"/><path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg><span data-submit-label>Send verification link</span><span data-submit-arrow aria-hidden="true">→</span></button>
         </div>
       </form>

@@ -2,6 +2,7 @@ import re
 from datetime import date
 from unittest.mock import patch
 
+from django.conf import settings
 from django.http import HttpResponse
 from django.test import TestCase
 from django.urls import reverse
@@ -21,6 +22,26 @@ from .models import (
 from .middleware import ResponseHeaderSanitizationMiddleware
 from .storage import SafeMediaStorage
 from .views import ContactView
+
+
+class PrivacyPolicyTests(TestCase):
+    def test_policy_discloses_alumni_email_verification_and_cookies(self):
+        response = self.client.get(reverse("privacy-policy"))
+
+        self.assertContains(response, 'id="email-verification"', html=False)
+        self.assertContains(response, "same response whether or not it matches")
+        self.assertContains(response, "raw link token is not stored")
+        self.assertContains(response, 'id="cookies"', html=False)
+        self.assertContains(response, "csrftoken")
+        self.assertContains(response, "sessionid")
+        self.assertContains(response, "We do not currently set analytics")
+
+    def test_essential_cookie_security_settings_are_explicit(self):
+        self.assertTrue(settings.CSRF_COOKIE_HTTPONLY)
+        self.assertEqual(settings.CSRF_COOKIE_SAMESITE, "Lax")
+        self.assertTrue(settings.SESSION_COOKIE_HTTPONLY)
+        self.assertEqual(settings.SESSION_COOKIE_SAMESITE, "Lax")
+        self.assertEqual(settings.SESSION_COOKIE_AGE, 8 * 60 * 60)
 
 
 class SafeMediaStorageTests(TestCase):

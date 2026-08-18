@@ -79,6 +79,7 @@ class AlumniStoryTests(TestCase):
         self.assertEqual(form_response.status_code, 200)
         self.assertContains(form_response, "Verify your private email")
         self.assertContains(form_response, "data-protected-form")
+        self.assertContains(form_response, "/privacy/#email-verification")
         self.assertNotContains(form_response, self.approved.email)
 
         with patch(
