@@ -1,0 +1,13 @@
+Hello {{ story.full_name }},
+
+A secure profile-update step was started for your {{ school_name }} alumni profile.
+
+No information has been changed. If you would like to continue, use the secure link below to describe the correction or update. The link expires in one hour and can be used once:
+
+{{ verification_url }}
+
+Every requested change is reviewed by authorised school staff before publication.
+
+If you did not start this, no action is needed. The link will expire automatically, and your profile will remain unchanged.
+
+{{ school_name }}

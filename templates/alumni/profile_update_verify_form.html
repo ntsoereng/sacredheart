@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Verify an Update to {{ story.full_name }}'s Alumni Profile{% endblock %}
+{% block meta_description %}Verify ownership before requesting a correction to a Sacred Heart alumni profile.{% endblock %}
+{% block robots %}noindex, nofollow, noarchive{% endblock %}
+{% block content %}
+<section class="page-hero py-14 text-white">
+  <div class="mx-auto max-w-3xl px-6 text-center">
+    <p class="text-sm font-bold uppercase tracking-[0.2em] text-gold-light">Secure profile updates</p>
+    <h1 class="mt-4 text-4xl font-bold md:text-5xl">Verify your private email</h1>
+    <p class="mx-auto mt-5 max-w-2xl text-lg leading-8 text-white/80">Before accepting changes to {{ story.full_name }}’s profile, we send a secure link to the private email already held by the school.</p>
+  </div>
+</section>
+<section class="soft-section py-12 md:py-16">
+  <div class="mx-auto max-w-2xl px-6">
+    <div class="content-card rounded-3xl p-6 md:p-10">
+      <div class="flex items-start gap-4"><span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/8 text-primary" aria-hidden="true"><svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></span><div><p class="text-sm font-bold uppercase tracking-[0.18em] text-gold">Step 1 of 2</p><h2 class="mt-1 text-3xl font-bold">Confirm the email on file</h2></div></div>
+      <p class="mt-6 leading-7 text-gray-600">Enter the private email used when this alumni profile was submitted. For privacy, the school does not confirm profile contact details on this website.</p>
+      <form method="post" class="mt-7" novalidate data-protected-form>
+        {% csrf_token %}
+        {% include "partials/public_form_security_fields.html" %}
+        {% if form.non_field_errors %}<div class="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">{{ form.non_field_errors }}</div>{% endif %}
+        <label for="{{ form.email.id_for_label }}" class="mb-2 block text-sm font-bold text-gray-700">{{ form.email.label }} <span class="text-red-600">*</span></label>
+        {{ form.email }}
+        {% for error in form.email.errors %}<p class="mt-1.5 text-sm font-semibold text-red-700">{{ error }}</p>{% endfor %}
+        <div class="mt-7 flex flex-col gap-4 border-t border-stone-200 pt-6 sm:flex-row sm:items-center sm:justify-between">
+          <p class="max-w-sm text-xs leading-5 text-gray-500">The address is checked privately and is never displayed or included in the public profile.</p>
+          <button type="submit" data-submit-button data-submitting-label="Checking securely…" class="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 font-bold text-white hover:bg-primary-dark disabled:cursor-wait disabled:opacity-70"><svg data-submit-spinner class="hidden h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle class="opacity-30" cx="12" cy="12" r="9" stroke="currentColor" stroke-width="3"/><path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg><span data-submit-label>Send verification link</span><span data-submit-arrow aria-hidden="true">→</span></button>
+        </div>
+      </form>
+    </div>
+    <a href="{% url 'alumni-detail' story.slug %}" class="mt-6 flex justify-center text-sm font-bold text-primary hover:underline">← Return to {{ story.full_name }}’s profile</a>
+  </div>
+</section>
+{% endblock %}

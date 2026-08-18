@@ -1,9 +1,22 @@
+import re
+from datetime import timedelta
+from unittest.mock import patch
+
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
-from django.test import TestCase
+from django.core import mail
+from django.core.mail import get_connection
+from django.test import TestCase, override_settings
 from django.urls import reverse
 
-from .models import AlumniOpportunity, AlumniStory, MentorshipRequest
+from apps.core.models import ContactMessage
+
+from .models import (
+    AlumniOpportunity,
+    AlumniProfileUpdateVerification,
+    AlumniStory,
+    MentorshipRequest,
+)
 
 
 class AlumniStoryTests(TestCase):
@@ -49,6 +62,172 @@ class AlumniStoryTests(TestCase):
         )
         self.assertNotContains(response, self.approved.email)
         self.assertNotContains(response, self.approved.phone)
+
+    @override_settings(
+        EMAIL_HOST_USER="admissions@example.com",
+        EMAIL_HOST_PASSWORD="admissions-secret",
+        ALUMNI_EMAIL_HOST_USER="alumni@sacredheart.ac.ls",
+        ALUMNI_EMAIL_HOST_PASSWORD="alumni-secret",
+    )
+    def test_profile_update_requires_the_private_email_magic_link(self):
+        update_url = reverse(
+            "alumni-profile-update",
+            args=[self.approved.slug],
+        )
+        form_response = self.client.get(update_url)
+
+        self.assertEqual(form_response.status_code, 200)
+        self.assertContains(form_response, "Verify your private email")
+        self.assertContains(form_response, "data-protected-form")
+        self.assertNotContains(form_response, self.approved.email)
+
+        with patch(
+            "apps.alumni.emails.get_connection",
+            wraps=get_connection,
+        ) as connection_factory:
+            with self.captureOnCommitCallbacks(execute=True):
+                response = self.client.post(
+                    update_url,
+                    {
+                        "email": "private@example.com",
+                        "submission_token": form_response.context["form"][
+                            "submission_token"
+                        ].value(),
+                    },
+                )
+
+        connection_kwargs = connection_factory.call_args.kwargs
+        self.assertEqual(
+            connection_kwargs["username"],
+            "alumni@sacredheart.ac.ls",
+        )
+        self.assertEqual(connection_kwargs["password"], "alumni-secret")
+
+        self.assertRedirects(
+            response,
+            reverse("alumni-profile-update-sent", args=[self.approved.slug]),
+        )
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, [self.approved.email])
+        self.assertEqual(
+            mail.outbox[0].from_email,
+            "Sacred Heart Alumni Association <alumni@sacredheart.ac.ls>",
+        )
+        self.assertEqual(mail.outbox[0].reply_to, ["alumni@sacredheart.ac.ls"])
+        self.assertEqual(AlumniProfileUpdateVerification.objects.count(), 1)
+
+        verification_url = re.search(
+            r"http://testserver(?P<path>/alumni/\S+)",
+            mail.outbox[0].body,
+        ).group("path")
+        verification = AlumniProfileUpdateVerification.objects.get()
+        raw_token = verification_url.rstrip("/").rsplit("/", 1)[-1]
+        self.assertNotEqual(verification.token_digest, raw_token)
+
+        correction_form = self.client.get(verification_url)
+        self.assertEqual(correction_form.status_code, 200)
+        self.assertContains(correction_form, "Email verified")
+        self.assertNotContains(correction_form, self.approved.email)
+        self.assertEqual(correction_form["Referrer-Policy"], "no-referrer")
+        self.assertEqual(
+            correction_form["X-Robots-Tag"],
+            "noindex, nofollow, noarchive",
+        )
+
+        response = self.client.post(
+            verification_url,
+            {
+                "update_type": "work",
+                "message": "Please update my occupation to Senior Engineer.",
+                "submission_token": correction_form.context["form"][
+                    "submission_token"
+                ].value(),
+            },
+        )
+        self.assertRedirects(
+            response,
+            reverse("alumni-detail", args=[self.approved.slug]),
+        )
+        update_request = ContactMessage.objects.get()
+        self.assertEqual(update_request.name, "Mpho Molefe")
+        self.assertIn("Verified alumni profile update", update_request.subject)
+        self.assertIn("Occupation, studies, or industry", update_request.message)
+        self.assertIn("Senior Engineer", update_request.message)
+        verification.refresh_from_db()
+        self.assertIsNotNone(verification.used_at)
+        self.assertEqual(self.client.get(verification_url).status_code, 410)
+
+    def test_wrong_update_email_gets_the_same_response_without_a_link(self):
+        update_url = reverse("alumni-profile-update", args=[self.approved.slug])
+        form_response = self.client.get(update_url)
+
+        response = self.client.post(
+            update_url,
+            {
+                "email": "imposter@example.com",
+                "submission_token": form_response.context["form"][
+                    "submission_token"
+                ].value(),
+            },
+            follow=True,
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response,
+            "Secure instructions will be sent to the private contact address",
+        )
+        self.assertNotContains(response, "does not match")
+        self.assertEqual(len(mail.outbox), 0)
+        self.assertFalse(AlumniProfileUpdateVerification.objects.exists())
+
+    def test_profile_update_email_resend_has_a_cooldown(self):
+        update_url = reverse("alumni-profile-update", args=[self.approved.slug])
+
+        for _attempt in range(2):
+            form_response = self.client.get(update_url)
+            with self.captureOnCommitCallbacks(execute=True):
+                response = self.client.post(
+                    update_url,
+                    {
+                        "email": self.approved.email,
+                        "submission_token": form_response.context["form"][
+                            "submission_token"
+                        ].value(),
+                    },
+                )
+            self.assertRedirects(
+                response,
+                reverse(
+                    "alumni-profile-update-sent",
+                    args=[self.approved.slug],
+                ),
+            )
+
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(AlumniProfileUpdateVerification.objects.count(), 1)
+
+    def test_expired_profile_update_link_is_rejected(self):
+        verification, raw_token = AlumniProfileUpdateVerification.issue(
+            self.approved,
+            lifetime=timedelta(seconds=-1),
+        )
+        verification_url = reverse(
+            "alumni-profile-update-confirm",
+            args=[self.approved.slug, raw_token],
+        )
+
+        response = self.client.get(verification_url)
+
+        self.assertEqual(response.status_code, 410)
+        self.assertContains(response, "expired or already been used", status_code=410)
+
+    def test_unpublished_profile_cannot_receive_an_update_request(self):
+        response = self.client.get(
+            reverse("alumni-profile-update", args=[self.pending.slug])
+        )
+
+        self.assertEqual(response.status_code, 404)
 
     def test_mentorship_feature_is_not_public(self):
         public_responses = (

@@ -7,6 +7,52 @@ from apps.core.forms import PublicFormProtectionFieldsMixin
 from .models import AlumniOpportunity, AlumniStory, MentorshipRequest
 
 
+class AlumniProfileUpdateVerificationForm(
+    PublicFormProtectionFieldsMixin,
+    forms.Form,
+):
+    email = forms.EmailField(
+        label="Private email on the profile",
+        widget=forms.EmailInput(
+            attrs={
+                "autocomplete": "email",
+                "placeholder": "you@example.com",
+            }
+        ),
+    )
+
+
+class AlumniProfileUpdateRequestForm(
+    PublicFormProtectionFieldsMixin,
+    forms.Form,
+):
+    UPDATE_TYPE_CHOICES = (
+        ("work", "Occupation, studies, or industry"),
+        ("location", "Current location"),
+        ("story", "Profile story, memories, or advice"),
+        ("photo", "Profile photograph"),
+        ("identity", "Name or graduation year"),
+        ("removal", "Profile removal"),
+        ("other", "Something else"),
+    )
+
+    update_type = forms.ChoiceField(
+        choices=UPDATE_TYPE_CHOICES,
+        label="What needs updating?",
+    )
+    message = forms.CharField(
+        label="Requested correction or update",
+        widget=forms.Textarea(
+            attrs={
+                "rows": 7,
+                "placeholder": (
+                    "Tell us what is currently incorrect and what it should say…"
+                ),
+            }
+        ),
+    )
+
+
 class AlumniStorySubmissionForm(PublicFormProtectionFieldsMixin, forms.ModelForm):
     class Meta:
         model = AlumniStory

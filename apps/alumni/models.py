@@ -1,3 +1,7 @@
+import hashlib
+import secrets
+from datetime import timedelta
+
 from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -110,6 +114,45 @@ class AlumniStory(models.Model):
         if self.mentor_entrepreneurship:
             areas.append("Entrepreneurship advice")
         return areas
+
+
+class AlumniProfileUpdateVerification(models.Model):
+    alumni = models.ForeignKey(
+        AlumniStory,
+        on_delete=models.CASCADE,
+        related_name="profile_update_verifications",
+    )
+    token_digest = models.CharField(max_length=64, unique=True, editable=False)
+    expires_at = models.DateTimeField()
+    used_at = models.DateTimeField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ("-created_at",)
+        indexes = [models.Index(fields=("alumni", "expires_at"))]
+        verbose_name = "Alumni profile update verification"
+        verbose_name_plural = "Alumni profile update verifications"
+
+    @staticmethod
+    def digest_token(raw_token):
+        return hashlib.sha256(str(raw_token).encode()).hexdigest()
+
+    @classmethod
+    def issue(cls, alumni, lifetime=timedelta(hours=1)):
+        raw_token = secrets.token_urlsafe(32)
+        verification = cls.objects.create(
+            alumni=alumni,
+            token_digest=cls.digest_token(raw_token),
+            expires_at=timezone.now() + lifetime,
+        )
+        return verification, raw_token
+
+    @property
+    def is_available(self):
+        return self.used_at is None and self.expires_at > timezone.now()
+
+    def __str__(self):
+        return f"Profile update verification for {self.alumni}"
 
 
 class AlumniOpportunity(models.Model):

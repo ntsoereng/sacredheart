@@ -27,6 +27,7 @@
     {% block twitter_image %}{% if seo_default_image %}<meta name="twitter:image" content="{{ seo_default_image }}">{% endif %}{% endblock %}
     <script nonce="{{ csp_nonce }}" type="application/ld+json">{{ organization_schema }}</script>
     {% block structured_data %}{% endblock %}
+    {% block extra_head %}{% endblock %}
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Request an Update to {{ story.full_name }}'s Alumni Profile{% endblock %}
+{% block meta_description %}Request a correction or update to a published Sacred Heart alumni profile.{% endblock %}
+{% block robots %}noindex, nofollow, noarchive{% endblock %}
+{% block extra_head %}<meta name="referrer" content="no-referrer">{% endblock %}
+{% block content %}
+<section class="page-hero py-14 text-white">
+  <div class="mx-auto max-w-4xl px-6 text-center">
+    <p class="text-sm font-bold uppercase tracking-[0.2em] text-gold-light">Alumni directory</p>
+    <h1 class="mt-4 text-4xl font-bold md:text-5xl">Request a profile update</h1>
+    <p class="mx-auto mt-5 max-w-2xl text-lg leading-8 text-white/80">Your private email has been verified. Tell us what should be corrected on {{ story.full_name }}’s profile.</p>
+  </div>
+</section>
+
+<section class="soft-section py-12 md:py-16">
+  <div class="mx-auto grid max-w-5xl gap-7 px-6 lg:grid-cols-[18rem_minmax(0,1fr)] lg:items-start">
+    <aside class="space-y-5 lg:sticky lg:top-24">
+      <section class="overflow-hidden rounded-3xl bg-primary text-white shadow-lg">
+        {% if story.profile_photo %}<img src="{{ story.profile_photo.url }}" alt="{{ story.full_name }}" class="aspect-square w-full object-cover object-top">{% else %}<div class="flex aspect-square items-center justify-center bg-white/10 text-7xl font-bold text-gold/60" aria-hidden="true">{{ story.full_name|slice:":1" }}</div>{% endif %}
+        <div class="p-5">
+          <p class="text-xs font-bold uppercase tracking-[0.16em] text-gold-light">Profile being updated</p>
+          <h2 class="mt-2 text-2xl font-bold">{{ story.full_name }}</h2>
+          <p class="mt-1 text-sm text-white/65">Class of {{ story.graduation_year }}{% if story.occupation %} · {{ story.occupation }}{% endif %}</p>
+          <a href="{% url 'alumni-detail' story.slug %}" class="mt-5 inline-flex items-center gap-2 text-sm font-bold text-gold-light hover:text-white"><span aria-hidden="true">←</span> Back to profile</a>
+        </div>
+      </section>
+      <div class="rounded-2xl border border-blue-200 bg-blue-50 p-5 text-sm leading-6 text-blue-900">
+        <p class="font-bold">Need to replace the photo?</p>
+        <p class="mt-1">Choose “Profile photograph” and describe the request. Staff will reply by email with a safe way to send the new image.</p>
+      </div>
+    </aside>
+
+    <div class="content-card rounded-3xl p-6 md:p-10">
+      <div class="flex items-start gap-4">
+        <span class="hidden h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gold/15 text-primary sm:flex" aria-hidden="true"><svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20h4l11-11-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4M4 16l4 4"/></svg></span>
+        <div><p class="text-sm font-bold uppercase tracking-[0.18em] text-green-700">Email verified</p><h2 class="mt-2 text-3xl font-bold">What should we change?</h2><p class="mt-2 leading-7 text-gray-600">Give enough detail for staff to review the correction. Nothing changes publicly until an authorised staff member approves it.</p></div>
+      </div>
+
+      <form method="post" class="mt-8" novalidate data-protected-form>
+        {% csrf_token %}
+        {% include "partials/public_form_security_fields.html" %}
+        {% if form.non_field_errors %}<div class="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">{{ form.non_field_errors }}</div>{% endif %}
+        <div><label for="{{ form.update_type.id_for_label }}" class="mb-2 block text-sm font-bold text-gray-700">{{ form.update_type.label }} <span class="text-red-600">*</span></label>{{ form.update_type }}{% for error in form.update_type.errors %}<p class="mt-1.5 text-sm font-semibold text-red-700">{{ error }}</p>{% endfor %}</div>
+        <div class="mt-6"><label for="{{ form.message.id_for_label }}" class="mb-2 block text-sm font-bold text-gray-700">{{ form.message.label }} <span class="text-red-600">*</span></label>{{ form.message }}<p class="mt-1.5 text-xs leading-5 text-gray-500">For example: what the profile currently says, what it should say, and any context that will help the school confirm the change.</p>{% for error in form.message.errors %}<p class="mt-1.5 text-sm font-semibold text-red-700">{{ error }}</p>{% endfor %}</div>
+        <div class="mt-7 flex flex-col gap-4 border-t border-stone-200 pt-6 sm:flex-row sm:items-center sm:justify-between">
+          <div class="flex max-w-md gap-2 text-xs leading-5 text-gray-500"><svg class="mt-0.5 h-4 w-4 shrink-0 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><p>The verified private email remains hidden and will be used if staff need to follow up under our <a href="{% url 'privacy-policy' %}" class="font-bold text-primary underline">Privacy Policy</a>.</p></div>
+          <button type="submit" data-submit-button data-submitting-label="Sending request…" class="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 font-bold text-white hover:bg-primary-dark disabled:cursor-wait disabled:opacity-70"><svg data-submit-spinner class="hidden h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle class="opacity-30" cx="12" cy="12" r="9" stroke="currentColor" stroke-width="3"/><path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg><span data-submit-label>Send update request</span><span data-submit-arrow aria-hidden="true">→</span></button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

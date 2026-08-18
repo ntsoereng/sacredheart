@@ -4,10 +4,13 @@ from .views import (
     AlumniActionSuccessView,
     AlumniOpportunityCreateView,
     AlumniOpportunityListView,
+    AlumniProfileUpdateRequestView,
+    AlumniProfileUpdateSentView,
     AlumniStoryCreateView,
     AlumniStoryDetailView,
     AlumniStoryListView,
     AlumniStorySuccessView,
+    AlumniVerifiedProfileUpdateView,
 )
 
 
@@ -18,5 +21,8 @@ urlpatterns = [
     path("alumni/opportunities/share/", AlumniOpportunityCreateView.as_view(), name="alumni-opportunity-create"),
     path("alumni/opportunities/thank-you/", AlumniActionSuccessView.as_view(), name="alumni-opportunity-success"),
     path("alumni/opportunities/", AlumniOpportunityListView.as_view(), name="alumni-opportunity-list"),
+    path("alumni/<slug:slug>/request-update/", AlumniProfileUpdateRequestView.as_view(), name="alumni-profile-update"),
+    path("alumni/<slug:slug>/request-update/check-email/", AlumniProfileUpdateSentView.as_view(), name="alumni-profile-update-sent"),
+    path("alumni/<slug:slug>/request-update/<str:token>/", AlumniVerifiedProfileUpdateView.as_view(), name="alumni-profile-update-confirm"),
     path("alumni/<slug:slug>/", AlumniStoryDetailView.as_view(), name="alumni-detail"),
 ]

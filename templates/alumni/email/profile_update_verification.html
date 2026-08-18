@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<body style="margin:0;background:#f7f3ed;color:#292524;font-family:Arial,sans-serif;">
+  <div style="margin:0 auto;max-width:620px;padding:32px 20px;">
+    <div style="overflow:hidden;border:1px solid #e7e5e4;border-radius:18px;background:#ffffff;">
+      <div style="background:#6d1f2f;padding:24px 28px;color:#ffffff;">
+        <p style="margin:0;color:#e2c45a;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;">Alumni directory</p>
+        <h1 style="margin:8px 0 0;font-family:Georgia,serif;font-size:28px;">Verify your profile update</h1>
+      </div>
+      <div style="padding:28px;">
+        <p style="margin:0 0 16px;line-height:1.6;">Hello {{ story.full_name }},</p>
+        <p style="margin:0 0 20px;line-height:1.6;">A secure profile-update step was started for your {{ school_name }} alumni profile. No information has been changed. If you would like to continue, use the secure link below to describe the correction. It expires in one hour and can be used once.</p>
+        <p style="margin:24px 0;"><a href="{{ verification_url }}" style="display:inline-block;border-radius:10px;background:#6d1f2f;color:#ffffff;padding:13px 20px;font-weight:700;text-decoration:none;">Verify and request changes</a></p>
+        <p style="margin:0 0 16px;color:#57534e;font-size:14px;line-height:1.6;">Every requested change is reviewed by authorised school staff before publication.</p>
+        <p style="margin:0;color:#78716c;font-size:13px;line-height:1.6;">If you did not start this, no action is needed. The link will expire automatically, and your profile will remain unchanged.</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

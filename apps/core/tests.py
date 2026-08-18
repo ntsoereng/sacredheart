@@ -300,6 +300,7 @@ class SeoTests(TestCase):
             "/accounts/",
             "/search/",
             "/share/",
+            "/request-update/",
             "/thank-you/",
             "/success/",
         ):

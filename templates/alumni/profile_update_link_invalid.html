@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Verification Link Unavailable | Alumni Profile Update{% endblock %}
+{% block meta_description %}This alumni profile update verification link is unavailable.{% endblock %}
+{% block robots %}noindex, nofollow, noarchive{% endblock %}
+{% block extra_head %}<meta name="referrer" content="no-referrer">{% endblock %}
+{% block content %}
+<section class="soft-section py-20">
+  <div class="mx-auto max-w-2xl px-6">
+    <div class="content-card rounded-3xl p-8 text-center md:p-12">
+      <span class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-50 text-red-700" aria-hidden="true"><svg class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v6m0 4h.01"/></svg></span>
+      <h1 class="mt-6 text-3xl font-bold">This verification link is unavailable</h1>
+      <p class="mx-auto mt-4 max-w-lg leading-7 text-gray-600">It may have expired or already been used. Request a new link to continue.</p>
+      <a href="{% url 'alumni-profile-update' story.slug %}" class="btn-primary mt-8 inline-flex font-bold">Request a new link</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -247,6 +247,15 @@ DEFAULT_FROM_EMAIL = config(
 )
 SERVER_EMAIL = config("SERVER_EMAIL", default=DEFAULT_FROM_EMAIL)
 
+# Alumni profile verification uses a separate mailbox while sharing the main
+# SMTP server, port, encryption, backend, and timeout settings above.
+ALUMNI_EMAIL_HOST_USER = config("ALUMNI_EMAIL_HOST_USER", default="")
+ALUMNI_EMAIL_HOST_PASSWORD = config("ALUMNI_EMAIL_HOST_PASSWORD", default="")
+ALUMNI_DEFAULT_FROM_EMAIL = config(
+    "ALUMNI_DEFAULT_FROM_EMAIL",
+    default="Sacred Heart Alumni Association <alumni@sacredheart.ac.ls>",
+)
+
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
