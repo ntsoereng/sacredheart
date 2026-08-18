@@ -16,6 +16,11 @@ from .views import (
 
 urlpatterns = [
     path("alumni/", AlumniStoryListView.as_view(), name="alumni-list"),
+    path(
+        "alumni/classes/<int:year>/",
+        AlumniStoryListView.as_view(),
+        name="alumni-class",
+    ),
     path("alumni/share/", AlumniStoryCreateView.as_view(), name="alumni-create"),
     path("alumni/thank-you/", AlumniStorySuccessView.as_view(), name="alumni-success"),
     path("alumni/opportunities/share/", AlumniOpportunityCreateView.as_view(), name="alumni-opportunity-create"),

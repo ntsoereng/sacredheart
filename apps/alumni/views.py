@@ -1,13 +1,13 @@
 import hmac
 import logging
 from datetime import timedelta
+from urllib.parse import urlencode
 
 from django.contrib import messages
 from django.db import transaction
-from django.db.models import Q
-from django.http import HttpResponseGone
-from django.shortcuts import get_object_or_404
-from django.shortcuts import render
+from django.db.models import Count, Q
+from django.http import Http404, HttpResponseGone
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.views.generic import CreateView, DetailView, FormView, ListView, TemplateView
@@ -36,26 +36,60 @@ class AlumniStoryListView(ListView):
     model = AlumniStory
     template_name = "alumni/story_list.html"
     context_object_name = "stories"
-    paginate_by = 9
+    paginate_by = 12
 
-    def get_queryset(self):
-        queryset = AlumniStory.objects.filter(
+    @staticmethod
+    def published_stories():
+        return AlumniStory.objects.filter(
             status="approved",
             consent_to_publish=True,
         )
-        query = self.request.GET.get("q", "").strip()
-        if query:
-            queryset = queryset.filter(
-                Q(full_name__icontains=query)
-                | Q(occupation__icontains=query)
-                | Q(industry__icontains=query)
-                | Q(current_location__icontains=query)
-                | Q(graduation_year__icontains=query)
+
+    def get_queryset(self):
+        queryset = self.published_stories()
+        self.selected_class = self.kwargs.get("year")
+        self.search_query = self.request.GET.get("q", "").strip()
+
+        if self.selected_class is not None:
+            class_queryset = queryset.filter(
+                graduation_year=self.selected_class,
             )
-        return queryset
+            if not class_queryset.exists():
+                raise Http404("This alumni class is not available.")
+            queryset = class_queryset
+
+        if self.search_query:
+            queryset = queryset.filter(
+                Q(full_name__icontains=self.search_query)
+                | Q(occupation__icontains=self.search_query)
+                | Q(industry__icontains=self.search_query)
+                | Q(current_location__icontains=self.search_query)
+                | Q(graduation_year__icontains=self.search_query)
+            )
+        elif self.selected_class is None:
+            return queryset.none()
+
+        return queryset.order_by("full_name")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        published_stories = self.published_stories()
+        context["class_groups"] = (
+            published_stories.values("graduation_year")
+            .annotate(alumni_count=Count("id"))
+            .order_by("-graduation_year")
+        )
+        context["selected_class"] = self.selected_class
+        context["search_query"] = self.search_query
+        context["total_profiles"] = published_stories.count()
+        context["total_classes"] = published_stories.values(
+            "graduation_year"
+        ).distinct().count()
+        context["pagination_query"] = (
+            f"{urlencode({'q': self.search_query})}&"
+            if self.search_query
+            else ""
+        )
         context["opportunities"] = AlumniOpportunity.objects.filter(
             Q(deadline__isnull=True) | Q(deadline__gte=timezone.localdate()),
             status="approved",
@@ -75,6 +109,17 @@ class AlumniStoryDetailView(DetailView):
             status="approved",
             consent_to_publish=True,
         )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        class_profiles = self.get_queryset().filter(
+            graduation_year=self.object.graduation_year,
+        )
+        context["class_size"] = class_profiles.count()
+        context["classmates"] = class_profiles.exclude(pk=self.object.pk).order_by(
+            "full_name"
+        )[:3]
+        return context
 
 
 class AlumniProfileUpdateRequestView(PublicFormProtectionMixin, FormView):

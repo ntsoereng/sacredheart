@@ -115,6 +115,25 @@ class AlumniSitemap(Sitemap):
         return reverse("alumni-detail", kwargs={"slug": item.slug})
 
 
+class AlumniClassSitemap(Sitemap):
+    changefreq = "weekly"
+    priority = 0.7
+
+    def items(self):
+        return (
+            AlumniStory.objects.filter(
+                status="approved",
+                consent_to_publish=True,
+            )
+            .values_list("graduation_year", flat=True)
+            .distinct()
+            .order_by("-graduation_year")
+        )
+
+    def location(self, item):
+        return reverse("alumni-class", kwargs={"year": item})
+
+
 class ActivitySitemap(Sitemap):
     changefreq = "monthly"
     priority = 0.7
@@ -164,6 +183,7 @@ sitemaps = {
     "subjects": SubjectSitemap,
     "pages": PageSitemap,
     "alumni": AlumniSitemap,
+    "alumni-classes": AlumniClassSitemap,
     "activities": ActivitySitemap,
     "staff": StaffSitemap,
     "vacancies": VacancySitemap,

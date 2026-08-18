@@ -6,7 +6,11 @@
   <div class="pointer-events-none absolute -right-28 -top-28 h-80 w-80 rounded-full border-[3rem] border-white/5" aria-hidden="true"></div>
   <div class="pointer-events-none absolute -bottom-32 left-1/2 h-64 w-64 rounded-full bg-gold/10 blur-3xl" aria-hidden="true"></div>
   <div class="relative mx-auto max-w-6xl px-6">
-    <a href="{% url 'alumni-list' %}#directory" class="inline-flex items-center gap-2 text-sm font-bold text-gold-light hover:text-white"><span aria-hidden="true">←</span> Alumni directory</a>
+    <nav class="flex flex-wrap items-center gap-2 text-sm font-bold" aria-label="Breadcrumb">
+      <a href="{% url 'alumni-class' story.graduation_year %}" class="inline-flex items-center gap-2 text-gold-light hover:text-white"><span aria-hidden="true">←</span> Class of {{ story.graduation_year }}</a>
+      <span class="text-white/35" aria-hidden="true">/</span>
+      <a href="{% url 'alumni-list' %}#directory" class="text-white/65 hover:text-white">All classes</a>
+    </nav>
     <div class="mt-8 grid gap-8 lg:grid-cols-[20rem_minmax(0,1fr)] lg:items-center lg:gap-12">
       <div class="relative mx-auto w-full max-w-sm lg:mx-0">
         <div class="absolute -bottom-3 -right-3 h-full w-full rounded-3xl border border-gold/30" aria-hidden="true"></div>
@@ -14,7 +18,7 @@
         <span class="absolute -bottom-4 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full bg-white px-4 py-2 text-xs font-bold text-green-800 shadow-lg"><svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M16.7 5.3a1 1 0 0 1 0 1.4l-8 8a1 1 0 0 1-1.4 0l-4-4a1 1 0 1 1 1.4-1.4L8 12.6l7.3-7.3a1 1 0 0 1 1.4 0Z" clip-rule="evenodd"/></svg>Verified alumni profile</span>
       </div>
       <div class="pt-4 text-center lg:pt-0 lg:text-left">
-        <p class="text-sm font-bold uppercase tracking-[0.2em] text-gold-light">Sacred Heart · Class of {{ story.graduation_year }}</p>
+        <a href="{% url 'alumni-class' story.graduation_year %}" class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-bold uppercase tracking-[0.16em] text-gold-light hover:border-gold/60 hover:bg-white/10"><svg class="h-4 w-4" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m2 8 8-4 8 4-8 4-8-4Z"/><path d="M6 10v4c2.5 1.7 5.5 1.7 8 0v-4"/></svg>Class of {{ story.graduation_year }}</a>
         <h1 class="mt-4 text-4xl font-bold leading-tight sm:text-5xl lg:text-7xl">{{ story.full_name }}</h1>
         {% if story.occupation %}<p class="mt-5 text-xl font-semibold text-white">{{ story.occupation }}</p>{% endif %}
         {% if story.industry or story.current_location %}<div class="mt-5 flex flex-wrap justify-center gap-3 text-sm text-white/75 lg:justify-start">{% if story.industry %}<span class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/8 px-4 py-2"><svg class="h-4 w-4 text-gold-light" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M3 6h14v10H3zM7 6V4h6v2M3 9h14"/></svg>{{ story.industry }}</span>{% endif %}{% if story.current_location %}<span class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/8 px-4 py-2"><svg class="h-4 w-4 text-gold-light" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M15.5 8c0 3.7-5.5 8-5.5 8S4.5 11.7 4.5 8a5.5 5.5 0 1 1 11 0Z"/><circle cx="10" cy="8" r="1.7"/></svg>{{ story.current_location }}</span>{% endif %}</div>{% endif %}
@@ -33,13 +37,31 @@
       </article>
       {% if story.school_memories %}<article class="content-card relative overflow-hidden rounded-3xl p-7 md:p-10"><span class="pointer-events-none absolute -right-5 -top-10 font-serif text-[10rem] leading-none text-gold/10" aria-hidden="true">“</span><div class="relative flex items-center gap-4"><span class="icon-disc shrink-0" aria-hidden="true"><svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16v13H4zM8 6V4h8v2M8 11h8m-8 4h5"/></svg></span><div><p class="text-xs font-bold uppercase tracking-[0.18em] text-gold">Looking back</p><h2 class="mt-1 text-2xl font-bold">School memories</h2></div></div><div class="relative mt-6 text-lg leading-8 text-gray-700">{{ story.school_memories|linebreaks }}</div></article>{% endif %}
       {% if story.message_to_students %}<blockquote class="relative overflow-hidden rounded-3xl bg-primary p-7 text-white shadow-xl shadow-primary/10 md:p-10"><svg class="absolute right-7 top-7 h-14 w-14 text-white/5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 11h4v8H3v-6c0-5 2-8 7-9v3c-3 .7-4.5 2-5 4Zm10 0h4v8h-6v-6c0-5 2-8 7-9v3c-3 .7-4.5 2-5 4Z"/></svg><div class="relative flex items-center gap-3"><span class="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-gold-light" aria-hidden="true"><svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 4 7v5c0 4.8 3.4 7.7 8 9 4.6-1.3 8-4.2 8-9V7l-8-4Z"/><path d="m8.5 12.5 2.2 2.2 4.8-5"/></svg></span><p class="text-xs font-bold uppercase tracking-[0.18em] text-gold-light">Words for current learners</p></div><div class="relative mt-5 font-serif text-xl leading-9 text-white/90 md:text-2xl">{{ story.message_to_students|linebreaks }}</div><footer class="relative mt-5 text-sm font-bold text-gold-light">— {{ story.full_name }}, Class of {{ story.graduation_year }}</footer></blockquote>{% endif %}
+      {% if classmates %}
+      <section class="content-card rounded-3xl p-7 md:p-10" aria-labelledby="classmates-heading">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div><p class="text-xs font-bold uppercase tracking-[0.18em] text-gold">Shared school year</p><h2 id="classmates-heading" class="mt-1 text-2xl font-bold">More from the Class of {{ story.graduation_year }}</h2></div>
+          <a href="{% url 'alumni-class' story.graduation_year %}" class="text-link whitespace-nowrap">View all {{ class_size }} profile{{ class_size|pluralize }} →</a>
+        </div>
+        <div class="mt-6 grid gap-4 sm:grid-cols-3">
+          {% for classmate in classmates %}
+          <a href="{% url 'alumni-detail' classmate.slug %}" class="group rounded-2xl border border-stone-200 bg-stone-50 p-4 transition hover:-translate-y-0.5 hover:border-gold/60 hover:bg-white hover:shadow-md">
+            <div class="flex items-center gap-3">
+              {% if classmate.profile_photo %}<img src="{{ classmate.profile_photo.url }}" alt="" class="h-12 w-12 shrink-0 rounded-xl object-cover object-top" loading="lazy" decoding="async">{% else %}<span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/8 text-xl font-bold text-primary" aria-hidden="true">{{ classmate.full_name|slice:":1" }}</span>{% endif %}
+              <span class="min-w-0"><strong class="block truncate text-gray-900 group-hover:text-primary">{{ classmate.full_name }}</strong>{% if classmate.occupation %}<span class="mt-0.5 block truncate text-xs text-gray-500">{{ classmate.occupation }}</span>{% endif %}</span>
+            </div>
+          </a>
+          {% endfor %}
+        </div>
+      </section>
+      {% endif %}
     </main>
 
     <aside class="space-y-5 lg:sticky lg:top-24">
       <section class="content-card rounded-3xl p-6">
         <p class="text-xs font-bold uppercase tracking-[0.18em] text-gold">At a glance</p>
         <dl class="mt-5 divide-y divide-stone-200">
-          <div class="flex gap-3 py-4 first:pt-0"><span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/8 text-primary" aria-hidden="true"><svg class="h-4 w-4" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 6h14v10H3zM7 6V4h6v2"/></svg></span><div><dt class="text-xs font-bold uppercase tracking-wide text-gray-500">Class year</dt><dd class="mt-1 font-bold text-gray-900">{{ story.graduation_year }}</dd></div></div>
+          <div class="flex gap-3 py-4 first:pt-0"><span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/8 text-primary" aria-hidden="true"><svg class="h-4 w-4" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><path d="m2 8 8-4 8 4-8 4-8-4Z"/><path d="M6 10v4c2.5 1.7 5.5 1.7 8 0v-4"/></svg></span><div><dt class="text-xs font-bold uppercase tracking-wide text-gray-500">Graduating class</dt><dd class="mt-1"><a href="{% url 'alumni-class' story.graduation_year %}" class="font-bold text-primary hover:underline">Class of {{ story.graduation_year }} · {{ class_size }} profile{{ class_size|pluralize }}</a></dd></div></div>
           {% if story.occupation %}<div class="flex gap-3 py-4"><span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/8 text-primary" aria-hidden="true"><svg class="h-4 w-4" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 6h14v10H3zM7 6V4h6v2M3 9h14"/></svg></span><div><dt class="text-xs font-bold uppercase tracking-wide text-gray-500">Occupation</dt><dd class="mt-1 font-bold text-gray-900">{{ story.occupation }}</dd></div></div>{% endif %}
           {% if story.industry %}<div class="flex gap-3 py-4"><span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/8 text-primary" aria-hidden="true"><svg class="h-4 w-4" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="10" cy="10" r="7"/><path d="M3 10h14M10 3c2 2 3 4.3 3 7s-1 5-3 7c-2-2-3-4.3-3-7s1-5 3-7Z"/></svg></span><div><dt class="text-xs font-bold uppercase tracking-wide text-gray-500">Industry</dt><dd class="mt-1 font-bold text-gray-900">{{ story.industry }}</dd></div></div>{% endif %}
           {% if story.current_location %}<div class="flex gap-3 py-4 last:pb-0"><span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/8 text-primary" aria-hidden="true"><svg class="h-4 w-4" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M15.5 8c0 3.7-5.5 8-5.5 8S4.5 11.7 4.5 8a5.5 5.5 0 1 1 11 0Z"/><circle cx="10" cy="8" r="1.7"/></svg></span><div><dt class="text-xs font-bold uppercase tracking-wide text-gray-500">Location</dt><dd class="mt-1 font-bold text-gray-900">{{ story.current_location }}</dd></div></div>{% endif %}
@@ -52,7 +74,7 @@
         <a href="{% url 'alumni-profile-update' story.slug %}" class="mt-5 inline-flex min-h-11 items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-white hover:bg-primary-dark">Request a profile update <span aria-hidden="true">→</span></a>
       </section>
       <section class="rounded-3xl border border-gold/25 bg-gold/10 p-6"><span class="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-primary shadow-sm" aria-hidden="true"><svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3"/><path d="M6 20a6 6 0 0 1 12 0"/></svg></span><h2 class="mt-4 text-xl font-bold">Part of the Sacred Heart story?</h2><p class="mt-2 text-sm leading-6 text-gray-600">Add your profile and help the alumni directory grow across generations.</p><a href="{% url 'alumni-create' %}" class="mt-5 inline-flex items-center gap-2 font-bold text-primary hover:underline">Join the directory <span aria-hidden="true">→</span></a></section>
-      <a href="{% url 'alumni-list' %}#directory" class="flex min-h-12 items-center justify-center gap-2 rounded-xl border border-stone-300 bg-white px-5 py-3 font-bold text-primary hover:border-primary hover:bg-primary hover:text-white"><span aria-hidden="true">←</span> More alumni profiles</a>
+      <a href="{% url 'alumni-class' story.graduation_year %}" class="flex min-h-12 items-center justify-center gap-2 rounded-xl border border-stone-300 bg-white px-5 py-3 font-bold text-primary hover:border-primary hover:bg-primary hover:text-white"><span aria-hidden="true">←</span> Explore the Class of {{ story.graduation_year }}</a>
     </aside>
   </div>
 </section>

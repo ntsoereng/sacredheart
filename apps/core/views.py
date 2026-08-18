@@ -251,6 +251,7 @@ class SearchView(TemplateView):
                 | Q(occupation__icontains=query)
                 | Q(industry__icontains=query)
                 | Q(current_location__icontains=query)
+                | Q(graduation_year__icontains=query)
                 | Q(life_story__icontains=query)
                 | Q(school_memories__icontains=query)
                 | Q(message_to_students__icontains=query)

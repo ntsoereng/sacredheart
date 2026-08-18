@@ -47,14 +47,89 @@ class AlumniStoryTests(TestCase):
         response = self.client.get(reverse(url_name))
         return response.context["form"]["submission_token"].value()
 
-    def test_only_approved_story_is_public(self):
+    def test_directory_lists_only_classes_with_approved_profiles(self):
         response = self.client.get(reverse("alumni-list"))
-        self.assertContains(response, self.approved.full_name)
+
+        self.assertContains(response, "Browse by graduating class")
+        self.assertContains(response, "Class of")
+        self.assertContains(response, "2005")
+        self.assertContains(response, "1 profile")
         self.assertNotContains(response, self.pending.full_name)
+        self.assertNotContains(response, "2010")
+        self.assertNotContains(response, self.approved.full_name)
+        self.assertEqual(
+            self.client.get(reverse("alumni-class", args=[2010])).status_code,
+            404,
+        )
         self.assertEqual(
             self.client.get(reverse("alumni-detail", args=[self.pending.slug])).status_code,
             404,
         )
+
+    def test_class_page_shows_members_and_an_accurate_count(self):
+        classmate = AlumniStory.objects.create(
+            full_name="Thato Mokoena",
+            graduation_year=2005,
+            email="thato@example.com",
+            occupation="Teacher",
+            consent_to_publish=True,
+            status="approved",
+        )
+        AlumniStory.objects.create(
+            full_name="Palesa Ndlovu",
+            graduation_year=2007,
+            email="palesa@example.com",
+            consent_to_publish=True,
+            status="approved",
+        )
+
+        directory_response = self.client.get(reverse("alumni-list"))
+        class_response = self.client.get(reverse("alumni-class", args=[2005]))
+
+        self.assertContains(directory_response, "2 profiles")
+        self.assertContains(directory_response, "2007")
+        self.assertContains(class_response, "Class of 2005")
+        self.assertContains(class_response, self.approved.full_name)
+        self.assertContains(class_response, classmate.full_name)
+        self.assertNotContains(class_response, "Palesa Ndlovu")
+
+    def test_directory_search_still_finds_profiles_across_classes(self):
+        response = self.client.get(reverse("alumni-list"), {"q": "Engineer"})
+
+        self.assertContains(response, "Search results")
+        self.assertContains(response, self.approved.full_name)
+        self.assertEqual(response.context["search_query"], "Engineer")
+        self.assertContains(
+            response,
+            '<meta name="robots" content="noindex, follow">',
+            html=True,
+        )
+
+    def test_profile_links_to_its_class_and_surfaces_classmates(self):
+        classmate = AlumniStory.objects.create(
+            full_name="Thato Mokoena",
+            graduation_year=2005,
+            email="thato@example.com",
+            occupation="Teacher",
+            consent_to_publish=True,
+            status="approved",
+        )
+
+        response = self.client.get(
+            reverse("alumni-detail", args=[self.approved.slug])
+        )
+
+        class_url = reverse("alumni-class", args=[2005])
+        self.assertContains(response, class_url)
+        self.assertContains(response, "2 profiles")
+        self.assertContains(response, "More from the Class of 2005")
+        self.assertContains(response, classmate.full_name)
+
+    def test_available_class_pages_are_in_the_sitemap(self):
+        response = self.client.get("/sitemap.xml", HTTP_HOST="testserver")
+
+        self.assertContains(response, "http://testserver/alumni/classes/2005/")
+        self.assertNotContains(response, "http://testserver/alumni/classes/2010/")
 
     def test_contact_details_are_not_published(self):
         response = self.client.get(
