@@ -10,6 +10,8 @@ from django.http import Http404, HttpResponseGone
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import never_cache
 from django.views.generic import CreateView, DetailView, FormView, ListView, TemplateView
 
 from apps.core.models import ContactMessage
@@ -223,6 +225,7 @@ class AlumniProfileUpdateSentView(TemplateView):
         return context
 
 
+@method_decorator(never_cache, name="dispatch")
 class AlumniVerifiedProfileUpdateView(PublicFormProtectionMixin, FormView):
     rate_limit_count = 5
     rate_limit_window = 3600

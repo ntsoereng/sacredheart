@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
 from django.core import mail
 from django.core.mail import get_connection
-from django.test import TestCase, override_settings
+from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 
 from apps.core.models import ContactMessage
@@ -295,6 +295,54 @@ class AlumniStoryTests(TestCase):
         verification.refresh_from_db()
         self.assertIsNotNone(verification.used_at)
         self.assertEqual(self.client.get(verification_url).status_code, 410)
+
+    def test_one_time_update_form_passes_enforced_https_csrf_checks(self):
+        verification, raw_token = AlumniProfileUpdateVerification.issue(
+            self.approved
+        )
+        update_path = reverse(
+            "alumni-profile-update-confirm",
+            args=[self.approved.slug, raw_token],
+        )
+        update_url = f"https://testserver{update_path}"
+        csrf_client = Client(enforce_csrf_checks=True)
+
+        form_response = csrf_client.get(
+            update_path,
+            secure=True,
+            HTTP_HOST="testserver",
+        )
+
+        self.assertEqual(form_response.status_code, 200)
+        self.assertContains(
+            form_response,
+            '<meta name="referrer" content="same-origin">',
+            html=True,
+        )
+        self.assertEqual(form_response["Referrer-Policy"], "same-origin")
+        self.assertIn("no-store", form_response["Cache-Control"])
+
+        response = csrf_client.post(
+            update_path,
+            {
+                "csrfmiddlewaretoken": csrf_client.cookies["csrftoken"].value,
+                "update_type": "work",
+                "message": "Please update my industry to Banking.",
+                "submission_token": form_response.context["form"][
+                    "submission_token"
+                ].value(),
+            },
+            secure=True,
+            HTTP_HOST="testserver",
+            HTTP_REFERER=update_url,
+        )
+
+        self.assertRedirects(
+            response,
+            reverse("alumni-detail", args=[self.approved.slug]),
+        )
+        verification.refresh_from_db()
+        self.assertIsNotNone(verification.used_at)
 
     def test_wrong_update_email_gets_the_same_response_without_a_link(self):
         update_url = reverse("alumni-profile-update", args=[self.approved.slug])
