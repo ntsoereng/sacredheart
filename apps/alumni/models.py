@@ -35,7 +35,6 @@ class AlumniStory(models.Model):
     )
     profile_photo = models.ImageField(upload_to="alumni/", blank=True, null=True)
     life_story = models.TextField(
-        blank=True,
         verbose_name="Profile summary",
         help_text="Briefly describe your journey, work, studies or community contribution.",
     )

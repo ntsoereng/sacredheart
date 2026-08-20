@@ -61,9 +61,7 @@ class AlumniStoryListView(ListView):
         if self.search_query:
             queryset = queryset.filter(
                 Q(full_name__icontains=self.search_query)
-                | Q(occupation__icontains=self.search_query)
                 | Q(industry__icontains=self.search_query)
-                | Q(current_location__icontains=self.search_query)
                 | Q(graduation_year__icontains=self.search_query)
             )
         elif self.selected_class is None:
@@ -77,7 +75,7 @@ class AlumniStoryListView(ListView):
         context["class_groups"] = (
             published_stories.values("graduation_year")
             .annotate(alumni_count=Count("id"))
-            .order_by("-graduation_year")
+            .order_by("graduation_year")
         )
         context["selected_class"] = self.selected_class
         context["search_query"] = self.search_query

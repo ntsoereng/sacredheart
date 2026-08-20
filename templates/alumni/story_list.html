@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block title %}{% if selected_class %}Class of {{ selected_class }} | Alumni Directory{% elif search_query %}Search the Alumni Directory{% else %}Alumni Network | Sacred Heart{% endif %}{% endblock %}
-{% block meta_description %}{% if selected_class %}Meet verified Sacred Heart alumni from the Class of {{ selected_class }}.{% else %}Browse verified Sacred Heart alumni by graduating class, profession, industry, or location.{% endif %}{% endblock %}
+{% block meta_description %}{% if selected_class %}Meet verified Sacred Heart alumni from the Class of {{ selected_class }}.{% else %}Browse verified Sacred Heart alumni by graduating class or industry.{% endif %}{% endblock %}
 {% block og_title %}Sacred Heart Alumni Network{% endblock %}
 {% block og_description %}A growing directory of Sacred Heart stories, careers, communities, and shared opportunities.{% endblock %}
 {% block twitter_title %}Sacred Heart Alumni Network{% endblock %}
@@ -25,7 +25,7 @@
   <div class="mx-auto grid max-w-6xl gap-4 px-6 md:grid-cols-3">
     <div class="group rounded-2xl border border-stone-200 bg-stone-50 p-5 transition hover:-translate-y-1 hover:border-gold/50 hover:bg-white hover:shadow-lg">
       <span class="icon-disc" aria-hidden="true"><svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3"/><path d="M6 20a6 6 0 0 1 12 0"/></svg></span>
-      <h2 class="mt-4 text-xl font-bold">Discover familiar faces</h2><p class="mt-2 text-sm leading-6 text-gray-600">Search by name, class year, profession, industry, or location.</p>
+      <h2 class="mt-4 text-xl font-bold">Discover familiar faces</h2><p class="mt-2 text-sm leading-6 text-gray-600">Search by name, class year, or industry.</p>
     </div>
     <div class="group rounded-2xl bg-primary p-5 text-white shadow-lg shadow-primary/10 transition hover:-translate-y-1 hover:shadow-xl">
       <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-white/10 text-gold-light" aria-hidden="true"><svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V8l8-5 8 5v11"/><path d="M8 19v-6h8v6M3 19h18"/></svg></span>
@@ -66,7 +66,7 @@
     </div>
 
     <form method="get" action="{% if selected_class %}{% url 'alumni-class' selected_class %}{% else %}{% url 'alumni-list' %}{% endif %}" class="content-card mt-7 grid gap-3 rounded-2xl p-4 md:grid-cols-[1fr_auto]" role="search">
-      <label class="relative"><span class="sr-only">Search alumni</span><svg class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg><input class="alumni-search-input min-h-12 w-full" type="search" name="q" value="{{ search_query }}" placeholder="{% if selected_class %}Search within the Class of {{ selected_class }}{% else %}Search name, class, profession, industry or location{% endif %}"></label>
+      <label class="relative"><span class="sr-only">Search alumni</span><svg class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg><input class="alumni-search-input min-h-12 w-full" type="search" name="q" value="{{ search_query }}" placeholder="{% if selected_class %}Search within the Class of {{ selected_class }}{% else %}Search name, class, or industry{% endif %}"></label>
       <button class="btn-primary min-h-12 font-bold transition hover:-translate-y-0.5 hover:bg-primary-dark hover:shadow-lg" type="submit">Search directory</button>
     </form>
 
@@ -96,13 +96,12 @@
           </div>
           <div class="flex flex-1 flex-col p-5">
             <h3 class="text-xl font-bold text-gray-900 transition group-hover:text-primary">{{ story.full_name }}</h3>
-            {% if story.occupation %}<p class="mt-1 font-semibold text-primary">{{ story.occupation }}</p>{% endif %}
-            {% if story.industry or story.current_location %}<div class="mt-4 space-y-2 text-sm text-gray-500">{% if story.industry %}<p class="flex items-center gap-2"><svg class="h-4 w-4 shrink-0 text-gold" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M3 6h14v10H3zM7 6V4h6v2M3 9h14"/></svg><span>{{ story.industry }}</span></p>{% endif %}{% if story.current_location %}<p class="flex items-center gap-2"><svg class="h-4 w-4 shrink-0 text-gold" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M15.5 8c0 3.7-5.5 8-5.5 8S4.5 11.7 4.5 8a5.5 5.5 0 1 1 11 0Z"/><circle cx="10" cy="8" r="1.7"/></svg><span>{{ story.current_location }}</span></p>{% endif %}</div>{% endif %}
+            {% if story.industry %}<p class="mt-3 flex items-center gap-2 text-sm font-semibold text-primary"><svg class="h-4 w-4 shrink-0 text-gold" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M3 6h14v10H3zM7 6V4h6v2M3 9h14"/></svg><span>{{ story.industry }}</span></p>{% endif %}
             <span class="mt-auto flex items-center justify-between border-t border-stone-200 pt-5 text-sm font-bold text-primary">Read profile<span class="flex h-9 w-9 items-center justify-center rounded-full bg-primary/8 transition group-hover:translate-x-1 group-hover:bg-primary group-hover:text-white" aria-hidden="true"><svg class="h-4 w-4" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 10h12m-5-5 5 5-5 5"/></svg></span></span>
           </div>
         </a>
         {% empty %}
-        <div class="content-card col-span-full rounded-3xl p-12 text-center"><span class="icon-disc mx-auto" aria-hidden="true"><svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg></span><h3 class="mt-4 text-xl font-bold">No profiles match this search</h3><p class="mt-2 text-gray-600">Try another name, profession, industry, location, or class year.</p>{% if selected_class %}<a href="{% url 'alumni-class' selected_class %}" class="mt-5 inline-flex font-bold text-primary hover:underline">Clear search</a>{% else %}<a href="{% url 'alumni-list' %}#directory" class="mt-5 inline-flex font-bold text-primary hover:underline">Browse all classes</a>{% endif %}</div>
+        <div class="content-card col-span-full rounded-3xl p-12 text-center"><span class="icon-disc mx-auto" aria-hidden="true"><svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg></span><h3 class="mt-4 text-xl font-bold">No profiles match this search</h3><p class="mt-2 text-gray-600">Try another name, industry, or class year.</p>{% if selected_class %}<a href="{% url 'alumni-class' selected_class %}" class="mt-5 inline-flex font-bold text-primary hover:underline">Clear search</a>{% else %}<a href="{% url 'alumni-list' %}#directory" class="mt-5 inline-flex font-bold text-primary hover:underline">Browse all classes</a>{% endif %}</div>
         {% endfor %}
       </div>
       {% include "partials/pagination.html" %}

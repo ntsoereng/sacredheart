@@ -39,6 +39,17 @@ class ApplicationForm(forms.ModelForm):
         ),
     )
 
+    previous_school = forms.CharField(
+        label="Previous school",
+        required=True,
+        widget=forms.TextInput(
+            attrs={
+                "class": "w-full",
+                "placeholder": "Name of previous school",
+            }
+        ),
+    )
+
     class Meta:
         model = Application
         fields = (
@@ -111,12 +122,6 @@ class ApplicationForm(forms.ModelForm):
                     "class": "w-full",
                     "autocomplete": "street-address",
                     "placeholder": "Village, town and other address details",
-                }
-            ),
-            "previous_school": forms.TextInput(
-                attrs={
-                    "class": "w-full",
-                    "placeholder": "Name of previous school",
                 }
             ),
             "district": forms.Select(

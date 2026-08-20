@@ -11,6 +11,7 @@ from django.urls import reverse
 
 from apps.core.models import ContactMessage
 
+from .forms import AlumniStorySubmissionForm
 from .models import (
     AlumniOpportunity,
     AlumniProfileUpdateVerification,
@@ -27,7 +28,9 @@ class AlumniStoryTests(TestCase):
             graduation_year=2005,
             email="private@example.com",
             phone="+266 5000 0000",
+            current_location="Maseru",
             occupation="Engineer",
+            industry="Information Technology",
             life_story="A journey in engineering.",
             school_memories="The friendships.",
             consent_to_publish=True,
@@ -46,6 +49,21 @@ class AlumniStoryTests(TestCase):
     def submission_token(self, url_name):
         response = self.client.get(reverse(url_name))
         return response.context["form"]["submission_token"].value()
+
+    def test_life_story_is_required_for_alumni_submissions(self):
+        form = AlumniStorySubmissionForm(
+            data={
+                "full_name": "Lerato Mokoena",
+                "graduation_year": 2015,
+                "email": "lerato@example.com",
+                "life_story": "",
+                "consent_to_publish": True,
+            }
+        )
+
+        self.assertFalse(form.is_valid())
+        self.assertEqual(form.errors["life_story"], ["This field is required."])
+        self.assertTrue(AlumniStory._meta.get_field("life_story").blank is False)
 
     def test_directory_lists_only_classes_with_approved_profiles(self):
         response = self.client.get(reverse("alumni-list"))
@@ -72,6 +90,7 @@ class AlumniStoryTests(TestCase):
             graduation_year=2005,
             email="thato@example.com",
             occupation="Teacher",
+            industry="Education",
             consent_to_publish=True,
             status="approved",
         )
@@ -91,14 +110,41 @@ class AlumniStoryTests(TestCase):
         self.assertContains(class_response, "Class of 2005")
         self.assertContains(class_response, self.approved.full_name)
         self.assertContains(class_response, classmate.full_name)
+        self.assertContains(class_response, "Information Technology")
+        self.assertContains(class_response, "Education")
+        self.assertNotContains(class_response, "Engineer")
+        self.assertNotContains(class_response, "Teacher")
+        self.assertNotContains(class_response, "Maseru")
         self.assertNotContains(class_response, "Palesa Ndlovu")
 
+    def test_directory_orders_oldest_classes_first(self):
+        AlumniStory.objects.create(
+            full_name="Palesa Ndlovu",
+            graduation_year=2007,
+            email="palesa@example.com",
+            life_story="A career in banking.",
+            industry="Banking",
+            consent_to_publish=True,
+            status="approved",
+        )
+
+        response = self.client.get(reverse("alumni-list"))
+        content = response.content.decode()
+
+        self.assertLess(
+            content.index(reverse("alumni-class", args=[2005])),
+            content.index(reverse("alumni-class", args=[2007])),
+        )
+
     def test_directory_search_still_finds_profiles_across_classes(self):
-        response = self.client.get(reverse("alumni-list"), {"q": "Engineer"})
+        response = self.client.get(
+            reverse("alumni-list"),
+            {"q": "Information Technology"},
+        )
 
         self.assertContains(response, "Search results")
         self.assertContains(response, self.approved.full_name)
-        self.assertEqual(response.context["search_query"], "Engineer")
+        self.assertEqual(response.context["search_query"], "Information Technology")
         self.assertContains(
             response,
             '<meta name="robots" content="noindex, follow">',

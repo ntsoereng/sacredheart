@@ -11,6 +11,7 @@ from unittest.mock import patch
 
 from apps.core.models import SiteSettings
 
+from .forms import ApplicationForm
 from .models import Application, ApplicationSubmissionToken
 from .protection import create_submission_token
 
@@ -81,6 +82,15 @@ class ApplicationCreateViewTests(TestCase):
         self.assertContains(response, 'autocomplete="off"')
         self.assertContains(response, 'aria-hidden="true"')
         self.assertContains(response, 'name="submission_token"')
+
+    def test_previous_school_is_required(self):
+        form = ApplicationForm(
+            data=self.valid_application_data(previous_school="", submission_token="token")
+        )
+
+        self.assertFalse(form.is_valid())
+        self.assertEqual(form.errors["previous_school"], ["This field is required."])
+        self.assertTrue(form.fields["previous_school"].required)
 
     def test_each_render_gets_a_distinct_signed_submission_token(self):
         SiteSettings.objects.create(
