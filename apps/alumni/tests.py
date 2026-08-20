@@ -56,6 +56,7 @@ class AlumniStoryTests(TestCase):
                 "full_name": "Lerato Mokoena",
                 "graduation_year": 2015,
                 "email": "lerato@example.com",
+                "industry": "Information Technology",
                 "life_story": "",
                 "consent_to_publish": True,
             }
@@ -64,6 +65,22 @@ class AlumniStoryTests(TestCase):
         self.assertFalse(form.is_valid())
         self.assertEqual(form.errors["life_story"], ["This field is required."])
         self.assertTrue(AlumniStory._meta.get_field("life_story").blank is False)
+
+    def test_industry_is_required_for_alumni_submissions(self):
+        form = AlumniStorySubmissionForm(
+            data={
+                "full_name": "Lerato Mokoena",
+                "graduation_year": 2015,
+                "email": "lerato@example.com",
+                "industry": "",
+                "life_story": "A career supporting digital education.",
+                "consent_to_publish": True,
+            }
+        )
+
+        self.assertFalse(form.is_valid())
+        self.assertEqual(form.errors["industry"], ["This field is required."])
+        self.assertFalse(AlumniStory._meta.get_field("industry").blank)
 
     def test_directory_lists_only_classes_with_approved_profiles(self):
         response = self.client.get(reverse("alumni-list"))

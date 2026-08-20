@@ -40,12 +40,12 @@ class ApplicationForm(forms.ModelForm):
     )
 
     previous_school = forms.CharField(
-        label="Previous school",
+        label="Your Primary School",
         required=True,
         widget=forms.TextInput(
             attrs={
                 "class": "w-full",
-                "placeholder": "Name of previous school",
+                "placeholder": "Name of your primary school",
             }
         ),
     )

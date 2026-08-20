@@ -30,7 +30,6 @@ class AlumniStory(models.Model):
     occupation = models.CharField(max_length=200, blank=True)
     industry = models.CharField(
         max_length=150,
-        blank=True,
         help_text="For example: engineering, education, health, finance or the arts.",
     )
     profile_photo = models.ImageField(upload_to="alumni/", blank=True, null=True)

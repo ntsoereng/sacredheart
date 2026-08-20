@@ -81,6 +81,7 @@ class AlumniStorySubmissionForm(PublicFormProtectionFieldsMixin, forms.ModelForm
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields["industry"].required = True
         self.fields["life_story"].required = True
         self.fields["consent_to_publish"].help_text = (
             "I consent to my directory profile and photo being published on this website."

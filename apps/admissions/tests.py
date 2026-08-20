@@ -91,6 +91,7 @@ class ApplicationCreateViewTests(TestCase):
         self.assertFalse(form.is_valid())
         self.assertEqual(form.errors["previous_school"], ["This field is required."])
         self.assertTrue(form.fields["previous_school"].required)
+        self.assertEqual(form.fields["previous_school"].label, "Your Primary School")
 
     def test_each_render_gets_a_distinct_signed_submission_token(self):
         SiteSettings.objects.create(
