@@ -1,3 +1,4 @@
+from . import workspace
 from django.urls import path
 
 from .views import (
@@ -31,6 +32,13 @@ from .views import (
 )
 
 urlpatterns = [
+    path("workspace/", workspace.workspace, name="workspace"),
+    path("workspace/tasks/new/", workspace.task_form, name="workspace-task-new"),
+    path("workspace/tasks/<int:pk>/", workspace.task_form, name="workspace-task"),
+    path("workspace/tasks/<int:pk>/complete/", workspace.task_action, {"action": "complete"}, name="workspace-task-complete"),
+    path("workspace/tasks/<int:pk>/reopen/", workspace.task_action, {"action": "reopen"}, name="workspace-task-reopen"),
+    path("workspace/tasks/<int:pk>/delete/", workspace.task_action, {"action": "delete"}, name="workspace-task-delete"),
+
     path(
         "",
         DashboardView.as_view(),

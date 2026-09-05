@@ -53,7 +53,7 @@
 
     <a href="#main-content" class="skip-link">Skip to main content</a>
 
-    {% include "partials/navbar.html" %}
+    {% block site_navigation %}{% include "partials/navbar.html" %}{% endblock %}
 
     {% include "partials/messages.html" %}
 
@@ -64,7 +64,7 @@
 
     </main>
 
-    {% include "partials/footer.html" %}
+    {% block site_footer %}{% include "partials/footer.html" %}{% endblock %}
 
 
     <script nonce="{{ csp_nonce }}">
