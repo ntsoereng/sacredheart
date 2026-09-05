@@ -233,6 +233,22 @@ button:focus-visible {
     outline: none;
 }
 
+/* Keep intrinsic content widths from widening the staff portal on phones. */
+.portal-shell {
+    min-width: 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+}
+
+.portal-shell :is(.grid, .flex) > * {
+    min-width: 0;
+}
+
+.portal-shell :is(input, select, textarea) {
+    min-width: 0;
+    max-width: 100%;
+}
+
 .portal-shell h1,
 .portal-shell h2,
 .portal-shell h3 {

@@ -904,6 +904,9 @@
   .list-none {
     list-style-type: none;
   }
+  .grid-cols-1 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
   .grid-cols-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -3718,6 +3721,18 @@ a:focus-visible, button:focus-visible {
 .footer-link:hover, .footer-link:focus-visible {
   color: var(--color-gold-light);
   outline: none;
+}
+.portal-shell {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.portal-shell :is(.grid, .flex) > * {
+  min-width: 0;
+}
+.portal-shell :is(input, select, textarea) {
+  min-width: 0;
+  max-width: 100%;
 }
 .portal-shell h1, .portal-shell h2, .portal-shell h3 {
   max-width: 100%;
