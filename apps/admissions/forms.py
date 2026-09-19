@@ -139,7 +139,14 @@ class ApplicationForm(forms.ModelForm):
         return " ".join(self.cleaned_data["student_surname"].split())
 
     def clean_parent_guardian_email(self):
-        return self.cleaned_data["parent_guardian_email"].strip().casefold()
+        email = self.cleaned_data["parent_guardian_email"].strip().casefold()
+        domain = email.rsplit("@", 1)[1]
+        if domain == "sacredheart.ac.ls" or domain.endswith(".sacredheart.ac.ls"):
+            raise forms.ValidationError(
+                "Please use the parent/guardian’s own email address. "
+                "Sacred Heart school email addresses cannot be used for applications."
+            )
+        return email
 
     def clean(self):
         cleaned_data = super().clean()

@@ -93,6 +93,40 @@ class ApplicationCreateViewTests(TestCase):
         self.assertTrue(form.fields["previous_school"].required)
         self.assertEqual(form.fields["previous_school"].label, "Your Primary School")
 
+    @override_settings(ADMISSIONS_RATE_LIMITS={})
+    def test_school_email_addresses_cannot_submit_applications(self):
+        SiteSettings.objects.create(
+            school_name="Sacred Heart High School", admissions_open=True
+        )
+        for email in (
+            "admin@sacredheart.ac.ls",
+            "admissions@sacredheart.ac.ls",
+            "learner@sacredheart.ac.ls",
+            "  ADMIN@SACREDHEART.AC.LS  ",
+            "guardian@mail.sacredheart.ac.ls",
+            "admissions",
+        ):
+            with self.subTest(email=email):
+                response = self.client.post(
+                    self.url,
+                    self.valid_application_data(
+                        parent_guardian_email=email,
+                        submission_token=self.submission_token(),
+                    ),
+                )
+                self.assertEqual(response.status_code, 200)
+                self.assertIn("parent_guardian_email", response.context["form"].errors)
+                self.assertEqual(Application.objects.count(), 0)
+
+    def test_personal_email_addresses_remain_valid(self):
+        for email in ("Guardian@Example.com", "sacredheart.ac.ls@example.com"):
+            with self.subTest(email=email):
+                form = ApplicationForm(data=self.valid_application_data(
+                    parent_guardian_email=email, submission_token="token"
+                ))
+                self.assertTrue(form.is_valid(), form.errors)
+                self.assertEqual(form.cleaned_data["parent_guardian_email"], email.lower())
+
     def test_each_render_gets_a_distinct_signed_submission_token(self):
         SiteSettings.objects.create(
             school_name="Sacred Heart High School",
