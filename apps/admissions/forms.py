@@ -13,6 +13,12 @@ DUPLICATE_APPLICATION_MESSAGE = (
 
 class ApplicationForm(forms.ModelForm):
 
+    boarding_required = forms.ChoiceField(
+        label="Will you require boarding/accommodation?",
+        choices=[("", "Select Yes or No"), ("yes", "Yes"), ("no", "No")],
+        widget=forms.Select(attrs={"class": "w-full"}),
+    )
+
     website = forms.CharField(
         required=False,
         widget=forms.TextInput(
@@ -58,6 +64,7 @@ class ApplicationForm(forms.ModelForm):
             "student_surname",
             "date_of_birth",
             "nationality",
+            "boarding_required",
             "parent_guardian_names",
             "parent_phone_number",
             "parent_guardian_email",

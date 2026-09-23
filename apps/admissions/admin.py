@@ -27,6 +27,7 @@ class ApplicationAdmin(admin.ModelAdmin):
         "academic_year",
         "nationality",
         "district",
+        "boarding_required",
         "parent_guardian_email",
         "submitted_at",
         "status",
@@ -48,6 +49,7 @@ class ApplicationAdmin(admin.ModelAdmin):
 
     list_filter = (
         "district",
+        "boarding_required",
         "nationality",
         "status",
         "submitted_at",

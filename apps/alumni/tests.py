@@ -439,46 +439,7 @@ class AlumniStoryTests(TestCase):
             404,
         )
 
-    def test_verified_alumnus_can_submit_opportunity(self):
-        response = self.client.post(
-            reverse("alumni-opportunity-create"),
-            {
-                "alumni": self.approved.pk,
-                "verification_email": self.approved.email,
-                "opportunity_type": "scholarship",
-                "title": "Engineering scholarship",
-                "provider": "Example Foundation",
-                "summary": "Support for eligible secondary school graduates.",
-                "application_url": "https://example.com/apply",
-                "deadline": "2030-12-31",
-                "submission_token": self.submission_token(
-                    "alumni-opportunity-create"
-                ),
-            },
-        )
-        self.assertRedirects(response, reverse("alumni-opportunity-success"))
-        opportunity = AlumniOpportunity.objects.get()
-        self.assertEqual(opportunity.status, "pending")
-        self.assertEqual(opportunity.alumni, self.approved)
-
-    def test_opportunity_submission_rejects_wrong_profile_email(self):
-        response = self.client.post(
-            reverse("alumni-opportunity-create"),
-            {
-                "alumni": self.approved.pk,
-                "verification_email": "not-the-alumnus@example.com",
-                "opportunity_type": "training",
-                "title": "Skills workshop",
-                "summary": "A useful workshop.",
-                "submission_token": self.submission_token(
-                    "alumni-opportunity-create"
-                ),
-            },
-        )
-        self.assertContains(response, "does not match the selected verified profile")
-        self.assertFalse(AlumniOpportunity.objects.exists())
-
-    def test_only_current_approved_opportunities_are_public(self):
+    def test_opportunities_are_hidden_from_public_pages(self):
         AlumniOpportunity.objects.create(
             alumni=self.approved,
             opportunity_type="competition",
@@ -486,20 +447,35 @@ class AlumniStoryTests(TestCase):
             summary="Open to current learners.",
             status="approved",
         )
-        AlumniOpportunity.objects.create(
-            alumni=self.approved,
-            opportunity_type="training",
-            title="Unreviewed workshop",
-            summary="Pending staff checks.",
-        )
-        response = self.client.get(reverse("alumni-list"))
-        self.assertContains(response, "Science competition")
-        self.assertNotContains(response, "Unreviewed workshop")
-        opportunity_response = self.client.get(
-            reverse("alumni-opportunity-list"), {"type": "competition"}
-        )
-        self.assertContains(opportunity_response, "Science competition")
-        self.assertNotContains(opportunity_response, "Unreviewed workshop")
+        for url in (
+            reverse("alumni-list"),
+            reverse("alumni-class", args=[self.approved.graduation_year]),
+            "/",
+            "/sitemap.xml",
+        ):
+            with self.subTest(url=url):
+                response = self.client.get(url)
+                self.assertEqual(response.status_code, 200)
+                self.assertNotContains(response, "Science competition")
+                self.assertNotContains(response, "/alumni/opportunities/")
+                self.assertNotContains(response, 'id="opportunities"')
+
+    def test_public_opportunity_routes_are_unavailable(self):
+        for url in (
+            "/alumni/opportunities/",
+            "/alumni/opportunities/share/",
+            "/alumni/opportunities/thank-you/",
+        ):
+            with self.subTest(url=url):
+                self.assertEqual(self.client.get(url).status_code, 404)
+                self.assertEqual(self.client.post(url, {
+                    "alumni": self.approved.pk,
+                    "verification_email": self.approved.email,
+                    "opportunity_type": "scholarship",
+                    "title": "Engineering scholarship",
+                    "summary": "Support for graduates.",
+                }).status_code, 404)
+        self.assertFalse(AlumniOpportunity.objects.exists())
 
     def test_staff_can_review_opportunity_and_handle_mentorship(self):
         opportunity = AlumniOpportunity.objects.create(

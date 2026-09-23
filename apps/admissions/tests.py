@@ -31,6 +31,7 @@ class ApplicationCreateViewTests(TestCase):
             "student_surname": "Mokoena",
             "date_of_birth": "2012-05-10",
             "nationality": "Lesotho",
+            "boarding_required": "no",
             "parent_guardian_names": "Thabo Mokoena",
             "parent_phone_number": "+266 5000 0000",
             "parent_guardian_email": "guardian@example.com",
@@ -82,6 +83,27 @@ class ApplicationCreateViewTests(TestCase):
         self.assertContains(response, 'autocomplete="off"')
         self.assertContains(response, 'aria-hidden="true"')
         self.assertContains(response, 'name="submission_token"')
+
+    def test_boarding_answer_is_required_and_validated(self):
+        for answer in ("", "maybe"):
+            with self.subTest(answer=answer):
+                form = ApplicationForm(data=self.valid_application_data(
+                    boarding_required=answer, submission_token="token"
+                ))
+                self.assertFalse(form.is_valid())
+                self.assertIn("boarding_required", form.errors)
+
+    def test_boarding_answers_are_saved(self):
+        for answer in ("yes", "no"):
+            with self.subTest(answer=answer):
+                form = ApplicationForm(data=self.valid_application_data(
+                    boarding_required=answer, student_name=answer,
+                    submission_token="token"
+                ))
+                self.assertTrue(form.is_valid(), form.errors)
+                application = form.save()
+                application.refresh_from_db()
+                self.assertEqual(application.boarding_required, answer)
 
     def test_previous_school_is_required(self):
         form = ApplicationForm(
@@ -220,6 +242,7 @@ class ApplicationCreateViewTests(TestCase):
                 "student_surname": "Dlamini",
                 "date_of_birth": "2012-05-10",
                 "nationality": "South Africa",
+                "boarding_required": "no",
                 "parent_guardian_names": "Thandi Dlamini",
                 "parent_phone_number": "+27 11 555 0100",
                 "parent_guardian_email": "parent@example.com",
@@ -247,6 +270,7 @@ class ApplicationCreateViewTests(TestCase):
                 "student_surname": "Mokoena",
                 "date_of_birth": "2012-05-10",
                 "nationality": "Lesotho",
+                "boarding_required": "no",
                 "parent_guardian_names": "Thabo Mokoena",
                 "parent_phone_number": "+266 5000 0000",
                 "parent_guardian_email": "guardian@example.com",
@@ -282,6 +306,7 @@ class ApplicationCreateViewTests(TestCase):
                 "student_surname": "Mokoena",
                 "date_of_birth": "2012-05-10",
                 "nationality": "South Africa",
+                "boarding_required": "no",
                 "parent_guardian_names": "Thabo Mokoena",
                 "parent_phone_number": "+266 5000 0000",
                 "parent_guardian_email": "guardian@example.com",
@@ -474,6 +499,7 @@ class ApplicationDuplicateConstraintTests(TestCase):
             "student_surname": "Mokoena",
             "date_of_birth": date(2012, 5, 10),
             "nationality": "Lesotho",
+            "boarding_required": "no",
             "parent_guardian_names": "Thabo Mokoena",
             "parent_phone_number": "+266 5000 0000",
             "parent_guardian_email": "guardian@example.com",
@@ -520,6 +546,7 @@ class ConcurrentApplicationSubmissionTests(TransactionTestCase):
             "student_surname": "Mokoena",
             "date_of_birth": "2012-05-10",
             "nationality": "Lesotho",
+            "boarding_required": "no",
             "parent_guardian_names": "Thabo Mokoena",
             "parent_phone_number": "+266 5000 0000",
             "parent_guardian_email": "guardian@example.com",

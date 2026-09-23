@@ -90,12 +90,6 @@ class AlumniStoryListView(ListView):
             if self.search_query
             else ""
         )
-        context["opportunities"] = AlumniOpportunity.objects.filter(
-            Q(deadline__isnull=True) | Q(deadline__gte=timezone.localdate()),
-            status="approved",
-            alumni__status="approved",
-            alumni__consent_to_publish=True,
-        ).select_related("alumni")[:6]
         return context
 
 

@@ -86,6 +86,14 @@ class Application(models.Model):
         choices=DISTRICT_CHOICES
     )
 
+    boarding_required = models.CharField(
+        max_length=3,
+        choices=[("yes", "Yes"), ("no", "No")],
+        blank=True,
+        default="",
+        verbose_name="Boarding/accommodation required",
+    )
+
     submitted_at = models.DateTimeField(
         auto_now_add=True
     )

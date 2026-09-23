@@ -95,6 +95,22 @@ class StaffApplicationWorkflowTests(TestCase):
         cache.clear()
         self.client.force_login(self.staff_user)
 
+    def test_boarding_answer_in_details_and_export(self):
+        import csv
+        import io
+
+        self.assertEqual(self.application.boarding_required, "")
+        for answer, label in (("", ""), ("yes", "Yes"), ("no", "No")):
+            with self.subTest(answer=answer):
+                self.application.boarding_required = answer
+                self.application.save()
+                detail = self.client.get(reverse("application-detail", args=[self.application.pk]))
+                self.assertContains(detail, "Boarding/accommodation required")
+                self.assertContains(detail, f'<dd class="mt-1 font-semibold">{label}</dd>', html=True)
+                response = self.client.get(reverse("application-export"))
+                rows = list(csv.DictReader(io.StringIO(response.content.decode())))
+                self.assertEqual(rows[0]["Boarding/Accommodation Required"], label)
+
     def test_application_export_neutralizes_spreadsheet_formulas(self):
         self.application.student_name = "=HYPERLINK(\"https://evil.example\")"
         self.application.save(update_fields=["student_name"])

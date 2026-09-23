@@ -677,6 +677,7 @@ class ApplicationExportView(LoginRequiredMixin, StaffPermissionRequiredMixin, Vi
             "Previous School",
             "Student Candidate Number",
             "District",
+            "Boarding/Accommodation Required",
             "Submitted",
         ])
 
@@ -699,6 +700,7 @@ class ApplicationExportView(LoginRequiredMixin, StaffPermissionRequiredMixin, Vi
                     app.previous_school,
                     app.student_candidate_number,
                     app.district,
+                    app.get_boarding_required_display(),
                     app.submitted_at,
                 )
             )

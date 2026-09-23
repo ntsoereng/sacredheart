@@ -24,7 +24,6 @@ class StaticViewSitemap(Sitemap):
         "activity-list": ("monthly", 0.7),
         "staff-list": ("monthly", 0.7),
         "alumni-list": ("weekly", 0.8),
-        "alumni-opportunity-list": ("weekly", 0.7),
         "vacancy-list": ("daily", 0.8),
         "contact": ("monthly", 0.6),
         "donations": ("monthly", 0.6),

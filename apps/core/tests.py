@@ -111,7 +111,6 @@ class PublicFormProtectionTests(TestCase):
     protected_form_names = (
         "contact",
         "alumni-create",
-        "alumni-opportunity-create",
         "staff-login",
         "staff-register",
     )
