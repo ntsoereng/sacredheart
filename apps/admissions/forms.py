@@ -14,7 +14,7 @@ DUPLICATE_APPLICATION_MESSAGE = (
 class ApplicationForm(forms.ModelForm):
 
     boarding_required = forms.ChoiceField(
-        label="Will you require boarding/accommodation?",
+        label="Will you require accommodation?",
         choices=[("", "Select Yes or No"), ("yes", "Yes"), ("no", "No")],
         widget=forms.Select(attrs={"class": "w-full"}),
     )
